@@ -2,3 +2,6 @@
 backend/data/dataset
 backend/data/metadata.txt
 backend/data/processed_dataset
+
+
+__pycache__
