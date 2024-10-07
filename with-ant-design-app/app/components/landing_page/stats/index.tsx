@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Button, Row, Col } from "antd";
 
+import * as THREE from "three";
+
 import { useRouter } from "next/navigation";
 
 import { Carousel, Radio } from "antd";
@@ -14,12 +16,13 @@ import styles from "./Statistics.module.css";
 import QueueAnim from "rc-queue-anim";
 import { DotPosition } from "antd/es/carousel";
 import Link from "next/link";
+import { ExportOutlined } from "@ant-design/icons";
 
 TweenOne.plugins.push(Children);
 
 const buttonContents = [
-  { label: "Algoritmam", value: 15000, labelLink: "/data", labelLinkText: "izmantotie dati" },
-  { label: "Platformā pieejamie", value: 200, labelLink: "/data", labelLinkText: "sludinājumi" },
+  { label: "Algoritmam", value: 15000, labelLink: "/data", labelLinkText: "izmantotie dati", labelLinkExternal: true },
+  { label: "Platformā pieejamie", value: 200, labelLink: "/groups", labelLinkText: "sludinājumi" },
   { label: "Sludinājumu", value: 10, labelLink: "/groups", labelLinkText: "veidi" },
 ];
 
@@ -28,15 +31,23 @@ const Statistics: React.FC = () => {
 
   const [values, setValues] = useState([0, 0, 0]);
 
+  const [zoom, setZoom] = useState(false);
+  const router = useRouter();
+
   useEffect(() => {
     console.log("values", values);  
   }, [values]);
 
   const [dotPosition, setDotPosition] = useState<DotPosition>("top");
 
-  const handleClick = () => {
+  const handleClick = (link: string) => {
     setValue((prevValue) => prevValue + 1000);
     setValues((prevValues) => prevValues.map((value) => value + 1000));
+
+    setZoom(true);
+    setTimeout(() => {
+      router.push(link); // Redirect after animation
+    }, 500); // Duration should match the animation time
   };
 
   return (
@@ -70,7 +81,7 @@ const Statistics: React.FC = () => {
           >
             {buttonContents.map((buttonContent, index) => (
               <div key={index} className={styles["statistic"]}>
-                <div className={styles["statistic-button"]}>
+                <div className={`${styles["statistic-button"]} ${zoom ? styles["zoom-in"] : ""}`} onClick={()=>handleClick(buttonContent.labelLink)}>
                 {/* <Button onClick={handleClick} style={{ marginTop: 16 }}> */}
                   <TweenOne
                     animation={{
@@ -81,7 +92,7 @@ const Statistics: React.FC = () => {
                         formatMoney: true,
                       },
                       delay: 0,
-                      duration: 700,
+                      duration: 1500,
                     }}
                     className={styles.numberdisplay}
                   />
@@ -93,8 +104,9 @@ const Statistics: React.FC = () => {
                   </div>
                   <div className={styles["statistic-label-link"]}>
                   {buttonContent.labelLink && (
-                    <Link href={buttonContent.labelLink}>
+                    <Link href={buttonContent.labelLink} className={styles["statistic-label-link-group"]}>
                       {buttonContent.labelLinkText}
+                      {buttonContent.labelLinkExternal && <ExportOutlined />}
                     </Link>  
                   )}
                   </div>

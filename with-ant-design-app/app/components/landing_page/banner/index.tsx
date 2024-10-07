@@ -29,7 +29,9 @@ const Banner = () => {
   const handleMouseMove = (e: { clientX: number; clientY: number }) => {
     if (!bannerRef.current) return;
 
-    const rect = bannerRef.current.getBoundingClientRect();
+    // const rect = bannerRef.current.getBoundingClientRect();
+    // rect is all window
+    const rect = { left: 0, top: 0 };
     setMousePosition({
       x: e.clientX - rect.left,
       y: e.clientY - rect.top,
@@ -63,30 +65,39 @@ const Banner = () => {
       const initialX = generateBellCurvePosition(bannerSize.width);
       const initialY = generateUniformPosition(bannerSize.height);
 
+      const randomClass = Math.floor(Math.random() * 3);
+      const cubeClass = `cube-${randomClass}`;
+
       //   console.log(bannerSize);
       //   console.log({ layer, speed, initialX, initialY });
 
-      return { layer, speed, initialX, initialY };
+      return { layer, speed, initialX, initialY, cubeClass };
     });
   }, [bannerSize.width, bannerSize.height]);
 
   const cubes = cubesSettings.map((cube, index) => {
-    const { layer, speed, initialX, initialY } = cube;
+    const { layer, speed, initialX, initialY, cubeClass } = cube;
     const x = (mousePosition.x - bannerSize.width / 2) * speed + initialX;
     const y = (mousePosition.y - bannerSize.height / 2) * speed + initialY;
+
+    // const currentX = initialX + (x - initialX) * 0.1;
+    // const currentY = initialY + (y - initialY) * 0.1;
 
     return (
       <div
         key={index}
         style={{
           position: "absolute",
-          width: "3px",
-          height: "3px",
-          backgroundColor: "rgba(255,255,255,0.8)",
+          width: "5px",
+          height: "5px",
           left: `calc(50% + ${x}px)`,
           top: `calc(50% + ${y}px)`,
+          opacity: layer / 4,
           transform: `translate(-50%, -50%) scale(${layer})`,
+          // transition: "left 0.1s linear, top 0.1s linear",
+
         }}
+        className={`${styles[cubeClass]} ${styles.wander}`}
       />
     );
   });
@@ -110,14 +121,19 @@ const Banner = () => {
           className={styles.content}
         >
           <div className={styles.title}>Inovācija cenu noteikšanā</div>
+          <div style={{
+            width: "60%",
+            paddingTop: "10px",
+            paddingBottom: "10px",
+          }}>
           <Divider 
             style={{
               color: "white",
               borderColor: "white",
-              // width: "50%",
               margin: "10px auto",
             }}
           />
+          </div>
           <div className={styles.subtitle}>Nosaki īpašuma cenu ātri un vienkārši</div>
           {/* <div>
             <Button type="primary" size="large">
