@@ -1,0 +1,109 @@
+
+
+.statistics {
+  --main_background: #ce97dcb7;
+  --secondary-color: #2c1e44;
+  --link-color: #025bae;
+  background-color: var(--main_background);
+  height: 100vh;
+}
+
+.code-box-shape {
+  /* position: absolute; */
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: 50px;
+  height: 50px;
+  border-radius: 4px;
+  background: #1890ff;
+  display: flex;
+  float: left;
+  /* position: relative !important; */
+}
+
+.queue-anim-demo {
+  float: left;
+  margin: 0 5px 0 0 !important;
+}
+
+.numberdisplay {
+  color: var(--secondary-color);
+  font-size: 50px;
+  font-weight: 600;
+  transition: transform 0.2s ease-in-out;
+  /* color: #333;  */
+}
+
+.statistic-container {
+  display: flex;
+  /* justify-content: center; */
+  margin-left: 20%;
+  width: 100%;
+  /* margin-right: auto; */
+  height: 50vh;
+  margin-top: 50px;
+  /* gap: 50px; */
+}
+
+.statistic {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  
+  width: 20%;
+  aspect-ratio: 1 / 1;
+}
+
+.statistic-label {
+  margin-top: 30px;
+}
+
+.statistic-label-text {
+  color: var(--secondary-color);
+  font-size: 20px;
+  font-weight: 600;
+  transition: transform 0.2s ease-in-out;
+  text-align: center;
+  /* color: #333;  */
+}
+.statistic-label-link a {
+  display: block;
+  width: 100%;
+  color: var(--link-color);
+  font-size: 20px;
+  font-weight: 600;
+  transition: transform 0.2s ease-in-out;
+  text-align: center;;
+  /* color: #333;  */
+}
+
+.statistic-button {
+
+  display: flex;
+
+  /* background-color: var(--main_background); */
+  color: white;
+
+  box-shadow: rgba(10, 64, 115, 0.1) 0px 16px 32px;
+  aspect-ratio: 1 / 1;
+  justify-content: center;
+  align-items: center;
+  border-radius: 100%;
+
+  width: 40%;
+
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s, box-shadow 0.3s cubic-bezier(0.215, 0.61, 0.355, 1), transform 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+
+.statistic:hover .statistic-button {
+  /* smoothly lift up */
+  transform: translateY(-4px);
+  box-shadow: rgba(255, 210, 195, 0.912) 0px 16px 32px;
+}

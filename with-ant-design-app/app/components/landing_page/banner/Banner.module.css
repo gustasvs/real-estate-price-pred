@@ -1,0 +1,36 @@
+.content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    /* background-color: #1a1a1a; */
+    /* background-image: url('https://images.unsplash.com/photo-1506748686214-e9df14d4d9d9'); */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    color: #fff;
+}
+
+
+.title {
+    font-family: 'proxima-nova', sans-serif;
+    width: 100%;
+    font-size: 2.5rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    /* gap between symbols */
+    letter-spacing: 0.2rem;
+    text-align: center;
+    color: #c6ebff;
+
+}
+
+.subtitle {
+    font-family: 'proxima-nova', sans-serif;
+    /* text-transform: uppercase; */
+    font-size: 1rem;
+    font-weight: 400;
+    color: #e3f6ff;
+}
