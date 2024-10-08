@@ -113,7 +113,7 @@ const Banner = () => {
         onMouseMove={handleMouseMove}
         style={{
           height: "80vh",
-          background: "linear-gradient(to right, #1a1a1a, #3e236e)", // Single color gradient
+          // background: "linear-gradient(to right, #1a1a1a, #3e236e)", // Single color gradient
         }}
       >
         {cubes}

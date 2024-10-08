@@ -16,7 +16,7 @@ function RootLayout({ children }: React.PropsWithChildren) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Navigation />
+        {/* <Navigation /> */}
         <StyledComponentsRegistry>{children}</StyledComponentsRegistry>
       </body>
     </html>

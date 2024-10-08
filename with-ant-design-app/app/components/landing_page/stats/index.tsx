@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button, Row, Col } from "antd";
 
-import * as THREE from "three";
 
 import { useRouter } from "next/navigation";
 
@@ -78,7 +77,7 @@ const Statistics: React.FC = () => {
                 setValues([0, 0, 0]);
               }
             }}
-          >
+            >
             {buttonContents.map((buttonContent, index) => (
               <div key={index} className={styles["statistic"]}>
                 <div className={`${styles["statistic-button"]} ${zoom ? styles["zoom-in"] : ""}`} onClick={()=>handleClick(buttonContent.labelLink)}>
@@ -130,7 +129,7 @@ const Statistics: React.FC = () => {
           >
             <div key="a" className={styles["statistic"]}>
               <div className={styles.statisticlabel}>Total Value</div>
-              <Button onClick={handleClick} style={{ marginTop: 16 }}>
+              <Button onClick={()=>handleClick} style={{ marginTop: 16 }}>
                 <TweenOne
                   animation={{
                     Children: {
@@ -144,7 +143,7 @@ const Statistics: React.FC = () => {
               </Button>
             </div>
             <div key="b" className={styles["statistic"]}>
-              <Button onClick={handleClick} style={{ marginTop: 16 }}>
+              <Button onClick={() => handleClick} style={{ marginTop: 16 }}>
                 <TweenOne
                   animation={{
                     Children: {

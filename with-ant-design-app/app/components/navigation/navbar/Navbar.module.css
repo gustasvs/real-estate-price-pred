@@ -22,12 +22,15 @@
     display: flex;
     justify-content: space-between;
     /* align-items: center; */
-    margin-top: 2rem;
+    margin-top: 1rem;
+    /* margin-bottom: 1rem; */
     width: 100%;
   }
   
 .logo-container {
     display: flex;
+    /* justify-content: center; */
+    align-items: center;
     width: 20%;
 }
 
@@ -69,6 +72,7 @@
     background-color: transparent;
     /* rounded corners */
     border-radius: 20px;
+    height: 42px;
     color: white;
     font-weight: 600;
 }

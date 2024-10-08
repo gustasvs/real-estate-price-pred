@@ -16,9 +16,16 @@ import {
 import theme from "./themeConfig";
 import Banner from "./components/landing_page/banner";
 import Statistics from "./components/landing_page/stats";
+import Navbar from "./components/navigation/navbar";
 
-const HomePage = () => (
+import 'overlayscrollbars/overlayscrollbars.css';
+import OverlayScrollbars from 'overlayscrollbars';
+
+
+const HomePage = () => {
+  return (  
   <ConfigProvider theme={theme}>
+    <Navbar toggle={() => {}}/>
     <Banner />
     <Statistics />
     {/* <div style={{ padding: 100, height: "100vh" }}>
@@ -76,6 +83,7 @@ const HomePage = () => (
       </div>
     </div> */}
   </ConfigProvider>
-);
+  );
+};
 
 export default HomePage;

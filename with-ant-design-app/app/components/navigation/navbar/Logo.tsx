@@ -36,12 +36,14 @@ const Logo = () => {
 
   return (
     <>
-      <Link href="/" style={{ display: showButton ? "none" : "block" }}>
+      <Link href="/" style={{ display: showButton ? "none" : "flex", alignItems: "center" }}>
         <GitlabOutlined style={{ fontSize: "48px", color: "white" }} />
       </Link>
       <div
         style={{
           display: showButton ? "block" : "none",
+          justifyContent: "center",
+          alignItems: "center",
         }}
       >
         <Button />

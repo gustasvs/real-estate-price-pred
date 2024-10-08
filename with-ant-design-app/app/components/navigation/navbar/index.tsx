@@ -1,12 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import Logo from "./Logo";
 import styles from "./Navbar.module.css"; // Import the new CSS module
 import Column from "antd/es/table/Column";
 import { Button, Divider } from "antd";
 import { DownOutlined } from "@ant-design/icons";
+import SignUpModal from "./login-modal";
 
 const Navbar = ({ toggle }: { toggle: () => void }) => {
+
+  const [signUpModalOpen, setSignUpModalOpen] = useState(false);
+
   return (
     <div className={styles.navbar}>
       <div className={styles.container}>
@@ -31,8 +35,13 @@ const Navbar = ({ toggle }: { toggle: () => void }) => {
             <Button className={styles["rounded-button"]}>
               <span>Sign in</span>
             </Button>
-            <Button className={`${styles["rounded-button"]} ${styles["button-fill"]}`}>
+            <Button className={`${styles["rounded-button"]} ${styles["button-fill"]}`}
+              onClick={() =>{
+                setSignUpModalOpen(true);
+              }}>
               <span>Sign up free</span>
+              <SignUpModal open={signUpModalOpen} setOpen={setSignUpModalOpen} />
+            
             </Button>
             </div>
         </div>
