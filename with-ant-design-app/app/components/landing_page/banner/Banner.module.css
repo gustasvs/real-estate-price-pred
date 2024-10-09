@@ -3,7 +3,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: 80vh;
     /* background-color: #1a1a1a; */
     /* background-image: url('https://images.unsplash.com/photo-1506748686214-e9df14d4d9d9'); */
     /* background-size: cover; */
@@ -15,8 +15,8 @@
 
 .banner {
   background: linear-gradient(to right, var(--background-dark-main), var(--background-dark-secondary));
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
+  /* border-top-left-radius: 10px;
+  border-top-right-radius: 10px; */
 }
 
 

@@ -1,0 +1,11 @@
+.layout {
+    background-color: var(--background-light-main);
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    height: 5rem;
+    padding: 0 48px;
+    background-color: var(--background-dark-secondary);
+}

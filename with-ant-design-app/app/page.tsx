@@ -19,8 +19,6 @@ import Statistics from "./components/landing_page/stats";
 import Navbar from "./components/navigation/navbar";
 import GenericLayout from "./components/generic-page-layout";
 
-// import 'overlayscrollbars/overlayscrollbars.css';
-// import OverlayScrollbars from 'overlayscrollbars';
 
 
 const HomePage = () => {

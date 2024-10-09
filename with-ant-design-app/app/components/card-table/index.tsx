@@ -1,29 +1,38 @@
-import { PlusOutlined } from "@ant-design/icons";
+import { CloseOutlined, PlusOutlined } from "@ant-design/icons";
 import { Card, Row, Col } from "antd";
 import Image from "next/image";
 
 import styles from "./Groups.module.css";
 import { useRouter } from "next/navigation";
 
-const groups = [
-  { id: 1, name: "Group 1", imageUrl: "/path/to/image1.jpg" },
-  { id: 2, name: "Group 2", imageUrl: "/path/to/image2.jpg" },
-  { id: 3, name: "Group 3", imageUrl: "/path/to/image3.jpg" },
-  { id: 4, name: "Group 4", imageUrl: "/path/to/image4.jpg" },
-  // { id: 5, name: "Group 5", imageUrl: "/path/to/image5.jpg" },
-];
 
 const CardTable = ({
   columnCount,
   onCardClick = () => {},
+  groups,
+  setGroups,
 }: {
   columnCount: number;
   onCardClick?: (id: number) => void;
+  groups: any[];
+  setGroups: (groups: any[]) => void;
 }): JSX.Element => {
   const router = useRouter();
 
   const rowGutter: [number, number] = [16, 16];
   const colSpan: number = 24 / columnCount;
+
+  const addNewGroup = () => {
+    const newGroups = [...groups];
+    newGroups.push({ id: groups.length + 1, name: "Jauna grupa", imageUrl: "/path/to/image.jpg" });
+    setGroups(newGroups);
+  }
+
+  const deleteGroup = (id: number) => {
+    const newGroups = groups.filter((group) => group.id !== id);
+    setGroups(newGroups);
+  }
+
 
   return (
     <>
@@ -56,12 +65,28 @@ const CardTable = ({
                 }}
               >
                 <div className={styles["content"]}>
-                  <Image
+                  <div className={styles["delete-group-button"]} onClick={(e) => {
+                      e.stopPropagation();
+                      deleteGroup(group.id);
+                  }}>
+                    <CloseOutlined />
+                  </div>
+                  {/* <Image
                     src={group.imageUrl}
-                    alt={group.name}
+                    alt={""}
                     width={200}
                     height={200}
-                  />
+                  /> */}
+                  <div style={{
+                      background: `url(${group.imageUrl})`,
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                      width: "200px",
+                      height: "200px",
+                      borderRadius: "10px",
+                  }}>
+
+                  </div>
                   <h4 style={{ color: "#ffffff" }}>{group.name}</h4>
                 </div>
               </div>
@@ -74,7 +99,9 @@ const CardTable = ({
               justifyContent: "space-evenly",
             }}
           >
-            <div className={`${styles["card"]} ${styles["card-add"]}`}>
+            <div className={`${styles["card"]} ${styles["card-add"]}`} onClick={() => {
+                addNewGroup();
+            }}>
               <div className={styles["content"]}>
                 <div className={styles["card-content-image"]}>
                   <PlusOutlined

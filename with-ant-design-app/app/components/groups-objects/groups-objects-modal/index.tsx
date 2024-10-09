@@ -61,7 +61,10 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ open, setOpen }
                 <GoogleOutlined className={styles["google-icon"]} />
               <span
                 className={`${styles["google-login-text"]} ${styles["login-text"]}`}
-              >Sign up with Google</span>
+              >
+                {/* Sign up with Google */}
+                Reģistrēties izmantojot Google
+                </span>
             </Button>
         </div>
         <div className={styles["divider-container"]}>
@@ -71,7 +74,11 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ open, setOpen }
             <Button className={`${styles["email-login-button"]} ${styles["login-button"]}`}>
               <span
                 className={`${styles["email-login-text"]} ${styles["login-text"]}`}
-              >Sign up with email</span>
+              >
+                {/* Sign up with email */}
+                Reģistrēties izmantojot e-pastu
+                
+                </span>
             </Button>
         </div>
         <div className={styles["terms-container"]}>

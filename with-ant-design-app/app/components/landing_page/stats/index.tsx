@@ -30,12 +30,8 @@ const Statistics: React.FC = () => {
 
   const [values, setValues] = useState([0, 0, 0]);
 
-  const [zoom, setZoom] = useState(false);
   const router = useRouter();
 
-  useEffect(() => {
-    console.log("values", values);  
-  }, [values]);
 
   const [dotPosition, setDotPosition] = useState<DotPosition>("top");
 
@@ -43,10 +39,7 @@ const Statistics: React.FC = () => {
     setValue((prevValue) => prevValue + 1000);
     setValues((prevValues) => prevValues.map((value) => value + 1000));
 
-    setZoom(true);
-    setTimeout(() => {
-      router.push(link); // Redirect after animation
-    }, 500); // Duration should match the animation time
+    router.push(link); // Redirect after animationme
   };
 
   return (
@@ -80,7 +73,7 @@ const Statistics: React.FC = () => {
             >
             {buttonContents.map((buttonContent, index) => (
               <div key={index} className={styles["statistic"]}>
-                <div className={`${styles["statistic-button"]} ${zoom ? styles["zoom-in"] : ""}`} onClick={()=>handleClick(buttonContent.labelLink)}>
+                <div className={styles["statistic-button"]} onClick={()=>handleClick(buttonContent.labelLink)}>
                 {/* <Button onClick={handleClick} style={{ marginTop: 16 }}> */}
                   <TweenOne
                     animation={{

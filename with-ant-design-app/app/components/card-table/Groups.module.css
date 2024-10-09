@@ -34,7 +34,8 @@
     border: var(--group-main) 5px solid;
     padding: 36px;
   }
-  
+
+
   .content {
     display: flex;
     flex-direction: column;
@@ -152,3 +153,46 @@
     opacity: 1;
   }
   
+
+  .delete-group-button {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    background: var(--group-main);
+    color: #ffffff;
+    border: none;
+    border-radius: 50%;
+    width: 10px;
+    height: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .delete-group-button svg {
+    width: 25px;
+    height: 25px;
+    opacity: 0.6;
+  }
+  
+  @keyframes bob {
+    0% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-3px);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+
+  .delete-group-button svg:hover {
+    opacity: 1;
+    animation: bob 0.48s infinite;
+
+    /* red filter */
+    filter: invert() invert(17%) sepia(75%) saturate(5060%) hue-rotate(7deg) brightness(78%) contrast(130%) drop-shadow(0 0 0.5rem #D10000);
+  }

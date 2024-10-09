@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Divider, Modal } from 'antd';
 
 import styles from './SignUpModal.module.css';
@@ -15,12 +15,7 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ open, setOpen }
 
 ) => {
   
-  const handleOk = () => {
-    setOpen(false);
-  };
-
-  const handleCancel = () => {
-    console.log('Clicked cancel button');
+  const handleCloseModal = () => {
     setOpen(false);
   };
 
@@ -29,10 +24,7 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ open, setOpen }
       <Modal
         // title="Title"
         open={open}
-        onOk={handleOk}
-        onClose={handleCancel}
-        onCancel={handleCancel}
-        destroyOnClose={true}
+        onCancel={handleCloseModal}
         className={styles["sign-up-modal"]}
         width={484}
         footer={null}
@@ -44,17 +36,19 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ open, setOpen }
                 <GoogleOutlined className={styles["google-icon"]} />
               <span
                 className={`${styles["google-login-text"]} ${styles["login-text"]}`}
-              >Sign up with Google</span>
+              >
+                Reģistrēties izmantojot Google
+              </span>
             </Button>
         </div>
         <div className={styles["divider-container"]}>
-            <Divider plain>or</Divider>
+            <Divider plain>vai</Divider>
         </div>
         <div className={styles["email-login-container"]}>
             <Button className={`${styles["email-login-button"]} ${styles["login-button"]}`}>
               <span
                 className={`${styles["email-login-text"]} ${styles["login-text"]}`}
-              >Sign up with email</span>
+              >Reģistrēties izmantojot e-pastu</span>
             </Button>
         </div>
         <div className={styles["terms-container"]}>
@@ -64,7 +58,7 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ open, setOpen }
         </div>
         <div className={styles["login-container"]}>
             <span className={styles["login-text"]}>
-              Already have an account? <a href="#">Log in</a>
+              Vai tev jau ir konts? <a href="#">Autorizēties</a>
             </span>
         </div>
 

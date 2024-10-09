@@ -8,6 +8,7 @@
   "dependencies": {
     "@ant-design/cssinjs": ">=1.21.0",
     "@ant-design/icons": "^5.1.4",
+    "@ant-design/pro-components": "^2.7.19",
     "antd": "^5.0.0",
     "next": "latest",
     "rc-queue-anim": "^2.0.0",
@@ -15,7 +16,9 @@
     "rc-tween-one": "^3.0.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-masonry-list": "^1.0.6",
     "react-parallax": "^3.5.1",
+    "react-spring": "^9.7.4",
     "three": "^0.169.0"
   },
   "devDependencies": {

@@ -20,19 +20,19 @@ const GenericLayout: React.FC<{ children?: React.ReactNode, homePage?: boolean }
 
   return (
     <>
-    <Navbar toggle={()=>{}}/>
+    <Navbar toggle={()=>{}} homePage={homePage}/>
     <Layout>
       {/* <Header style={{ display: 'flex', alignItems: 'center', height: "5rem", padding: '0 48px' }}> */}
         
       {/* </Header> */}
-      <Content style={{ padding: homePage ? 'none' : '0 48px' }}>
-        {!homePage && (
+      <Content style={{ margin: homePage ? 'none' : '6rem 48px', borderRadius: borderRadiusLG }}>
+        {/* {!homePage && (
         <Breadcrumb style={{ margin: '16px 0' }}>
           <Breadcrumb.Item>Home</Breadcrumb.Item>
           <Breadcrumb.Item>List</Breadcrumb.Item>
           <Breadcrumb.Item>App</Breadcrumb.Item>
         </Breadcrumb>
-        )}
+        )} */}
         <div
           style={{
             background: colorBgContainer,

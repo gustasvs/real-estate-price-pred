@@ -9,6 +9,11 @@
     background: transparent; /* Add a background if necessary */
   }
   
+  .navbar-with-background {
+    display: flex;
+    background: var(--background-dark-secondary);
+    padding-bottom: 1rem;
+  }
   
   .container {
     margin-left: 2em;
@@ -37,22 +42,51 @@
 .menu-container {
     width: 50%;
     display: flex;
-    gap: 1em;
+    gap: 2em;
     flex-direction: row;
-    justify-content: space-evenly;
+    justify-content: center;
     align-items: center;
 }
 
 .menu-item {
     display: flex;
-    color: white;
+    color: var(--background-light-secondary);
     font-weight: 600;
     align-items: center;
+    /* no underline */
+    text-decoration: none;
+}
+
+@keyframes enlarge {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.menu-item:hover span {
+    color: var(--background-light-main);
+    animation: enlarge 0.48s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+    text-decoration: underline;
+}
+
+.menu-item:not(:last-child)::after {
+    content: "";
+    display: block;
+    height: 1.5em;
+    width: 2px;
+    background-color: var(--background-light-main);
+    margin-left: 2em;
 }
 
 .down-icon {
     display: flex;
-    color: white;
+    color: var(--background-light-secondary);
     font-size: 1rem;
     margin-left: 0.5em;
     /* height: 10px; */

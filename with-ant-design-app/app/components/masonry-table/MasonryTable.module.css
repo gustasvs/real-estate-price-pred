@@ -1,0 +1,31 @@
+.masonry-table {
+    column-count: 3; /* Adjust this for your number of columns */
+    column-gap: 20px;
+    padding: 20px;
+    width: 70%;
+    margin: 0 auto;
+}
+
+.masonry-table-header {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.content {
+    break-inside: avoid;
+    margin-bottom: 20px;
+    background-color: #333;
+    border-radius: 18px;
+    overflow: hidden;
+    transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
+    transform: translateX(0) opacity(1);
+}
+
+.content-image {
+    width: 100%;
+    height: auto; /* Adjust height based on the image */
+    object-fit: cover;
+    border-radius: 18px 18px 0 0;
+}
