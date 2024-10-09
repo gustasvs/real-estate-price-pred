@@ -55,7 +55,7 @@ const Statistics: React.FC = () => {
         <OverPack
           style={{
             overflow: "hidden",
-            height: "100vh",
+            // height: "60vh",
             width: "70%",
             display: "flex",
           }}

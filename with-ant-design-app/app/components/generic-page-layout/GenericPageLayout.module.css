@@ -1,0 +1,10 @@
+.footer-container {
+    text-align: center;
+    font-weight: 300;
+    color: var(--background-dark-secondary);
+}
+
+.footer-title-span {
+    font-style: italic;
+
+}

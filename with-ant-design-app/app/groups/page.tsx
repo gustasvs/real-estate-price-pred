@@ -3,7 +3,7 @@
 import React from "react";
 import CardTable from "../components/card-table";
 
-import styles from "../components/groups/GroupsPage.module.css";
+// import styles from "../components/groups/GroupsPage.module.css";
 import GenericLayout from "../components/generic-page-layout";
 
 import { useRouter } from "next/navigation";

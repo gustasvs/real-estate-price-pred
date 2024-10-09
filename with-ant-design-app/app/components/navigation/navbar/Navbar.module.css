@@ -73,13 +73,22 @@
     /* rounded corners */
     border-radius: 20px;
     height: 42px;
+    /* width: 100%; */
     color: white;
     font-weight: 600;
 }
 
+.rounded-button:hover {
+    background-color: var(--background-dark-secondary);
+    color: var(--background-dark-secondary);
+}
+.rounded-button:hover span {
+
+}
+
 .button-fill {
-    background-color: #ffb5fa;
-    color: darkblue;
+    background-color: var(--background-light-secondary);
+    color: var(--background-dark-main);
     padding: 0.5em 1em;
     border-radius: 20px;
 }

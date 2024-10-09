@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import Link from "next/link";
 import Logo from "./Logo";
@@ -33,13 +35,13 @@ const Navbar = ({ toggle }: { toggle: () => void }) => {
 
             <div className={styles["profile-container"]}>
             <Button className={styles["rounded-button"]}>
-              <span>Sign in</span>
+              <span>Ieiet</span>
             </Button>
             <Button className={`${styles["rounded-button"]} ${styles["button-fill"]}`}
               onClick={() =>{
                 setSignUpModalOpen(true);
               }}>
-              <span>Sign up free</span>
+              <span>Izveidot kontu</span>
               <SignUpModal open={signUpModalOpen} setOpen={setSignUpModalOpen} />
             
             </Button>

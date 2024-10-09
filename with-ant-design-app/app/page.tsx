@@ -17,71 +17,19 @@ import theme from "./themeConfig";
 import Banner from "./components/landing_page/banner";
 import Statistics from "./components/landing_page/stats";
 import Navbar from "./components/navigation/navbar";
+import GenericLayout from "./components/generic-page-layout";
 
-import 'overlayscrollbars/overlayscrollbars.css';
-import OverlayScrollbars from 'overlayscrollbars';
+// import 'overlayscrollbars/overlayscrollbars.css';
+// import OverlayScrollbars from 'overlayscrollbars';
 
 
 const HomePage = () => {
   return (  
   <ConfigProvider theme={theme}>
-    <Navbar toggle={() => {}}/>
+    <GenericLayout homePage>
     <Banner />
     <Statistics />
-    {/* <div style={{ padding: 100, height: "100vh" }}>
-      <div className="text-center mb-5">
-        <Link href="#" className="logo mr-0">
-          <SmileFilled style={{ fontSize: 48 }} />
-        </Link>
-        <p className="mb-0 mt-3 text-disabled">Welcome to the world !</p>
-      </div>
-      <div>
-        <Form
-          layout="horizontal"
-          size={"large"}
-          labelCol={{ span: 8 }}
-          wrapperCol={{ span: 8 }}
-        >
-          <Form.Item label="Input Number">
-            <InputNumber
-              min={1}
-              max={10}
-              style={{ width: 100 }}
-              defaultValue={3}
-              name="inputNumber"
-            />
-          </Form.Item>
-          <Form.Item label="Switch">
-            <Switch defaultChecked />
-          </Form.Item>
-          <Form.Item label="Slider">
-            <Slider defaultValue={70} />
-          </Form.Item>
-          <Form.Item label="Select">
-            <Select
-              defaultValue="lucy"
-              style={{ width: 192 }}
-              options={[
-                { value: "jack", label: "Jack" },
-                { value: "lucy", label: "Lucy" },
-                { value: "Yiminghe", label: "yiminghe" },
-                { value: "lijianan", label: "lijianan" },
-                { value: "disabled", label: "Disabled", disabled: true },
-              ]}
-            />
-          </Form.Item>
-          <Form.Item label="DatePicker">
-            <DatePicker showTime />
-          </Form.Item>
-          <Form.Item style={{ marginTop: 48 }} wrapperCol={{ offset: 8 }}>
-            <Button type="primary" htmlType="submit">
-              OK
-            </Button>
-            <Button style={{ marginLeft: 8 }}>Cancel</Button>
-          </Form.Item>
-        </Form>
-      </div>
-    </div> */}
+    </GenericLayout>
   </ConfigProvider>
   );
 };

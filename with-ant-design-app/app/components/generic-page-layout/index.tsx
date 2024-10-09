@@ -1,6 +1,10 @@
+"use client";
+
 import React from 'react';
 import { Breadcrumb, Layout, Menu, theme } from 'antd';
 import Navbar from '../navigation/navbar';
+
+import styles from './GenericPageLayout.module.css';
 
 const { Header, Content, Footer } = Layout;
 
@@ -9,31 +13,26 @@ const items = new Array(15).fill(null).map((_, index) => ({
   label: `nav ${index + 1}`,
 }));
 
-const GenericLayout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
+const GenericLayout: React.FC<{ children?: React.ReactNode, homePage?: boolean }> = ({ children, homePage }) => {
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
 
   return (
+    <>
+    <Navbar toggle={()=>{}}/>
     <Layout>
-      <Header style={{ display: 'flex', alignItems: 'center', height: "5rem", padding: '0 48px' }}>
-      
-        {/* <div className="demo-logo" /> */}
-        {/* <Menu
-          theme="dark"
-          mode="horizontal"
-          defaultSelectedKeys={['2']}
-          items={items}
-          style={{ flex: 1, minWidth: 0 }}
-        /> */}
-        <Navbar toggle={()=>{}}/>
-      </Header>
-      <Content style={{ padding: '0 48px' }}>
+      {/* <Header style={{ display: 'flex', alignItems: 'center', height: "5rem", padding: '0 48px' }}> */}
+        
+      {/* </Header> */}
+      <Content style={{ padding: homePage ? 'none' : '0 48px' }}>
+        {!homePage && (
         <Breadcrumb style={{ margin: '16px 0' }}>
           <Breadcrumb.Item>Home</Breadcrumb.Item>
           <Breadcrumb.Item>List</Breadcrumb.Item>
           <Breadcrumb.Item>App</Breadcrumb.Item>
         </Breadcrumb>
+        )}
         <div
           style={{
             background: colorBgContainer,
@@ -45,10 +44,11 @@ const GenericLayout: React.FC<{ children?: React.ReactNode }> = ({ children }) =
           {children}
         </div>
       </Content>
-      <Footer style={{ textAlign: 'center' }}>
-        Ant Design ©{new Date().getFullYear()} Created by Ant UED
+      <Footer className={styles["footer-container"]}>
+        <span className={styles["footer-title-span"]}>Cenu paredzēšana</span> ©{new Date().getFullYear()} autors Gustavs Jakobsons
       </Footer>
     </Layout>
+    </>
   );
 };
 
