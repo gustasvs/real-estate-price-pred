@@ -52,6 +52,10 @@
     font-weight: 600;
 }
 
+.email-login-text {
+    font-weight: 500;
+}
+
 .divider-container {
     margin-top: 20px;
     text-align: center;

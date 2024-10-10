@@ -196,3 +196,43 @@
     /* red filter */
     filter: invert() invert(17%) sepia(75%) saturate(5060%) hue-rotate(7deg) brightness(78%) contrast(130%) drop-shadow(0 0 0.5rem #D10000);
   }
+
+
+  .ant-popconfirm-buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .delete-group-button-popover-ok {
+    width: 60%;
+    border-radius: 10px;
+    background-color: var(--background-dark-secondary);
+    transition: transform 0.48s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .delete-group-button-popover-cancel {
+    float: left;
+    width: 30%;
+
+    border-radius: 10px;
+
+    background-color: var(--background-light-secondary);
+    color: var(--background-dark-secondary);
+    transition: transform 0.48s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+.delete-group-button-popover-ok:hover,
+.delete-group-button-popover-cancel:hover {
+  transform: scale(1.05);
+}
+
+.card-content-title {
+  position: absolute;
+  font-family: 'Poppins', sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+  width: 200px;
+  top: 260px;
+  /* word-break: break-all; */
+  word-wrap: break-word;
+}

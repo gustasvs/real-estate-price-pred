@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button, Row, Col } from "antd";
 
 
@@ -15,15 +15,61 @@ import styles from "./Statistics.module.css";
 import QueueAnim from "rc-queue-anim";
 import { DotPosition } from "antd/es/carousel";
 import Link from "next/link";
-import { ExportOutlined } from "@ant-design/icons";
+import { AreaChartOutlined, BookOutlined, DatabaseOutlined, ExportOutlined } from "@ant-design/icons";
+
+
+import { tsParticles } from "@tsparticles/engine";
+import { loadFull } from "tsparticles";
+import Particles from "@tsparticles/react";
+
 
 TweenOne.plugins.push(Children);
 
 const buttonContents = [
-  { label: "Algoritmam", value: 15000, labelLink: "/data", labelLinkText: "izmantotie dati", labelLinkExternal: true },
-  { label: "Platformā pieejamie", value: 200, labelLink: "/groups", labelLinkText: "sludinājumi" },
-  { label: "Sludinājumu", value: 10, labelLink: "/groups", labelLinkText: "veidi" },
+  { label: "Uzzini vairāk par platformā izmantotajiem ", value: 15000, labelLink: "/data", labelLinkText: " datu ierakstiem", labelLinkExternal: true,
+    icon: <DatabaseOutlined /> },
+  { label: "Izpēti ", value: 189, labelLink: "/groups", labelLinkText: " publiski pieejamos sludinājumus",
+    icon: <BookOutlined />
+  },
+  { label: "Apskati ", value: 10, labelLink: "/groups", labelLinkText: " izmantotos sludinājumu veidus",
+    icon: <AreaChartOutlined />
+  },
 ];
+
+
+
+async function loadParticles(options: any) {
+  await loadFull(tsParticles);
+  console.log("tsParticles loaded");
+  return await tsParticles.load({ options });
+}
+
+const configs = {
+  particles: {
+    move: {
+      angle: {
+        value: 15
+      },
+      enable: true,
+      direction: "top",
+      outModes: "destroy"
+    },
+    shape: {
+      type: "image",
+      options: {
+        image: {
+          src:
+            "https://icons.iconarchive.com/icons/designbolts/cute-social-2014/256/Google-Plus-One-icon.png",
+          width: 256,
+          height: 256
+        }
+      }
+    },
+    size: {
+      value: 32
+    }
+  }
+};
 
 const Statistics: React.FC = () => {
   const [value, setValue] = useState(buttonContents[0].value);
@@ -32,12 +78,35 @@ const Statistics: React.FC = () => {
 
   const router = useRouter();
 
+  const likeBtnRef = useRef<HTMLDivElement | null>(null);
 
+  useEffect(() => {
+    async function loadParticlesConfig() {
+      const container = await loadParticles(configs);
+      console.log("Particles loaded", container);
+  
+      if (likeBtnRef.current && container) {
+        likeBtnRef.current.addEventListener("mouseover", () => {
+          const rect = likeBtnRef.current!.getBoundingClientRect();
+  
+          if (container && container.particles) {
+            container.particles.addParticle({
+              x: (rect.left + Math.random() * rect.width) * container.retina.pixelRatio,
+              y: (rect.top + Math.random() * rect.height) * container.retina.pixelRatio,
+            });
+          }
+        });
+      }
+    }
+  
+    loadParticlesConfig();
+  }, []);
+  
   const [dotPosition, setDotPosition] = useState<DotPosition>("top");
 
   const handleClick = (link: string) => {
-    setValue((prevValue) => prevValue + 1000);
-    setValues((prevValues) => prevValues.map((value) => value + 1000));
+    // setValue((prevValue) => prevValue + 1000);
+    // setValues((prevValues) => prevValues.map((value) => value + 1000));
 
     router.push(link); // Redirect after animationme
   };
@@ -58,7 +127,6 @@ const Statistics: React.FC = () => {
             leaveReverse
             className={styles["statistic-container"]}
             onEnd={(e) => {
-              console.log("end", e);
               // setValue((prev) => prev + 1000);
               // setValues(buttonContents.map((item) => item.value));
               if (e.type == "enter" && e.key == 0) {
@@ -71,10 +139,14 @@ const Statistics: React.FC = () => {
               }
             }}
             >
-            {buttonContents.map((buttonContent, index) => (
-              <div key={index} className={styles["statistic"]}>
-                <div className={styles["statistic-button"]} onClick={()=>handleClick(buttonContent.labelLink)}>
-                {/* <Button onClick={handleClick} style={{ marginTop: 16 }}> */}
+            {buttonContents.map((buttonContent, index) => ( 
+              <div id="like" key={index} className={styles["statistic"]} ref={likeBtnRef}>
+                <div className={`${styles["statistic-button"]} ${styles[`statistic-button-type-${index + 1}`]}`} onClick={()=>handleClick(buttonContent.labelLink)}>
+                  {buttonContent.icon}
+                </div>
+                <div className={styles["statistic-label"]}>
+                  <div className={styles["statistic-label-text"]}>
+                  {buttonContent.label}
                   <TweenOne
                     animation={{
                       Children: {
@@ -87,70 +159,27 @@ const Statistics: React.FC = () => {
                       duration: 1500,
                     }}
                     className={styles.numberdisplay}
+                    style={{
+                      width: "fit-content",
+                    }}
                   />
-                {/* </Button> */}
-                </div>
-                <div className={styles["statistic-label"]}>
-                  <div className={styles["statistic-label-text"]}>
-                  {buttonContent.label}
+                  {buttonContent.labelLinkText}
                   </div>
                   <div className={styles["statistic-label-link"]}>
-                  {buttonContent.labelLink && (
+                  {buttonContent.labelLinkExternal && <ExportOutlined />}
+                    
+                  {/* {buttonContent.labelLink && (
                     <Link href={buttonContent.labelLink} className={styles["statistic-label-link-group"]}>
                       {buttonContent.labelLinkText}
-                      {buttonContent.labelLinkExternal && <ExportOutlined />}
                     </Link>  
-                  )}
+                  )} */}
                   </div>
                 </div>
               </div>
             ))}
           </QueueAnim>
         </OverPack>
-        <OverPack
-          style={{
-            overflow: "hidden",
-            height: "100vh",
-            width: "100%",
-            display: "flex",
-          }}
-        >
-          <QueueAnim
-            key="queue"
-            leaveReverse
-            className={styles["statistic-container"]}
-          >
-            <div key="a" className={styles["statistic"]}>
-              <div className={styles.statisticlabel}>Total Value</div>
-              <Button onClick={()=>handleClick} style={{ marginTop: 16 }}>
-                <TweenOne
-                  animation={{
-                    Children: {
-                      value: value,
-                      floatLength: 0,
-                      formatMoney: true,
-                    },
-                  }}
-                  className={styles.numberdisplay}
-                />
-              </Button>
-            </div>
-            <div key="b" className={styles["statistic"]}>
-              <Button onClick={() => handleClick} style={{ marginTop: 16 }}>
-                <TweenOne
-                  animation={{
-                    Children: {
-                      value: value,
-                      floatLength: 0,
-                      formatMoney: true,
-                    },
-                  }}
-                  className={styles.numberdisplay}
-                />
-              </Button>
-            </div>
-          </QueueAnim>
-        </OverPack>
+        <></>
       </Carousel>
     </div>
   );

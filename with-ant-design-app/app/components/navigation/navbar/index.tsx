@@ -49,6 +49,7 @@ const Navbar = ({ toggle, homePage }: { toggle: () => void, homePage: boolean | 
             </Button>
             <LoginModal open={loginModalOpen} setOpen={setLoginModalOpen} />
             <Button className={`${styles["rounded-button"]} ${styles["button-fill"]}`}
+              // ghost
               onClick={() =>{
                 setSignUpModalOpen(true);
               }}>

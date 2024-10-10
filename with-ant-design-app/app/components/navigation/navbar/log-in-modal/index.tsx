@@ -48,12 +48,14 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, setOpen }) => {
           </div>
           <div className={styles["terms-container"]}>
             <span className={styles["terms-text"]}>
-              By logging in, you agree to our Terms & Conditions, Privacy Policy and User data & Cookie policy
+              {/* By logging in, you agree to our Terms & Conditions, Privacy Policy and User data & Cookie policy */}
+              Autorizējoties jūs piekrītat portāla Lietošanas noteikumiem, Konfidencialitātes politikai un Lietotāja datu un sīkdatņu politikai
             </span>
           </div>
           <div className={styles["signup-container"]}>
             <span className={styles["signup-text"]}>
-              Don't have an account? <a href="#">Sign up</a>
+              {/* Don't have an account? <a href="#">Sign up</a> */}
+              Vēl nav konta? <a href="#">Reģistrēties</a>
             </span>
           </div>
         </div>

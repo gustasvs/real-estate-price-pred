@@ -112,12 +112,19 @@
     font-weight: 600;
 }
 
-.rounded-button:hover {
-    background-color: var(--background-dark-secondary);
-    color: var(--background-dark-secondary);
+.content .profile-container .rounded-button:hover {
+    outline-color: var(--background-light-main);
+    border-color: var(--background-light-main);
+    /* background: var(--background-dark-main); */
+    background-color: transparent;
+    color: white;
 }
-.rounded-button:hover span {
 
+.content .profile-container .button-fill:hover {
+    outline-color: var(--background-light-main);
+    border-color: var(--background-light-main);
+    background: var(--background-light-main);
+    color: var(--background-dark-main);
 }
 
 .button-fill {

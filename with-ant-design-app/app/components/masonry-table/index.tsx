@@ -65,17 +65,20 @@ const MasonryTable = ({
   ];
 
   return (
-    <>
+    <div
+    className={styles["masonry-table-container"]}
+    >
       <PageHeader
         ghost={false}
         onBack={() => window.history.back()}
         title="Grupas objekti"
-        subTitle="Šeit var redzēt visas grupas objektus"
+        subTitle="Šeit var redzēt visus grupas objektus"
         breadcrumb={{ routes }}
         breadcrumbRender={(props, originBreadcrumb) => {
           return originBreadcrumb;
 
         }}
+        className={styles["site-page-header"]}
         extra={[
           <Button onClick={animateAndSort} key="3">Kārtot pēc pievienošanas laika</Button>,
           <Button onClick={animateAndSort} key="2">Kārtot pēc cenas</Button>,
@@ -104,11 +107,18 @@ const MasonryTable = ({
                 height: `${item.height}px`,
               }}
             ></div>
-            <h4 style={{ color: "#ffffff" }}>{item.id}</h4>
+            <div style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              padding: 10,
+            }}>
+            <span style={{ color: "#ffffff", marginLeft: 20, fontSize: 22}}>{item.name}</span>
+              </div>
           </div>
         ))}
       </div>
-    </>
+    </div>
   );
 };
 

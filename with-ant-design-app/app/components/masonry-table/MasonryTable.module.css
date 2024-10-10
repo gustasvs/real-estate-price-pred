@@ -6,6 +6,11 @@
     margin: 0 auto;
 }
 
+.masonry-table-container,
+.site-page-header {
+    background-color: var(--background-light-secondary);
+}
+
 .masonry-table-header {
     font-size: 24px;
     font-weight: 600;

@@ -5,7 +5,7 @@ import styles from "./Banner.module.css"; // Ensure you create a CSS module for 
 import { Parallax } from "rc-scroll-anim";
 
 const Banner = () => {
-  const numberOfObjects = 60; // Define the number of cubes
+  const numberOfObjects = 50; // Define the number of cubes
 
   const bannerRef = useRef<HTMLDivElement>(null);
   const [bannerSize, setBannerSize] = useState({ width: 0, height: 0 });
@@ -41,7 +41,7 @@ const Banner = () => {
   const cubesSettings = useMemo(() => {
     const generateBellCurvePosition = (size: number) => {
       const position = Math.random();
-      const distanceFromSide = (Math.exp(-5 * position) * size) / 2;
+      const distanceFromSide = (Math.exp(-6 * position) * size) / 2;
 
       const absoluteDistance =
         Math.random() > 0.5
@@ -60,12 +60,12 @@ const Banner = () => {
     };
 
     return Array.from({ length: numberOfObjects }, () => {
-      const layer = Math.floor(Math.random() * 5);
+      const layer = Math.floor(Math.random() * 4);
       const speed = (layer * (layer / 2)) * 0.005;
       const initialX = generateBellCurvePosition(bannerSize.width);
       const initialY = generateUniformPosition(bannerSize.height);
 
-      const randomClass = Math.floor(Math.random() * 3);
+      const randomClass = Math.floor(Math.random() * 4);
       const cubeClass = `cube-${randomClass}`;
 
       //   console.log(bannerSize);
@@ -93,8 +93,10 @@ const Banner = () => {
           left: `calc(50% + ${x}px)`,
           top: `calc(50% + ${y}px)`,
           opacity: layer / 4,
-          transform: `translate(-50%, -50%) scale(${layer})`,
+          transform: `translate(-50%, -50%)`,
+          animationDelay: `${index * 0.5}s`, // Delay based on index, modify as needed
           // transition: "left 0.1s linear, top 0.1s linear",
+          ...(layer && { '--scale': layer.toString() } as React.CSSProperties)
 
         }}
         className={`${styles[cubeClass]} ${styles.wander}`}

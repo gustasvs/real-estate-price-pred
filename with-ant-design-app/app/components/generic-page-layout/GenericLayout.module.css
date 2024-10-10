@@ -9,3 +9,13 @@
     padding: 0 48px;
     background-color: var(--background-dark-secondary);
 }
+
+body .ant-layout .ant-layout-content .ant-page-header {
+    background-color: var(--background-dark-secondary);
+}
+
+.layout-container,
+.site-layout,
+.site-layout-content {
+    background-color: var(--background-light-main);
+}

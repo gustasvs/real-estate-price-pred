@@ -50,10 +50,14 @@
     display: flex;
 }
 
-.login-text {
+.sign-up-text {
     font-size: 16px;
     font-weight: 600;
     /* color: #fff; */
+}
+
+.email-login-text {
+    font-weight: 500;
 }
 
 .terms-container {

@@ -1,7 +1,7 @@
 
 
 .statistics {
-  background-color: var(--background-light-secondary);
+  background-color: var(--background-gray);
   height: 80vh;
 }
 
@@ -27,9 +27,11 @@
 }
 
 .numberdisplay {
-  color: var(--background-dark-secondary);
-  font-size: 50px;
-  font-weight: 600;
+  display: inline-block;
+  /* color: var(--background-dark-secondary); */
+  color: rgb(255, 255, 255);
+  font-size: 19px;
+  font-weight: 700;
   transition: transform 0.2s ease-in-out;
   /* color: #333;  */
 }
@@ -57,10 +59,12 @@
 
 .statistic-label {
   margin-top: 30px;
+  max-width: 50%;
 }
 
 .statistic-label-text {
-  color: var(--background-dark-secondary);
+  /* color: var(--background-light-secondary); */
+  color: rgb(228, 223, 189);
   font-size: 18px;
   font-weight: 600;
   transition: transform 0.2s ease-in-out;
@@ -90,9 +94,11 @@
   display: flex;
 
   /* background-color: var(--main_background); */
-  color: white;
+  background-color: var(--background-light-secondary);
 
-  box-shadow: var(--secondary-color-transparent) 0px 16px 32px;
+  /* box-shadow: var(--secondary-color-transparent) 0px 16px 32px; */
+  --outer-shadow: rgba(200, 200, 195, 0.912) 0px 20px 32px;
+  box-shadow: var(--outer-shadow);
   aspect-ratio: 1 / 1;
   justify-content: center;
   align-items: center;
@@ -106,8 +112,65 @@
   transition: background-color 0.3s, box-shadow 0.3s cubic-bezier(0.215, 0.61, 0.355, 1), transform 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
 }
 
+.statistic-button-type-1 {
+  box-shadow: var(--outer-shadow), inset 0 0 30px rgba(200, 123, 123, 0.5);
+  outline: rgba(200, 123, 123, 0.5) 2px solid;
+}
+.statistic-button-type-2 {
+  box-shadow: var(--outer-shadow), inset 0 0 30px rgba(123, 200, 123, 0.5);
+  outline: rgba(123, 200, 123, 0.5) 2px solid;
+}
+.statistic-button-type-3 {
+  box-shadow: var(--outer-shadow), inset 0 0 30px rgba(123, 123, 200, 0.5);
+  outline: rgba(123, 123, 200, 0.5) 2px solid;
+}
+
+.statistic-button svg {
+  height: 80px;
+  width: 80px;
+  /* filter: invert(1) invert(20%) sepia(17%) saturate(183%) hue-rotate(156deg) brightness(95%) contrast(92%);  */
+  filter: invert(.1) sepia(17%) saturate(183%) hue-rotate(156deg) brightness(95%) contrast(92%);
+}
+
+/* New particle container for the particles */
+.particle-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+@keyframes particle-animation {
+  0% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.5);
+  }
+}
+
+.particle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background-color: var(--secondary-color);
+  border-radius: 50%;
+  animation: particle-animation 0.8s ease forwards;
+}
+
+
 .statistic:hover .statistic-button {
-  /* smoothly lift up */
   transform: translateY(-4px);
-  box-shadow: rgba(255, 210, 195, 0.912) 0px 16px 32px;
+  /* box-shadow: rgba(255, 255, 255, 0.6) 0px 0px 52px; */
+}
+
+.statistic:hover .particle-container .particle {
+  opacity: 1;
 }
