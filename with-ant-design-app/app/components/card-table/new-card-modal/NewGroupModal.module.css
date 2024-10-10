@@ -1,0 +1,88 @@
+.modal {
+    top: 20%;
+    padding: 28px 24px;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+.input {
+    margin-top: 20px;
+    padding: 8px 16px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    transition: border-color 0.3s ease-in-out;
+}
+
+.input:focus {
+    border-color: #40a9ff;
+    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+.submitButton, .cancelButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px;
+    padding: 10px 30px;
+    font-weight: bold;
+    border-radius: 30px;
+    width: 100%;
+    height: 56px;
+}
+
+.submitButton {
+    background-color: var(--background-dark-secondary);
+    color: var(--background-light-secondary);
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+.submitButton:hover {
+    background-color: var(--background-light-secondary);
+    color: var(--background-dark-secondary);
+    transform: scale(1.05);
+}
+
+.cancelButton {
+    background-color: var(--background-light-secondary);
+    color: var(--background-dark-secondary);
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+.cancelButton:hover {
+    background-color: var(--background-dark-secondary);
+    transform: scale(1.05);
+    outline: none;
+}
+
+.cancelButton:hover span {
+    color: var(--background-dark-main);
+}
+
+/* Additional Styling for Other Elements as Needed */
+.terms-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    width: 100%;
+}
+
+.terms-text {
+    text-align: center;
+    font-size: 12px;
+    font-weight: 400;
+}
+
+.sign-up-text {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.email-login-text {
+    font-weight: 500;
+}
+
+.login-text {
+    font-size: 14px;
+    font-weight: 400;
+}
