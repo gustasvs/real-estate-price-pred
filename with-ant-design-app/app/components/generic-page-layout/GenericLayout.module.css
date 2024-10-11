@@ -19,3 +19,9 @@ body .ant-layout .ant-layout-content .ant-page-header {
 .site-layout-content {
     background-color: var(--background-light-main);
 }
+
+.layout-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}

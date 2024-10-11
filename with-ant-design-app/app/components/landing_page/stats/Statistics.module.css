@@ -1,7 +1,8 @@
 
 
 .statistics {
-  background-color: var(--background-gray);
+  /* background-color: var(--background-gray); */
+  background-color: var(--background-light-secondary);
   height: 80vh;
 }
 
@@ -28,8 +29,8 @@
 
 .numberdisplay {
   display: inline-block;
-  /* color: var(--background-dark-secondary); */
-  color: rgb(255, 255, 255);
+  color: var(--background-dark-secondary);
+  /* color: rgb(255, 255, 255); */
   font-size: 19px;
   font-weight: 700;
   transition: transform 0.2s ease-in-out;
@@ -64,7 +65,8 @@
 
 .statistic-label-text {
   /* color: var(--background-light-secondary); */
-  color: rgb(228, 223, 189);
+  /* color: rgb(228, 223, 189); */
+  color: var(--background-dark-secondary);
   font-size: 18px;
   font-weight: 600;
   transition: transform 0.2s ease-in-out;
