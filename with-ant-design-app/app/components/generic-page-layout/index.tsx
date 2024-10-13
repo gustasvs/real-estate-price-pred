@@ -6,6 +6,7 @@ import Navbar from '../navigation/navbar';
 
 import styles from './GenericPageLayout.module.css';
 import { FacebookOutlined, GithubOutlined, GitlabOutlined, InstagramOutlined, XOutlined, YoutubeOutlined } from '@ant-design/icons';
+import { useSession } from 'next-auth/react';
 
 const { Header, Content, Footer } = Layout;
 
@@ -18,6 +19,11 @@ const GenericLayout: React.FC<{ children?: React.ReactNode, homePage?: boolean }
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
+
+  
+  const { data: session, status } = useSession();
+
+  console.log("session", session);
 
   return (
     <>

@@ -9,8 +9,17 @@ import { Button, Divider } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 import SignUpModal from "./sign-up-modal";
 import LoginModal from "./log-in-modal";
+import { useSession } from "next-auth/react";
+import { Session } from "next-auth";
+import { logout } from "../../../../actions/auth";
 
 const Navbar = ({ toggle, homePage }: { toggle: () => void, homePage: boolean | undefined }) => {
+
+
+  const { data: session, status } = useSession() as { data: Session | null, status: string };
+
+
+  console.log("navbar session", session);
 
   const [signUpModalOpen, setSignUpModalOpen] = useState(false);
   const [loginModalOpen, setLoginModalOpen] = useState(false);
@@ -38,7 +47,7 @@ const Navbar = ({ toggle, homePage }: { toggle: () => void, homePage: boolean | 
               <span>Kontakti</span>
             </Link>
           </div>
-
+          {!session ? (
             <div className={styles["profile-container"]}>
             <Button className={styles["rounded-button"]}
               onClick={() => {
@@ -57,6 +66,20 @@ const Navbar = ({ toggle, homePage }: { toggle: () => void, homePage: boolean | 
             </Button>
             <SignUpModal open={signUpModalOpen} setOpen={setSignUpModalOpen} />
             </div>
+          ) : (
+            <div className={styles["profile-container"]}>
+              <img src={session?.user?.image} alt="User Image" className={styles["user-image"]} />
+              <span className={styles["user-email"]}>{session?.user?.email}</span>
+              <Button className={`${styles["rounded-button"]} ${styles["button-fill"]}`}
+                onClick={async () => {
+                  console.log("logging out");
+                  await logout();
+                }}>
+                <span>Izrakstīties</span>
+              </Button>
+            </div>
+
+          )}
         </div>
       </div>
     </div>

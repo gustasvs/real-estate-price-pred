@@ -1,8 +1,12 @@
+
 import React from "react";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import StyledComponentsRegistry from "./AntdRegistry";
 import "./globals.css";
+import { SessionProvider } from "next-auth/react";
+import { ConfigProvider } from "antd";
+import theme from "./themeConfig";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,9 +19,11 @@ function RootLayout({ children }: React.PropsWithChildren) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        {/* <Navigation /> */}
-        {/* <StyledComponentsRegistry>{children}</StyledComponentsRegistry> */}
-      {children}
+        <SessionProvider>
+        <ConfigProvider theme={theme}>
+          {children}
+        </ConfigProvider>
+      </SessionProvider>
       </body>
     </html>
   );

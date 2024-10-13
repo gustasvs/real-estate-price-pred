@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from 'react';
 import { Button, Input, Modal } from 'antd';
 import styles from './NewGroupModal.module.css'; // Import the CSS module

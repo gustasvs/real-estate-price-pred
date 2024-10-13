@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Button, Divider } from "antd";
 import styles from "./Banner.module.css"; // Ensure you create a CSS module for styling

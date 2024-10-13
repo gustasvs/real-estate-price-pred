@@ -4,6 +4,7 @@ import React from 'react';
 import { Button, Divider, Modal } from 'antd';
 import styles from './LogInModal.module.css';
 import { GoogleCircleFilled, GoogleOutlined } from '@ant-design/icons';
+import { login } from '../../../../../actions/auth';
 
 interface LoginModalProps {
   open: boolean;
@@ -16,6 +17,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, setOpen }) => {
     setOpen(false);
   };
 
+
   return (
     <>
       <Modal
@@ -27,7 +29,10 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, setOpen }) => {
       >
         <div className={styles["login-modal-contents"]}>
           <div className={styles["google-login-container"]}>
-            <Button className={`${styles["google-login-button"]} ${styles["login-button"]}`}>
+            <Button className={`${styles["google-login-button"]} ${styles["login-button"]}`} onClick={async () =>{
+              console.log("logging in");
+              login("google");
+            }}>
               <GoogleOutlined className={styles["google-icon"]} />
               <span className={`${styles["google-login-text"]} ${styles["login-text"]}`}>
                 {/* Log in with Google */}

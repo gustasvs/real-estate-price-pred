@@ -1,3 +1,5 @@
+"use client";
+
 import { PlusOutlined } from "@ant-design/icons";
 import { Card, Row, Col, Button, Descriptions, Divider } from "antd";
 import Image from "next/image";
@@ -73,7 +75,7 @@ const MasonryTable = ({
         onBack={() => window.history.back()}
         title="Grupas objekti"
         subTitle="Šeit var redzēt visus grupas objektus"
-        breadcrumb={{ routes }}
+        breadcrumb={{ items: routes }}
         breadcrumbRender={(props, originBreadcrumb) => {
           return originBreadcrumb;
 
