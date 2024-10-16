@@ -9,18 +9,33 @@ import { useRouter } from "next/navigation";
 
 import Layout from "react-masonry-list";
 import { PageHeader } from "@ant-design/pro-components";
+import { useState } from "react";
+import NewObjectModal from "./new-object-modal/NewObjectModal";
 
 const MasonryTable = ({
   columnCount,
   onCardClick = () => {},
   objects,
-  setObjects,
+  createObject = () => {},
+  deleteObject = () => {},
+  updateObject = () => {},
+  loading = false,
 }: {
   columnCount: number;
   onCardClick?: (id: number) => void;
   objects: any[];
-  setObjects: (objects: any[]) => void;
+  createObject: () => void;
+  deleteObject: (id: string) => void;
+  updateObject: (id: string, objectData: { name: string, description: string, pictures: string[] }) => void;
+  loading?: boolean;
 }): JSX.Element => {
+
+  const [newObjectModalVisible, setNewObjectModalVisible] = useState(false);
+
+  const handleAddButtonClick = () => {
+    createObject();
+  };
+
   const animateAndSort = () => {
     objects.forEach((object) => {
       const element = document.getElementById(`item-${object.id}`);
@@ -36,7 +51,7 @@ const MasonryTable = ({
     setTimeout(() => {
       const randomOrder = [...objects];
       randomOrder.sort(() => Math.random() - 0.5);
-      setObjects(randomOrder);
+      // setObjects(randomOrder);
       setTimeout(() => {
         objects.forEach((object) => {
           const element = document.getElementById(`item-${object.id}`);
@@ -53,23 +68,21 @@ const MasonryTable = ({
 
   const routes = [
     {
-      path: 'index',
-      breadcrumbName: 'First-level Menu',
+      path: "index",
+      breadcrumbName: "First-level Menu",
     },
     {
-      path: 'first',
-      breadcrumbName: 'Second-level Menu',
+      path: "first",
+      breadcrumbName: "Second-level Menu",
     },
     {
-      path: 'second',
-      breadcrumbName: 'Third-level Menu',
+      path: "second",
+      breadcrumbName: "Third-level Menu",
     },
   ];
 
   return (
-    <div
-    className={styles["masonry-table-container"]}
-    >
+    <div className={styles["masonry-table-container"]}>
       <PageHeader
         ghost={false}
         onBack={() => window.history.back()}
@@ -78,19 +91,20 @@ const MasonryTable = ({
         breadcrumb={{ items: routes }}
         breadcrumbRender={(props, originBreadcrumb) => {
           return originBreadcrumb;
-
         }}
         className={styles["site-page-header"]}
         extra={[
-          <Button onClick={animateAndSort} key="3">Kārtot pēc pievienošanas laika</Button>,
-          <Button onClick={animateAndSort} key="2">Kārtot pēc cenas</Button>,
+          <Button onClick={animateAndSort} key="3">
+            Kārtot pēc pievienošanas laika
+          </Button>,
+          <Button onClick={animateAndSort} key="2">
+            Kārtot pēc cenas
+          </Button>,
           <Button onClick={animateAndSort} type="primary">
             <span>Kārtot</span>
-          </Button>
+          </Button>,
         ]}
-        
-      >
-      </PageHeader>
+      ></PageHeader>
       <Divider />
       <div className={styles["masonry-table"]}>
         {objects.map((item) => (
@@ -109,16 +123,29 @@ const MasonryTable = ({
                 height: `${item.height}px`,
               }}
             ></div>
-            <div style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              padding: 10,
-            }}>
-            <span style={{ color: "#ffffff", marginLeft: 20, fontSize: 22}}>{item.name}</span>
-              </div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                padding: 10,
+              }}
+            >
+              <span style={{ color: "#ffffff", marginLeft: 20, fontSize: 22 }}>
+                {item.name}
+              </span>
+            </div>
           </div>
         ))}
+        <div
+          className={`${styles["content"]} ${styles["content-add"]}`}
+          onClick={handleAddButtonClick}
+        >
+          <div className={styles["content-image"]}>
+            <PlusOutlined style={{ fontSize: "48px", color: "#fff" }} />
+          </div>
+          <h4 style={{ color: "#ffffff" }}>Pievienot jaunu objektu</h4>
+        </div>
       </div>
     </div>
   );
