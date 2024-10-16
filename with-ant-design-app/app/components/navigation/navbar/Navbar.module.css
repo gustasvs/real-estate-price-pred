@@ -36,11 +36,11 @@
     display: flex;
     /* justify-content: center; */
     align-items: center;
-    width: 20%;
+    width: 30%;
 }
 
 .menu-container {
-    width: 50%;
+    width: 40%;
     display: flex;
     gap: 2em;
     flex-direction: row;
@@ -96,8 +96,8 @@
 .profile-container {
     display: flex;
     gap: 1em;
-    width: 20%;
-    justify-content: center;
+    width: 30%;
+    justify-content: right;
     align-items: center;
 }
 
@@ -116,7 +116,7 @@
     outline-color: var(--background-light-main);
     border-color: var(--background-light-main);
     /* background: var(--background-dark-main); */
-    background-color: transparent;
+    background-color: var(--background-dark-main);
     color: white;
 }
 
@@ -132,4 +132,15 @@
     color: var(--background-dark-main);
     padding: 0.5em 1em;
     border-radius: 20px;
+}
+
+.blank-user-image {
+    display: flex;
+    background-color: var(--background-light-secondary);
+    color: var(--background-dark-main);
+    border-radius: 50%;
+    height: 42px;
+    width: 42px;
+    justify-content: center;
+    align-items: center;
 }

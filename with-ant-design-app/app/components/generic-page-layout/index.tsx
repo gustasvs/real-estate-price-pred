@@ -23,8 +23,6 @@ const GenericLayout: React.FC<{ children?: React.ReactNode, homePage?: boolean }
   
   const { data: session, status } = useSession();
 
-  console.log("session", session);
-
   return (
     <>
     <Navbar toggle={()=>{}} homePage={homePage}/>

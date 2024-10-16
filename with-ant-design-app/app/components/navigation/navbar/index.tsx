@@ -9,7 +9,7 @@ import { Button, Divider } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 import SignUpModal from "./sign-up-modal";
 import LoginModal from "./log-in-modal";
-import { useSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
 import { Session } from "next-auth";
 import { logout } from "../../../../actions/auth";
 
@@ -17,9 +17,6 @@ const Navbar = ({ toggle, homePage }: { toggle: () => void, homePage: boolean | 
 
 
   const { data: session, status } = useSession() as { data: Session | null, status: string };
-
-
-  console.log("navbar session", session);
 
   const [signUpModalOpen, setSignUpModalOpen] = useState(false);
   const [loginModalOpen, setLoginModalOpen] = useState(false);
@@ -68,7 +65,14 @@ const Navbar = ({ toggle, homePage }: { toggle: () => void, homePage: boolean | 
             </div>
           ) : (
             <div className={styles["profile-container"]}>
+              {session?.user?.image ? (
               <img src={session?.user?.image} alt="User Image" className={styles["user-image"]} />
+            ) : (
+              <div className={styles["blank-user-image"]} />
+
+            )
+          }
+
               <span className={styles["user-email"]}>{session?.user?.email}</span>
               <Button className={`${styles["rounded-button"]} ${styles["button-fill"]}`}
                 onClick={async () => {
