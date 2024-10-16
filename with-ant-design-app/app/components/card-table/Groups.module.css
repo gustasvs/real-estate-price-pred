@@ -153,6 +153,42 @@
     opacity: 1;
   }
   
+  .edit-group-dropdown {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    background: var(--group-main);
+    border: none;
+    border-radius: 50%;
+    width: 10px;
+    height: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .edit-group-dropdown svg {
+    color: #ffffff;
+    width: 25px;
+    height: 25px;
+    opacity: 0.6;
+  }
+
+  .edit-group-dropdown svg:hover {
+    opacity: 1;
+  }
+
+ .edit-group-dropdown .ant-dropdown .ant-dropdown-menu .ant-dropdown-menu-item {
+    background-color: var(--background-dark-secondary);
+    color: var(--background-light-secondary);
+  }
+
+  .edit-group-dropdown .edit-group-dropdown-menu .ant-dropdown-menu .ant-dropdown-menu-item {
+    background-color: var(--background-dark-secondary);
+    color: var(--background-light-secondary);
+  }
 
   .delete-group-button {
     position: absolute;
