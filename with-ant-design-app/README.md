@@ -1,3 +1,36 @@
+
+# TO RUN LOCALLY
+1. Clone the repository:
+    ```bash
+    git clone https://github.com/your-username/real-estate-price-pred.git
+    ```
+2. Navigate to the project directory:
+    ```bash
+    cd real-estate-price-pred/with-ant-design-app
+    ```
+3. Install the dependencies:
+    ```bash
+    npm install
+    ```
+4. Generate Prisma client:
+    ```bash
+    npx prisma generate
+    ```
+5. Push the Prisma schema to the database:
+    ```bash
+    npx prisma db push
+    ```
+6. Run the development server:
+    ```bash
+    npm run dev
+    ```
+7. Open your browser and visit `http://localhost:3000` to see the app in action.
+
+
+
+
+
+
 # Ant Design example
 
 This example shows how to use Next.js along with [Ant Design of React](https://ant.design). This is intended to show the integration of this UI toolkit with the Framework.

@@ -17,12 +17,29 @@ export const {
   auth,
 } = NextAuth({
   adapter: PrismaAdapter(db),
+  callbacks: {
+    // this is what gets returned when await auth() is called
+    
+    session: async ({ session, token }) => {
+      if (session?.user && token.sub) {
+          session.user.id = token.sub;
+      }
+      return session;
+    },
+    jwt: async ({ user, token }) => {
+      console.log("jwt callback", user, token);
+      if (user) {
+        token.sub = user.id;
+      }
+      return token;
+    },
+  },
   session: { strategy: "jwt" },
   secret: process.env.JWT_AUTH_SECRET || "secret",
   providers: [
     Github({
       clientId: process.env.AUTH_GITHUB_ID || "",
-      clientSecret: process.env.AUTH_GITHUB_SECRET || "",
+      clientSecret: process.env.AUTH_GITHUB_SECRET || "", 
     }),
     Twitter({
       clientId: process.env.TWITTER_ID,

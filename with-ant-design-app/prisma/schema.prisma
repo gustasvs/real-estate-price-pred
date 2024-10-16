@@ -33,6 +33,32 @@ model User {
  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  groups Group[] // New relation: A user can have multiple groups
+}
+
+model Group {
+  id      String             @id @default(auto()) @map("_id") @db.ObjectId
+  name    String             // Name of the group (e.g., "Country Houses", "Center of City Apartments")
+  userId  String             @db.ObjectId
+  user    User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  objects RealEstateObject[] // A group contains multiple real estate objects
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model RealEstateObject {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String   // Name of the real estate object
+  description String   // Textual info about the object
+  pictures    String[] // Array of image URLs
+
+  groupId String @db.ObjectId
+  group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
  
 model Account {
