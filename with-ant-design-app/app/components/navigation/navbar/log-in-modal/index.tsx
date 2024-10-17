@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
-import { Button, Divider, Form, Input, Modal } from "antd";
+import React, { useState } from "react";
+import { Alert, Button, Divider, Form, Input, Modal } from "antd";
 import styles from "./LogInModal.module.css";
 import { GithubOutlined, GoogleCircleFilled, GoogleOutlined, TwitterCircleFilled } from "@ant-design/icons";
 import { login } from "../../../../../actions/auth";
@@ -13,12 +13,26 @@ interface LoginModalProps {
 }
 
 const LoginModal: React.FC<LoginModalProps> = ({ open, setOpen }) => {
+  const [step, setStep] = useState(0);
+  const [error, setError] = useState<string | null>(null);
+
   const handleCloseModal = () => {
     setOpen(false);
   };
 
-  const [step, setStep] = React.useState(0);
+  const handleSignIn = async (values: { email: string; password: string }) => {
+    const res = await signIn("credentials", {
+      email: values.email,
+      password: values.password,
+      redirect: false, // Prevent automatic navigation on error
+    });
 
+    if (res?.error) {
+      setError("Diemžēl neizdevās autorizēties. Lūdzu pārbaudi ievadītos datus un mēģiniet vēlreiz!");
+    } else {
+      setError(null);
+    }
+  };
   return (
     <>
       <Modal
@@ -55,14 +69,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, setOpen }) => {
                 <Form
                   name="basic"
                   initialValues={{ remember: true }}
-                  onFinish={(values) => {
-                    console.log("Received values of form: ", values);
-                    signIn("credentials", {
-                      email: values.email,
-                      password: values.password,
-                      callbackUrl: "/",
-                    });
-                  }}
+                  onFinish={(values) => handleSignIn(values as { email: string; password: string })}
                   style={{ width: "100%" }}
                 >
                   <Form.Item
@@ -81,6 +88,9 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, setOpen }) => {
                   >
                     <Input.Password placeholder="Parole" className={styles["password-input"]} />
                   </Form.Item>
+
+                  {error && <Alert message={error} type="error" showIcon style={{ marginTop: "1em" }} />}
+
 
                   <div className={styles["button-container"]}>
                     <Button type="primary" htmlType="submit" className={styles["submit-button"]}>

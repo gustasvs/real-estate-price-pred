@@ -54,14 +54,45 @@ export const {
           placeholder: "email@example.com",
         },
         password: { label: "Password", type: "password" },
+        confirmPassword: { label: "Confirm Password", type: "password", optional: true },
       },
       authorize: async (credentials) => {
         console.log("called authorise with credentials", credentials);
+        if (!credentials) {
+          return null;
+        }
         if (!credentials || !credentials.email || !credentials.password) {
           return null;
         }
+
         const email = credentials.email as string;
-        const hash = saltAndHashPassword(credentials.password);
+        const password = credentials.password as string;
+        const confirmPassword = credentials.confirmPassword as string;
+
+        // check if user is trying to register
+        if (confirmPassword) {
+          if (password !== confirmPassword) {
+            return null;
+          }
+          const hash = saltAndHashPassword(password);
+          let user: any = await db.user.findUnique({
+            where: {
+              email,
+            },
+          });
+          if (user) {
+            // user already exists
+            return null;
+          }
+          // create new user
+          user = await db.user.create({
+            data: {
+              email,
+              hashedPassword: hash,
+            },
+          });
+          return user;
+        }
 
         let user: any = await db.user.findUnique({
           where: {
@@ -70,25 +101,19 @@ export const {
         });
 
         if (!user) {
-          // TODO OPTIONAL: Create user if they do not exist TODO
-          console.log("User not found, creating new user");
-          user = await db.user.create({
-            data: {
-              email,
-              hashedPassword: hash,
-            },
-          });
-        } else {
-          console.log("User found, checking password", user);
-          const isMatch = bcrypt.compareSync(
-            credentials.password as string,
-            user.hashedPassword
-          );
-          console.log("isMatch", isMatch);
-          // const isMatch = true;
-          if (!isMatch) {
-            throw new Error("Incorrect password.");
-          }
+          console.log("User not found");
+          return null;
+        }
+
+        console.log("User found, checking password", user);
+        const isMatch = bcrypt.compareSync(
+          credentials.password as string,
+          user.hashedPassword
+        );
+        console.log("isMatch", isMatch);
+        // const isMatch = true;
+        if (!isMatch) {
+          return null;
         }
 
         return user;

@@ -10,13 +10,73 @@
 }
 
 
-.google-login-container {
+
+.soc-login-container {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     margin-top: 20px;
     width: 100%;
 }
+.soc-login-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 70%;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.soc-login-buttons span {
+    display: flex;
+    justify-content: center;
+}
+
+
+.soc-login-button {
+    background-color: var(--background-dark-secondary);
+    color: var(--background-light-secondary);
+}
+
+.soc-login-button:hover {
+    background-color: var(--background-light-secondary);
+    color: var(--background-dark-secondary);
+}
+
+.soc-login-icon {
+    display: flex;
+    width: 100%;
+    font-size: 48px;
+    transition: transform 0.48s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.soc-login-icon svg {
+    fill: var(--background-dark-secondary);
+    transition: fill 0.48s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.soc-login-icon:hover {
+    transform: scale(1.07) translateY(-3px);
+
+}
+
+.soc-login-icon:hover svg {
+    fill: var(--background-dark-main);
+}
+
+.soc-login-icon:hover {
+    cursor: pointer;
+    
+}
+
+.soc-login-text {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--background-gray);
+    margin-bottom: 1em;
+}
+
 
 
 .email-login-container {
@@ -32,32 +92,28 @@
     align-items: center;
     border-radius: 30px;
     height: 56px;
-    width: 100%;
+    /* width: 100%; */
     padding: 24px;
 }
 
-.google-login-button {
-    background-color: var(--background-dark-secondary);
-    color: var(--background-light-secondary);
-}
-
-.google-login-button:hover {
-    background-color: var(--background-light-secondary);
-    color: var(--background-dark-secondary);
-}
-
-.google-icon {
+.log-in-container {
     display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    width: 100%;
 }
 
-.sign-up-text {
-    font-size: 16px;
-    font-weight: 600;
-    /* color: #fff; */
+.log-in-text {
+    font-size: 14px;
+    font-weight: 400;
+    text-align: center;
 }
 
-.email-login-text {
-    font-weight: 500;
+
+.divider-container {
+    margin-top: 20px;
+    text-align: center;
 }
 
 .terms-container {
@@ -74,16 +130,79 @@
     font-weight: 400;
 }
 
-.login-container {
+
+/* Additional styles for form elements */
+.form-container {
+    padding: 28px 24px; /* consistent with login-modal-contents */
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+
+.form-container .ant-form  .ant-form-item  {
+    margin: 0px;
+}
+
+.password-input {
+    /* margin-top: 20px; */
+    padding: 8px 16px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    transition: border-color 0.3s ease-in-out;
+    border-radius: 30px;
+    height: 48px;
+}
+
+.password-input:focus {
+    border-color: #40a9ff;
+    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+.confirm-password-container {
+    max-height: 0;
+    transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+    transform-origin: top;
+    opacity: 0;
+    transform: scaleY(0);
+  }
+  
+  .confirm-password-container.visible {
+    max-height: 3em;
+    opacity: 1;
+    transform: scaleY(1);
+  }
+  
+  .button-container, .terms-container, .log-in-container {
+    transition: transform 0.5s ease;
+  }
+
+.email-input {
+    /* margin-top: 20px; */
+    padding: 8px 16px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    transition: border-color 0.3s ease-in-out;
+    border-radius: 30px;
+    height: 48px;
+}
+
+.submit-button {
+    background-color: var(--background-dark-secondary);
+    color: var(--background-light-secondary);
+    border-radius: 30px;
+    height: 48px;
+    width: 70%;
+    margin: 2em auto 0 auto;
+    padding: 0 24px; /* padding for text inside the button */
+    font-size: 16px;
+    font-weight: 600;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 20px;
-    width: 100%;
 }
 
-.login-text {
-    font-size: 14px;
-    font-weight: 400;
-    /* color: #fff; */
+.submit-button:hover {
+    background-color: var(--background-light-secondary);
+    color: var(--background-dark-secondary);
 }
