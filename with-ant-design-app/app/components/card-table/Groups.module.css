@@ -155,7 +155,7 @@
   
   .edit-group-dropdown {
     position: absolute;
-    top: 30px;
+    top: 40px;
     right: 30px;
     background: var(--group-main);
     border: none;
@@ -180,15 +180,15 @@
     opacity: 1;
   }
 
- .edit-group-dropdown .ant-dropdown .ant-dropdown-menu .ant-dropdown-menu-item {
-    background-color: var(--background-dark-secondary);
-    color: var(--background-light-secondary);
-  }
+ .dropdown-item {
+  background-color: var(--background-light-secondary);
+  color: var(--background-dark-secondary);
+ }
 
-  .edit-group-dropdown .edit-group-dropdown-menu .ant-dropdown-menu .ant-dropdown-menu-item {
-    background-color: var(--background-dark-secondary);
-    color: var(--background-light-secondary);
-  }
+ .edit-group-dropdown .dropdown-container-wrapper .ant-dropdown-menu {
+  background-color: var(--background-light-secondary) !important;
+  color: var(--background-dark-secondary);
+ }
 
   .delete-group-button {
     position: absolute;

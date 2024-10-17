@@ -10,7 +10,6 @@ import { useRouter } from "next/navigation";
 import Layout from "react-masonry-list";
 import { PageHeader } from "@ant-design/pro-components";
 import { useState } from "react";
-import NewObjectModal from "./new-object-modal/NewObjectModal";
 
 const MasonryTable = ({
   columnCount,
@@ -26,10 +25,12 @@ const MasonryTable = ({
   objects: any[];
   createObject: () => void;
   deleteObject: (id: string) => void;
-  updateObject: (id: string, objectData: { name: string, description: string, pictures: string[] }) => void;
+  updateObject: (
+    id: string,
+    objectData: { name: string; description: string; pictures: string[] }
+  ) => void;
   loading?: boolean;
 }): JSX.Element => {
-
   const [newObjectModalVisible, setNewObjectModalVisible] = useState(false);
 
   const handleAddButtonClick = () => {
@@ -117,12 +118,20 @@ const MasonryTable = ({
             <div
               className={styles["content-image"]}
               style={{
-                background: `#${Math.floor(Math.random() * 16777215).toString(
-                  16
-                )}`,
-                height: `${item.height}px`,
+                backgroundImage: `url(${
+                  item.pictures[0]?.startsWith("data:image")
+                    ? item.pictures[0]
+                    : `data:image/png;base64,${item.pictures[0]}`
+                })`, // Ensure correct format for base64 images
+                backgroundSize: "cover", // Ensure the image covers the div
+                backgroundPosition: "center", // Center the image
+                // height: `${item.height}px`,
+                backgroundRepeat: "no-repeat",
+                height: "200px",
+                width: "200px",
               }}
             ></div>
+
             <div
               style={{
                 display: "flex",
@@ -141,10 +150,12 @@ const MasonryTable = ({
           className={`${styles["content"]} ${styles["content-add"]}`}
           onClick={handleAddButtonClick}
         >
-          <div className={styles["content-image"]}>
+          <div className={styles["content-add-image"]}>
             <PlusOutlined style={{ fontSize: "48px", color: "#fff" }} />
           </div>
-          <h4 style={{ color: "#ffffff" }}>Pievienot jaunu objektu</h4>
+          <span className={styles["content-add-title"]}>
+            Pievienot jaunu objektu
+          </span>
         </div>
       </div>
     </div>

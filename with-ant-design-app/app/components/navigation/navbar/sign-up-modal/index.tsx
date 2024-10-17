@@ -18,6 +18,8 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ open, setOpen }) => {
 
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  const [passwordsMatch, setPasswordsMatch] = useState(false);
+
   const handleCloseModal = () => {
     setOpen(false);
   };
@@ -26,7 +28,7 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ open, setOpen }) => {
     if (password.length < 8) {
       return 0;
     }
-    return 1;
+    return 4;
   };
 
   const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,13 +39,23 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ open, setOpen }) => {
     }
   };
 
+  const handleConfirmPasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.value === event.target.value) {
+      setPasswordsMatch(true);
+    } else {
+      setPasswordsMatch(false
+      );
+    }
+  };
+
+
   const handleSignUp = async (values: {
     email: string;
     password: string;
     confirmPassword: string;
   }) => {
     if (values.password !== values.confirmPassword) {
-      setError("Passwords do not match. Please try again.");
+      setError("Ievadītās paroles nesakrīt!");
       return;
     }
     
@@ -137,6 +149,16 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ open, setOpen }) => {
                   />
                 </Form.Item>
               </div>
+
+                {error && (
+                  <Alert
+                    message={error}
+                    type="error"
+                    showIcon
+                    style={{ marginBottom: "1em" }}
+                  />
+                )}
+
               <div className={styles["button-container"]}>
                 <Button
                   type="primary"

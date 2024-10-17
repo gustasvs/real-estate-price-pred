@@ -1,0 +1,51 @@
+.form-container {
+    display: flex;
+    flex-direction: column;
+    margin: 1em auto 3em auto;
+    max-width: 700px;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    width: 100%;
+    gap: 3em;
+}
+
+.cancel-button {
+    background-color: var(--background-light-secondary);
+    color: var(--background-dark-secondary);
+    border-radius: 30px;
+    height: 48px;
+    width: 30%;
+    margin: 2em auto 0 auto;
+    padding: 0 24px; /* padding for text inside the button */
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.submit-button {
+    background-color: var(--background-dark-secondary);
+    color: var(--background-light-secondary);
+    border-radius: 30px;
+    height: 48px;
+    width: 70%;
+    margin: 2em auto 0 auto;
+    padding: 0 24px; /* padding for text inside the button */
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.submit-button:hover {
+    background-color: var(--background-light-secondary);
+    color: var(--background-dark-secondary);
+}

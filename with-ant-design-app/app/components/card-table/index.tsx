@@ -1,5 +1,14 @@
 import { CloseOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
-import { Card, Row, Col, Popover, Popconfirm, MenuProps, Dropdown, Space } from "antd";
+import {
+  Card,
+  Row,
+  Col,
+  Popover,
+  Popconfirm,
+  MenuProps,
+  Dropdown,
+  Space,
+} from "antd";
 import Image from "next/image";
 
 import styles from "./Groups.module.css";
@@ -32,31 +41,28 @@ const CardTable = ({
   const rowGutter: [number, number] = [16, 16];
   const colSpan: number = 24 / columnCount;
 
-  const items: MenuProps['items'] = [
+  const items: MenuProps["items"] = [
     {
-      key: '1',
+      key: "1",
       label: (
-        <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
+        <a
+          className={styles["dropdown-item"]}
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://www.antgroup.com"
+        >
           1st menu item
         </a>
       ),
     },
     {
-      key: '3',
-      label: (
-        <a target="_blank" rel="noopener noreferrer" href="https://www.luohanacademy.com">
-          3rd menu item (disabled)
-        </a>
-      ),
-      disabled: true,
-    },
-    {
-      key: '4',
+      key: "4",
       danger: true,
-      label: 'Dzēst grupu',
+      label: (
+        <span className={styles["dropdown-danger-item"]}>Dzēst grupu</span>
+      ),
     },
   ];
-  
 
   const handleAddButtonClick = () => {
     setNewGroupModalVisible(true); // Open modal on add button click
@@ -97,49 +103,32 @@ const CardTable = ({
                   onCardClick(group.id);
                 }}
               >
+                <div className={styles["edit-group-dropdown"]}>
+                      <Dropdown
+                        menu={{ items }}
+                        open={true}
+                        placement="bottomLeft"
+                        overlayClassName={styles["edit-group-dropdown-menu"]}
+                        getPopupContainer={(trigger) =>
+                          trigger.parentNode as HTMLElement
+                        }
+                        dropdownRender={(menu) => (
+                          <div
+                            className={styles["dropdown-container-wrapper"]}
+                          >
+                            {menu}
+                          </div>
+                        )}
+                        className={styles["edit-group-dropdown-container"]}
+                      >
+                        <a onClick={(e) => e.preventDefault()}>
+                          <Space>
+                            <EditOutlined />
+                          </Space>
+                        </a>
+                      </Dropdown>
+                      </div>
                 <div className={styles["content"]}>
-                  <Popconfirm
-                    title="Vai tiešām vēlaties dzēst šo grupu?"
-                    onConfirm={(e) => {
-                      e.stopPropagation();
-                      deleteGroup(group.id);
-                    }}
-                    onCancel={(e) => {
-                      e.stopPropagation();
-                    }}
-                    okText="Jā"
-                    cancelText="Nē"
-                    okButtonProps={{
-                      className: styles["delete-group-button-popover-ok"],
-                    }}
-                    cancelButtonProps={{
-                      className: styles["delete-group-button-popover-cancel"],
-                    }}
-                  >
-                    <div
-                      className={styles["edit-group-dropdown"]}
-                    >
-                    <Dropdown menu={{ items }}
-                      placement="bottomRight"
-                      overlayClassName={styles["edit-group-dropdown-menu"]}
-                      getPopupContainer={(trigger) => trigger.parentNode as HTMLElement}
-                    >
-                      <a onClick={(e) => e.preventDefault()}>
-                        <Space>
-                          <EditOutlined />
-                        </Space>
-                      </a>
-                    </Dropdown>
-                    </div>
-                    {/* <div
-                      className={styles["delete-group-button"]}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                      }}
-                    >
-                      <CloseOutlined />
-                    </div> */}
-                  </Popconfirm>
                   {/* <Image
                     src={group.imageUrl}
                     alt={""}
