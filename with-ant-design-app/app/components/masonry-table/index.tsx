@@ -144,6 +144,17 @@ const MasonryTable = ({
                 {item.name}
               </span>
             </div>
+
+            {console.log(item)}
+            <div className={styles["content-description"]}>
+              <span className={styles["content-description-created-at"]}>
+                {new Date(item.createdAt).toLocaleDateString()}
+              </span>
+              <span className={styles["content-description-text"]}>
+                {item.description}
+              </span>
+            </div>
+
           </div>
         ))}
         <div
