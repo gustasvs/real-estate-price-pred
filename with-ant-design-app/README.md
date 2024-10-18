@@ -18,7 +18,8 @@
     ```
 5. Push the Prisma schema to the database:
     ```bash
-    npx prisma db push
+    <!-- npx prisma db push -->
+    docker exec -it with-ant-design-app_app_1 npx prisma migrate dev
     ```
 6. Run the development server:
     ```bash

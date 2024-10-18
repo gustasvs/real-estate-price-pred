@@ -17,7 +17,7 @@ export const getGroup = async (groupId: string) => {
   const userId = user.id;
   
   try {
-    const group = await db.group.findUnique({
+    const group = await db.residenceGroup.findUnique({
       where: { id: groupId, userId: userId }, 
     });
     return group;
@@ -38,7 +38,7 @@ const session = await auth();
   const userId = user.id;
 
   try {
-    const groups = await db.group.findMany({
+    const groups = await db.residenceGroup.findMany({
       where: { userId: userId },
     });
     return groups;
@@ -66,7 +66,7 @@ export const createGroup = async (groupName: string) => {
   const userId = user.id;
   
   try {
-    const newGroup = await db.group.create({
+    const newGroup = await db.residenceGroup.create({
       data: {
         name: groupName,
         userId: userId,
@@ -82,7 +82,7 @@ export const createGroup = async (groupName: string) => {
 // Update an existing group
 export const updateGroup = async (groupId: string, newGroupName: string) => {
   try {
-    const updatedGroup = await db.group.update({
+    const updatedGroup = await db.residenceGroup.update({
       where: { id: groupId },
       data: { name: newGroupName },
     });
@@ -96,7 +96,7 @@ export const updateGroup = async (groupId: string, newGroupName: string) => {
 // Delete an existing group
 export const deleteGroup = async (groupId: string) => {
   try {
-    await db.group.delete({
+    await db.residenceGroup.delete({
       where: { id: groupId },
     });
     return { success: true };

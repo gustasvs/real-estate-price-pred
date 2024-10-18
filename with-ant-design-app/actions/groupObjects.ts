@@ -7,7 +7,7 @@ import { auth } from "../auth";
 
 export const getObjects = async (groupId: string) => {
     try {
-      const objects = await db.realEstateObject.findMany({
+      const objects = await db.residence.findMany({
         where: { groupId: groupId },
       });
       return objects;
@@ -20,7 +20,10 @@ export const getObjects = async (groupId: string) => {
   
   export const createObject = async (groupId: string, objectData: { name: string, description: string, pictures: string[] }) => {
     try {
-      const newObject = await db.realEstateObject.create({
+
+      console.log("objectData", objectData);
+
+      const newObject = await db.residence.create({
         data: {
           name: objectData.name,
           description: objectData.description,
@@ -38,7 +41,7 @@ export const getObjects = async (groupId: string) => {
 
   export const updateObject = async (objectId: string, objectData: { name: string, description: string, pictures: string[] }) => {
     try {
-      const updatedObject = await db.realEstateObject.update({
+      const updatedObject = await db.residence.update({
         where: { id: objectId },
         data: {
           name: objectData.name,
@@ -57,7 +60,7 @@ export const getObjects = async (groupId: string) => {
 
   export const deleteObject = async (objectId: string) => {
     try {
-      await db.realEstateObject.delete({
+      await db.residence.delete({
         where: { id: objectId },
       });
       return { success: true };

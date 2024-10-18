@@ -67,9 +67,10 @@ const NewObjectForm = () => {
     console.log("res", res);
 
     if ('error' in res) {
-      router.push(`/groups/${group_id}`);
-    } else {
       message.error("Failed to create object");
+    } else {
+      router.push(`/groups/${group_id}`);
+    
     }
   };
   
