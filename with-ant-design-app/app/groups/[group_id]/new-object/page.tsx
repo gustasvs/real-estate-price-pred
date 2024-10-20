@@ -1,17 +1,26 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { Button, Form, Input, Upload, message, UploadProps } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  Upload,
+  message,
+  UploadProps,
+  InputNumber,
+} from "antd";
 import { InboxOutlined, UploadOutlined } from "@ant-design/icons";
 import GenericLayout from "../../../components/generic-page-layout";
 
-import imageCompression from 'browser-image-compression';
-
+import imageCompression from "browser-image-compression";
 
 import styles from "./NewObjectForm.module.css";
-import { createObject as createObjectApi
-
+import {
+  createObject as createObjectApi,
+  getObject as getObjectApi,
+  updateObject as updateObjectApi,
 } from "../../../../actions/groupObjects";
 
 const { Dragger } = Upload;
@@ -41,19 +50,57 @@ const NewObjectForm = () => {
   const router = useRouter();
   const params = useParams();
 
-  const group_id = Array.isArray(params.group_id) ? params.group_id[0] : params.group_id;
+  const group_id = Array.isArray(params.group_id)
+    ? params.group_id[0]
+    : params.group_id;
   const [form] = Form.useForm();
+  interface ObjectData {
+    name: string;
+    id: string;
+    description: string;
+    pictures: string[];
+    groupId: string;
+    createdAt: Date;
+    updatedAt: Date;
+  }
+
+  interface ErrorData {
+    error: string;
+  }
+
+  const [initialData, setInitialData] = useState<ObjectData | ErrorData | null>(
+    null
+  );
+
+  const objectId = params.object_id as string | undefined;
+
+  useEffect(() => {
+    // Function to fetch existing object data
+    const fetchObjectData = async () => {
+      if (objectId) {
+        const data = await getObjectApi(objectId);
+        if (!data) {
+          return;
+        }
+        setInitialData(data);
+        form.setFieldsValue(data); // Pre-populate the form with fetched data
+      }
+    };
+    fetchObjectData();
+  }, [form, objectId]);
 
   const handleSubmit = async (values: any) => {
     console.log("Received values of form: ", values);
     console.log("group_id", group_id);
-  
+
+    const submitFunction = objectId ? updateObjectApi : createObjectApi;
+
     const picturePromises = values.pictures.map(async (file: any) => {
       const compressedFile = await imageCompression(file.originFileObj, {
-        maxSizeMB: 0.5, // Set desired maximum size in MB
-        maxWidthOrHeight: 1920, // Optionally set maximum width/height
+        maxSizeMB: 0.5,
+        maxWidthOrHeight: 1920,
       });
-  
+
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.readAsDataURL(compressedFile); // Convert compressed image to base64
@@ -61,26 +108,21 @@ const NewObjectForm = () => {
         reader.onerror = (error) => reject(error);
       });
     });
-  
-    // Wait for all pictures to be converted
     const pictures = await Promise.all(picturePromises);
-  
-    // Send the data with the base64-encoded pictures
-    const res = await createObjectApi(group_id as string, {
+
+    const res = await submitFunction(group_id as string, {
       ...values,
-      pictures, // Replace file objects with base64 strings
+      pictures,
     });
 
     console.log("res", res);
 
-    if ('error' in res) {
+    if ("error" in res) {
       message.error("Failed to create object");
     } else {
       router.push(`/groups/${group_id}`);
-    
     }
   };
-  
 
   const normFile = (e: any) => {
     if (Array.isArray(e)) {
@@ -98,6 +140,7 @@ const NewObjectForm = () => {
         // style={{ maxWidth: 600, margin: 'auto' }}
         className={styles["form-container"]}
       >
+        {/* Name */}
         <Form.Item
           name="name"
           label="Name"
@@ -110,6 +153,103 @@ const NewObjectForm = () => {
         >
           <Input placeholder="Enter the name" />
         </Form.Item>
+
+        {/* Address */}
+        <Form.Item
+          name="address"
+          label="Address"
+          rules={[{ required: true, message: "Please input the address!" }]}
+        >
+          <Input placeholder="Enter the address" />
+        </Form.Item>
+
+        {/* Area */}
+        <Form.Item
+          name="area"
+          label="Area (in sq meters)"
+          rules={[{ required: true, message: "Please input the area!" }]}
+        >
+          <InputNumber
+            min={0}
+            placeholder="Enter the area"
+            style={{ width: "100%" }}
+          />
+        </Form.Item>
+
+        {/* Bedroom Count */}
+        <Form.Item
+          name="bedroomCount"
+          label="Bedrooms"
+          rules={[
+            { required: true, message: "Please input the number of bedrooms!" },
+          ]}
+        >
+          <InputNumber
+            min={0}
+            placeholder="Enter the number of bedrooms"
+            style={{ width: "100%" }}
+          />
+        </Form.Item>
+
+        {/* Bathroom Count */}
+        <Form.Item
+          name="bathroomCount"
+          label="Bathrooms"
+          rules={[
+            {
+              required: true,
+              message: "Please input the number of bathrooms!",
+            },
+          ]}
+        >
+          <InputNumber
+            min={0}
+            placeholder="Enter the number of bathrooms"
+            style={{ width: "100%" }}
+          />
+        </Form.Item>
+
+        {/* Parking Count */}
+        <Form.Item
+          name="parkingCount"
+          label="Parking Spaces"
+          rules={[
+            {
+              required: true,
+              message: "Please input the number of parking spaces!",
+            },
+          ]}
+        >
+          <InputNumber
+            min={0}
+            placeholder="Enter the number of parking spaces"
+            style={{ width: "100%" }}
+          />
+        </Form.Item>
+
+        {/* Price */}
+        <Form.Item
+          name="price"
+          label="Price"
+          rules={[{ required: true, message: "Please input the price!" }]}
+        >
+          <InputNumber
+            min={0}
+            placeholder="Enter the price"
+            style={{ width: "100%" }}
+          />
+        </Form.Item>
+
+        {/* Predicted Price */}
+        <Form.Item name="predictedPrice" label="Predicted Price">
+          <InputNumber
+            min={0}
+            placeholder="Enter the predicted price"
+            style={{ width: "100%" }}
+          />
+        </Form.Item>
+
+        {/* Description */}
         <Form.Item
           name="description"
           label="Description"
@@ -117,6 +257,7 @@ const NewObjectForm = () => {
         >
           <Input.TextArea rows={4} placeholder="Enter the description" />
         </Form.Item>
+
         <Form.Item
           name="pictures"
           label="Pictures"

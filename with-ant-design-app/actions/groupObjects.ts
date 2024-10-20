@@ -5,6 +5,18 @@ import { db } from "../db";
 import { auth } from "../auth";
 
 
+export const getObject = async (objectId: string) => {
+    try {
+      const object = await db.residence.findUnique({
+        where: { id: objectId },
+      });
+      return object;
+    } catch (error) {
+      console.error("Error fetching object:", error);
+      return { error: "Failed to get object" };
+    }
+  };
+
 export const getObjects = async (groupId: string) => {
     try {
       const objects = await db.residence.findMany({
