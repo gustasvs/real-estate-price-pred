@@ -11,7 +11,7 @@
   
   .navbar-with-background {
     display: flex;
-    background: var(--background-dark-secondary);
+    background: var(--background-dark-main);
     padding-bottom: 1rem;
   }
   

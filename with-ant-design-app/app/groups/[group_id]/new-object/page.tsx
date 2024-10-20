@@ -6,6 +6,9 @@ import { Button, Form, Input, Upload, message, UploadProps } from "antd";
 import { InboxOutlined, UploadOutlined } from "@ant-design/icons";
 import GenericLayout from "../../../components/generic-page-layout";
 
+import imageCompression from 'browser-image-compression';
+
+
 import styles from "./NewObjectForm.module.css";
 import { createObject as createObjectApi
 
@@ -45,13 +48,17 @@ const NewObjectForm = () => {
     console.log("Received values of form: ", values);
     console.log("group_id", group_id);
   
-    // Convert each image file to a base64 string
-    const picturePromises = values.pictures.map((file: any) => {
+    const picturePromises = values.pictures.map(async (file: any) => {
+      const compressedFile = await imageCompression(file.originFileObj, {
+        maxSizeMB: 0.5, // Set desired maximum size in MB
+        maxWidthOrHeight: 1920, // Optionally set maximum width/height
+      });
+  
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
-        reader.readAsDataURL(file.originFileObj); // Convert to base64
+        reader.readAsDataURL(compressedFile); // Convert compressed image to base64
         reader.onload = () => resolve(reader.result);
-        reader.onerror = error => reject(error);
+        reader.onerror = (error) => reject(error);
       });
     });
   

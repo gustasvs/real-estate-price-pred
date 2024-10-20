@@ -47,13 +47,23 @@ model ResidenceGroup {
 }
 
 model Residence {
-  id          String   @id @default(uuid())
+  id          String @id @default(uuid())
   name        String
+  address     String
+  area        Float
   description String
-  pictures    String[]
+
+  bedroomCount  Int
+  bathroomCount Int
+  parkingCount  Int
+
+  price          Float
+  predictedPrice Float
 
   groupId        String
   residenceGroup ResidenceGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  pictures String[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

@@ -1,7 +1,10 @@
 "use client";
 
-import { PlusOutlined } from "@ant-design/icons";
-import { Card, Row, Col, Button, Descriptions, Divider } from "antd";
+import { EditOutlined, PlusOutlined } from "@ant-design/icons";
+import { FaShower } from "react-icons/fa6";
+import { IoBedOutline } from "react-icons/io5";
+import { FaCarSide, FaRuler } from "react-icons/fa";
+import { Card, Row, Col, Button, Descriptions, Divider, Grid } from "antd";
 import Image from "next/image";
 
 import styles from "./MasonryTable.module.css";
@@ -67,6 +70,30 @@ const MasonryTable = ({
     }, 300);
   };
 
+  const distributeItems = (items: any[], pattern: number[]) => {
+    let result = [];
+    let index = 0;
+    let rowIndex = 0;
+    while (index < items.length) {
+      let row = [];
+      let count = pattern[rowIndex % pattern.length];
+      for (let i = 0; i < count; i++) {
+        if (index < items.length) {
+          row.push(items[index]);
+          index++;
+        }
+      }
+      result.push(row);
+      rowIndex++;
+    }
+    return result;
+  };
+
+  const rowPattern = [2, 4, 3]; // This defines the pattern of rows per column
+  const rowItems = distributeItems(objects, rowPattern);
+
+  console.log("rowItems", rowItems);
+
   const routes = [
     {
       path: "index",
@@ -107,57 +134,234 @@ const MasonryTable = ({
         ]}
       ></PageHeader>
       <Divider />
-      <div className={styles["masonry-table"]}>
-        {objects.map((item) => (
-          <div
-            key={item.id}
-            id={`item-${item.id}`}
-            className={styles["content"]}
-            onClick={() => onCardClick(item.id)}
+      {/* <div className={styles["masonry-table"]}> */}
+      <Row
+        gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}
+        style={{ width: "90%", margin: "0 auto" }}
+      >
+        {rowItems.map((itemsInRow, rowIndex) => (
+          <Row
+            key={`row-${rowIndex}`}
+            style={{ width: "100%" }}
+            gutter={[42, 32]}
           >
-            <div
-              className={styles["content-image"]}
-              style={{
-                backgroundImage: `url(${
-                  item.pictures[0]?.startsWith("data:image")
-                    ? item.pictures[0]
-                    : `data:image/png;base64,${item.pictures[0]}`
-                })`, // Ensure correct format for base64 images
-                backgroundSize: "cover", // Ensure the image covers the div
-                backgroundPosition: "center", // Center the image
-                // height: `${item.height}px`,
-                backgroundRepeat: "no-repeat",
-                height: "200px",
-                width: "200px",
-              }}
-            ></div>
+            {itemsInRow.map((item, itemIndex) => (
+              <Col
+                className={styles["content-wrapper"]}
+                span={Math.min(24 / itemsInRow.length, 12)}
+                key={item.id}
+              >
+                <div
+                  id={`item-${item.id}`}
+                  className={styles["content"]}
+                  onClick={() => onCardClick(item.id)}
+                  key={item.id}
+                  style={{
+                    marginBottom: 20, // Maintain bottom margin for spacing
+                  }}
+                >
+                  <div className={styles["content-image"]}>
+                    <img
+                      src={
+                        item.pictures[0]?.startsWith("data:image")
+                          ? item.pictures[0]
+                          : `data:image/png;base64,${item.pictures[0]}`
+                      }
+                      alt="content"
+                      style={{
+                        height: "100%", // Ensure image matches the container's height
+                        width: "auto", // Maintain aspect ratio and scale the width accordingly
+                        display: "block", // Remove any inline image spacing issues
+                      }}
+                    />
+                  </div>
+                  {/* other images */}
+                  <div className={styles["content-images-other"]}>
+                  {item.pictures.length > 1 && (
+                      <img
+                        src={
+                          item.pictures[1]?.startsWith("data:image")
+                            ? item.pictures[1]
+                            : `data:image/png;base64,${item.pictures[1]}`
+                        }
+                        alt="content"
+                        style={{
+                          height: "100%", // Ensure image matches the container's height
+                          width: "auto", // Maintain aspect ratio and scale the width accordingly
+                          display: "block", // Remove any inline image spacing issues
+                        }}
+                      />
+                  )}
+                  </div>
+                    
 
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                padding: 10,
-              }}
-            >
-              <span style={{ color: "#ffffff", marginLeft: 20, fontSize: 22 }}>
-                {item.name}
-              </span>
-            </div>
+                  <div
+                    className={styles["content-title-wrapper"]}
+                  >
+                    <span
+                      className={styles["content-title-name"]}
+                    >
+                      {item.name}
+                    </span>
+                  </div>
 
-            {console.log(item)}
-            <div className={styles["content-description"]}>
-              <span className={styles["content-description-created-at"]}>
-                {new Date(item.createdAt).toLocaleDateString()}
-              </span>
-              <span className={styles["content-description-text"]}>
-                {item.description}
-              </span>
-            </div>
+                  <div className={styles["content-description-wrapper"]}>
+                    <div className={styles["content-description"]}>
+                      {/* Header */}
+                      <div className={styles["content-description-header"]}>
+                        <div
+                          className={styles["content-description-header-top"]}
+                        >
+                          <span
+                            className={
+                              styles["content-description-header-name"]
+                            }
+                          >
+                            {item.name}
+                          </span>
+                          <span
+                            className={
+                              styles["content-description-header-price"]
+                            }
+                          >
+                            {item.price ?? "Nav norādīta cena"}
+                          </span>
+                        </div>
+                        <div
+                          className={
+                            styles["content-description-header-bottom"]
+                          }
+                        >
+                          <span
+                            className={
+                              styles["content-description-header-date"]
+                            }
+                          >
+                            Pievienots{" "}
+                            {new Date(item.createdAt).toLocaleDateString()}
+                          </span>
+                          <span
+                            className={
+                              styles[
+                                "content-description-header-price-prediction"
+                              ]
+                            }
+                          >
+                            {item.pricePrediction ??
+                              "Nav norādīta cenu prognoze"}
+                          </span>
+                        </div>
+                      </div>
 
-          </div>
+                      {/* Details list */}
+                      <div className={styles["content-description-list"]}>
+                        <li className={styles["content-description-list-item"]}>
+                          <span
+                            className={
+                              styles["content-description-list-item-title"]
+                            }
+                          >
+                            Pieraksti:
+                          </span>
+                          <span
+                            className={
+                              styles["content-description-list-item-value"]
+                            }
+                          >
+                            {item.description}
+                          </span>
+                        </li>
+                        <li className={styles["content-description-list-item"]}>
+                          <span
+                            className={
+                              styles["content-description-list-item-title"]
+                            }
+                          >
+                            Adrese:
+                          </span>
+                          <span
+                            className={
+                              styles["content-description-list-item-value"]
+                            }
+                          >
+                            {item.address ?? "Rīga, Jaunā iela 1 - 22"}
+                          </span>
+                        </li>
+                        <li className={styles["content-description-list-item"]}>
+                          <span
+                            className={
+                              styles["content-description-list-item-title"]
+                            }
+                          >
+                            Platība:
+                          </span>
+                          <span
+                            className={
+                              styles["content-description-list-item-value"]
+                            }
+                          >
+                            {`${item.area ?? 100} m²`}
+                          </span>
+                        </li>
+                      </div>
+
+                      {/* Footer */}
+                      <div className={styles["content-description-footer"]}>
+                        <div
+                          className={
+                            styles["content-description-house-details"]
+                          }
+                        >
+                          <div
+                            className={styles["content-description-bed-counts"]}
+                          >
+                            <IoBedOutline />
+                            <span>{item.bedroomCount ?? "3 Gultas"}</span>
+                          </div>
+                          <div
+                            className={
+                              styles["content-description-bath-counts"]
+                            }
+                          >
+                            <FaShower />
+                            <span>{item.bathroomCount ?? "2 Dušas"}</span>
+                          </div>
+                          <div
+                            className={styles["content-description-house-area"]}
+                          >
+                            <FaCarSide />
+                            <span>{`${item.parkingCount ?? "2"} Stāvvietas`}</span>
+                          </div>
+                        </div>
+
+                        <div className={styles["content-description-actions"]}>
+                          <Button
+                            type="primary"
+                            onClick={() => updateObject(item.id, item)}
+                            className={`${styles["content-description-action"]} ${styles["content-description-action-edit"]}`}
+                          >
+                            <EditOutlined />
+                            Rediģēt
+                          </Button>
+                          <Button
+                            type="primary"
+                            onClick={() => deleteObject(item.id)}
+                            className={`${styles["content-description-action"]} ${styles["content-description-action-delete"]}`}
+                          >
+                            Dzēst
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Col>
+            ))}
+          </Row>
         ))}
-        <div
+      </Row>
+
+      {/* <div
           className={`${styles["content"]} ${styles["content-add"]}`}
           onClick={handleAddButtonClick}
         >
@@ -167,8 +371,7 @@ const MasonryTable = ({
           <span className={styles["content-add-title"]}>
             Pievienot jaunu objektu
           </span>
-        </div>
-      </div>
+        </div> */}
     </div>
   );
 };

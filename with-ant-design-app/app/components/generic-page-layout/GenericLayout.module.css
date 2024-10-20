@@ -17,7 +17,7 @@ body .ant-layout .ant-layout-content .ant-page-header {
 .layout-container,
 .site-layout,
 .site-layout-content {
-    background-color: var(--background-light-main);
+    background-color: var(--background-dark-secondary);
 }
 
 .layout-container {
