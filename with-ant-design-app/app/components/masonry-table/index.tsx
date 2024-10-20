@@ -170,7 +170,7 @@ const MasonryTable = ({
                       alt="content"
                       style={{
                         height: "100%", // Ensure image matches the container's height
-                        width: "auto", // Maintain aspect ratio and scale the width accordingly
+                        // width: "auto",
                         display: "block", // Remove any inline image spacing issues
                       }}
                     />
