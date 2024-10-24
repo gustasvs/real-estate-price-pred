@@ -13,6 +13,7 @@ import { getSession, useSession } from "next-auth/react";
 import { Session } from "next-auth";
 import { logout } from "../../../../actions/auth";
 import Dropdown from "antd/es/dropdown/dropdown";
+import { useRouter } from "next/navigation";
 
 const Navbar = ({
   toggle,
@@ -25,6 +26,8 @@ const Navbar = ({
     data: Session | null;
     status: string;
   };
+
+  const router = useRouter();
 
   const [signUpModalOpen, setSignUpModalOpen] = useState(false);
   const [loginModalOpen, setLoginModalOpen] = useState(false);
@@ -86,8 +89,39 @@ const Navbar = ({
               <Dropdown
                 dropdownRender={(menu) => (
                   <div className={styles["profile-dropdown-container"]} >
-                    {menu}
-                    <Divider style={{ margin: "4px 0" }} />
+                    {/* {menu} */}
+                    
+                    <Button
+                      className={styles["rounded-button"]}
+                      onClick={() => {
+                        router.push("/profile");
+                      }}
+                    >
+                      <span>Mans profils</span>
+                    </Button>
+
+                    <Button
+                      className={styles["rounded-button"]}
+                      onClick={() => {
+                        router.push("/groups");
+                      }}
+                    >
+                      <span>Mani objekti</span>
+                    </Button>
+
+                    <Button
+                      className={styles["rounded-button"]}
+                      onClick={() => {
+                        console.log("settings");
+                      }}
+                    >
+                      <span>Iestatījumi</span>
+                    </Button>
+
+                    <Divider style={{ margin: "-0.5em 0", backgroundColor: "white"
+
+                     }} />
+
                     <Button
                       className={styles["rounded-button"]}
                       onClick={async () => {

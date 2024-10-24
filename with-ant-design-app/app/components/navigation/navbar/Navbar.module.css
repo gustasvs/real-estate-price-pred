@@ -12,7 +12,6 @@
   .navbar-with-background {
     display: flex;
     background: var(--background-dark-main);
-    padding-bottom: 1rem;
   }
   
   .container {
@@ -114,6 +113,9 @@
     background: var(--background-dark-main);
     border-radius: 20px;
     max-width: 200px;
+    margin-left: auto;
+    padding: 1em;
+    gap: 1em;
 }
 
 .rounded-button {
