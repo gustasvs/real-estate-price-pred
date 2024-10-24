@@ -101,6 +101,21 @@
     align-items: center;
 }
 
+.user-box {
+    display: flex;
+    gap: 1em;
+    align-items: center;
+    color: var(--background-light-secondary);
+}
+
+.profile-dropdown-container {
+    display: flex;
+    flex-direction: column;
+    background: var(--background-dark-main);
+    border-radius: 20px;
+    max-width: 200px;
+}
+
 .rounded-button {
     display: flex;
     background-color: transparent;

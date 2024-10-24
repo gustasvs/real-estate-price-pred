@@ -90,8 +90,8 @@ const Banner = () => {
         key={index}
         style={{
           position: "absolute",
-          width: "5px",
-          height: "5px",
+          width: "7px",
+          height: "7px",
           left: `calc(50% + ${x}px)`,
           top: `calc(50% + ${y}px)`,
           opacity: layer / 4,
@@ -116,7 +116,6 @@ const Banner = () => {
         className={styles.banner}
         onMouseMove={handleMouseMove}
         style={{
-          height: "80vh",
           // background: "linear-gradient(to right, #1a1a1a, #3e236e)", // Single color gradient
         }}
       >
@@ -138,7 +137,13 @@ const Banner = () => {
             }}
           />
           </div>
-          <div className={styles.subtitle}>Nosaki īpašuma cenu ātri un vienkārši</div>
+          <div className={styles.subtitle}>
+            Izstrādājiet un pielāgojiet cenu modeļus, lai atspoguļotu jūsu uzņēmuma un klientu vajadzības
+            </div>
+          <Button className={styles["get-started-button"]} type="primary" size="large">
+            Pievieno savu pirmo objektu
+          </Button>
+
           {/* <div>
             <Button type="primary" size="large">
               Learn More

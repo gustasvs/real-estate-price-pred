@@ -1,0 +1,94 @@
+.form-container {
+    display: flex;
+    flex-direction: column;
+    margin: 1em auto 3em auto;
+    max-width: 800px;
+    color: var(--background-light-secondary);
+}
+
+.label {
+    color: var(--text-brighter);
+    font-size: 24px;
+    width: 200px;
+}
+
+
+.upload-drag-icon svg {
+    font-size: 65px;
+    fill: var(--text-brighter);
+}
+
+.upload-text {
+    color: var(--background-light-secondary);
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 auto 1em auto;
+}
+
+.upload-hint {
+    color: var(--background-light-secondary);
+    font-size: 14px;
+    font-weight: 400;
+    margin: 0 auto 1em auto;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    width: 100%;
+    gap: 3em;
+}
+
+.cancel-button {
+    background-color: var(--background-light-secondary);
+    color: var(--background-dark-secondary);
+    border-radius: 30px;
+    height: 48px;
+    width: 30%;
+    margin: 2em auto 0 auto;
+    padding: 0 24px; /* padding for text inside the button */
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.submit-button {
+    background-color: var(--background-dark-secondary);
+    color: var(--background-light-secondary);
+    border-radius: 30px;
+    height: 48px;
+    width: 70%;
+    margin: 2em auto 0 auto;
+    padding: 0 24px; /* padding for text inside the button */
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.submit-button:hover {
+    background-color: var(--background-light-secondary);
+    color: var(--background-dark-secondary);
+}
+
+.input-field {
+    background-color: var(--background-light-main);
+    color: var(--background-dark-secondary);
+    border-radius: 30px;
+    height: 48px;
+    width: 100%;
+    margin: 0 auto 1em auto;
+    padding: 0 24px; /* padding for text inside the input field */
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+}

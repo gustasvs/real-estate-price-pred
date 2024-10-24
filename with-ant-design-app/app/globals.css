@@ -1,8 +1,14 @@
 
 :root {
+
+  font-size: 22px;
+
   --foreground-rgb: #dddddd;
   --background-dark-main: #222426;
-  --background-dark-secondary: #35393b;
+  /* --background-dark-secondary: #35393b; */
+
+  --background-dark-secondary: #595c5e;
+  /* --background-dark-secondary: #2a2e2f; */
 
   --background-light-main: #bbbbbb;
   --background-light-secondary: #dddddd;
@@ -21,6 +27,7 @@
 }
 
 body {
+  font-family: "DINNextW1G", sans-serif;
   margin: 0;
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(

@@ -91,8 +91,8 @@ const GroupPage = ({ searchParams }: { searchParams: any }) => {
     <GenericLayout>
       <MasonryTable
         columnCount={4}
-        onCardClick={(id) => {
-          router.push(`/groups/${group_id}/objects/${id}`);
+        onCardEdit={(id) => {
+          router.push(`/groups/${group_id}/${id}`);
         }}
         objects={objects}
         createObject={openNewObjectForm}

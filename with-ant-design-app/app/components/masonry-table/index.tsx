@@ -16,7 +16,7 @@ import { useState } from "react";
 
 const MasonryTable = ({
   columnCount,
-  onCardClick = () => {},
+  onCardEdit = () => {},
   objects,
   createObject = () => {},
   deleteObject = () => {},
@@ -24,7 +24,7 @@ const MasonryTable = ({
   loading = false,
 }: {
   columnCount: number;
-  onCardClick?: (id: number) => void;
+  onCardEdit?: (id: number) => void;
   objects: any[];
   createObject: () => void;
   deleteObject: (id: string) => void;
@@ -89,7 +89,7 @@ const MasonryTable = ({
     return result;
   };
 
-  const rowPattern = [2, 4, 3]; // This defines the pattern of rows per column
+  const rowPattern = [2, 3, 2]; // This defines the pattern of rows per column
   const rowItems = distributeItems(objects, rowPattern);
 
   console.log("rowItems", rowItems);
@@ -108,6 +108,8 @@ const MasonryTable = ({
       breadcrumbName: "Third-level Menu",
     },
   ];
+
+  // TODO implement flex grow from here: https://www.jiddo.ca/collection
 
   return (
     <div className={styles["masonry-table-container"]}>
@@ -154,7 +156,6 @@ const MasonryTable = ({
                 <div
                   id={`item-${item.id}`}
                   className={styles["content"]}
-                  onClick={() => onCardClick(item.id)}
                   key={item.id}
                   style={{
                     marginBottom: 20, // Maintain bottom margin for spacing
@@ -177,12 +178,13 @@ const MasonryTable = ({
                   </div>
                   {/* other images */}
                   <div className={styles["content-images-other"]}>
-                  {item.pictures.length > 1 && (
+                    {item.pictures.length > 1 && item.pictures.slice(1, 3).map((picture: string, index: number) => {
+                      return (
                       <img
                         src={
-                          item.pictures[1]?.startsWith("data:image")
-                            ? item.pictures[1]
-                            : `data:image/png;base64,${item.pictures[1]}`
+                          picture?.startsWith("data:image")
+                            ? picture
+                            : `data:image/png;base64,${picture}`
                         }
                         alt="content"
                         style={{
@@ -191,7 +193,8 @@ const MasonryTable = ({
                           display: "block", // Remove any inline image spacing issues
                         }}
                       />
-                  )}
+                      )
+                    })}
                   </div>
                     
 
@@ -337,18 +340,11 @@ const MasonryTable = ({
                         <div className={styles["content-description-actions"]}>
                           <Button
                             type="primary"
-                            onClick={() => updateObject(item.id, item)}
+                            onClick={() => onCardEdit(item.id)}
                             className={`${styles["content-description-action"]} ${styles["content-description-action-edit"]}`}
                           >
                             <EditOutlined />
                             Rediģēt
-                          </Button>
-                          <Button
-                            type="primary"
-                            onClick={() => deleteObject(item.id)}
-                            className={`${styles["content-description-action"]} ${styles["content-description-action-delete"]}`}
-                          >
-                            Dzēst
                           </Button>
                         </div>
                       </div>
