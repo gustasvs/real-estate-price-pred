@@ -1,7 +1,7 @@
 
 :root {
 
-  font-size: 22px;
+  font-size: 19px;
 
   --foreground-rgb: #dddddd;
   --background-dark-main: #222426;
@@ -13,6 +13,7 @@
   --background-light-main: #bbbbbb;
   --background-light-secondary: #dddddd;
   --background-gray: #7f7f7f;
+  /* --background-gray: #cdcbc8; */
 
   --text-bright: #e8e6e3;
   --text-brighter: #fff7f7;

@@ -90,14 +90,6 @@ const GroupsPage = () => {
 
   return (
     <GenericLayout>
-      <PageHeader
-        ghost={false}
-        onBack={() => window.history.back()}
-        title="Manas grupas"
-        subTitle="Šeit var redzēt visas manas grupas"
-        // breadcrumb={{ routes }}
-      >
-      </PageHeader>
       <Divider />
         <CardTable columnCount={3} onCardClick={(id: number) => navigateToGroup(id)} groups={groups} deleteGroup={deleteGroup} 
         createGroup={createGroup} updateGroup={updateGroup} loading={loading}

@@ -14,6 +14,7 @@ import { Session } from "next-auth";
 import { logout } from "../../../../actions/auth";
 import Dropdown from "antd/es/dropdown/dropdown";
 import { useRouter } from "next/navigation";
+import UserIcon from "../../user-icon/UserIcon";
 
 const Navbar = ({
   toggle,
@@ -135,18 +136,11 @@ const Navbar = ({
                 )}
               >
                 <div className={styles["user-box"]}>
+                <UserIcon />
                 <span className={styles["user-email"]}>
-                  {session?.user?.email}
+                  {session?.user?.name || session?.user?.email}
                 </span>
-                {session?.user?.image ? (
-                  <img
-                    src={session?.user?.image}
-                    alt="User Image"
-                    className={styles["user-image"]}
-                  />
-                ) : (
-                  <div className={styles["blank-user-image"]} />
-                )}
+                <DownOutlined className={styles["down-icon"]} />
                 </div>
               </Dropdown>
             </div>

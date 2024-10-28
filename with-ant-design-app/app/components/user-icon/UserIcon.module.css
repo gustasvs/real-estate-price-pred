@@ -1,0 +1,16 @@
+.blank-user-image {
+    display: flex;
+    background-color: var(--background-light-secondary);
+    color: var(--background-dark-main);
+    border-radius: 50%;
+    height: 42px;
+    width: 42px;
+    justify-content: center;
+    align-items: center;
+}
+
+.user-image {
+    border-radius: 50%;
+    height: 42px;
+    width: 42px;
+}

@@ -21,8 +21,20 @@ export const {
     // this is what gets returned when await auth() is called
     
     session: async ({ session, token }) => {
-      if (session?.user && token.sub) {
-          session.user.id = token.sub;
+      if (token.sub) {
+        // Fetch the updated user data from the database using the user's ID (token.sub)
+        const updatedUser = await db.user.findUnique({
+          where: { id: token.sub },
+        });
+
+        if (updatedUser) {
+          session.user = {
+            ...session.user,
+            ...updatedUser,
+            email: updatedUser.email || "", // Ensure email is always a string
+            id: token.sub, // Ensure the user ID is always included
+          };
+        }
       }
       return session;
     },

@@ -1,145 +1,96 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { updateUserProfile as updateUserProfileApi } from "../../actions/user";
-import { Input, Button, Select, message, Upload, Spin, Divider } from "antd";
+import React, { useState } from "react";
+import { Divider } from "antd";
 import { PageHeader } from "@ant-design/pro-components";
-import { UploadOutlined } from "@ant-design/icons";
-import styles from "./Profile.module.css"; // Assuming you have CSS module for styling
+import { HeartOutlined, UploadOutlined, UserOutlined } from "@ant-design/icons";
+import styles from "./Profile.module.css";
+import GenericLayout from "../components/generic-page-layout";
+import { IoSettingsOutline } from "react-icons/io5";
+import MyProfileForm from "../components/my-profile/my-profile-form/MyProfileForm";
+
+import { useRouter, useSearchParams } from "next/navigation";
+
+
+const sidebarItems = [
+  {
+    id: 1,
+    icon: <UserOutlined />,
+    label: "Lietotāja informācija",
+    item: <MyProfileForm />,
+  },
+  {
+    id: 2,
+    icon: <HeartOutlined />,
+    label: "Atzīmetas dzīvesvietas",
+    item: <div>Atzīmetas dzīvesvietas</div>,
+  },
+  {
+    id: 3,
+    icon: <IoSettingsOutline />,
+    label: "Iestatījumi",
+    item: <div>Iestatījumi</div>,
+  },
+];
 
 const UserProfilePage = () => {
-  const { data: session, status } = useSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  
+  const initialNavItem = Number(searchParams.get("activeNavItem")) || 1;
+  const [activeNavItem, setActiveNavItem] = useState(initialNavItem);
+  const [prevActiveNavItem, setPrevActiveNavItem] = useState(initialNavItem);
 
-  const [profile, setProfile] = useState({
-    name: "",
-    email: "",
-    role: "ADMIN", // Default role
-    image: "",
-  });
-  const [loading, setLoading] = useState(false);
-  const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    if (session) {
-      setProfile({
-        name: session.user?.name || "",
-        email: session.user?.email || "",
-        role: session.user?.role || "ADMIN",
-        image: session.user?.image || "",
-      });
-    }
-  }, [session]);
-
-  const handleUpdateProfile = async () => {
-    if (!profile.name.trim() || !profile.email.trim()) {
-      message.error("Vārds un e-pasts nevar būt tukši");
-      return;
-    }
-
-    setSaving(true);
-    try {
-      await updateUserProfileApi({
-        name: profile.name,
-        email: profile.email,
-        role: profile.role,
-        image: profile.image,
-      });
-      message.success("Profils veiksmīgi atjaunināts!");
-    } catch (error) {
-      console.error("Kļūda atjauninot profilu:", error);
-      message.error("Kļūda atjauninot profilu.");
-    } finally {
-      setSaving(false);
-    }
+  const handleNavClick = (newActiveNavItem: number) => {
+    setPrevActiveNavItem(activeNavItem);
+    setActiveNavItem(newActiveNavItem);
   };
 
-  const handleImageUpload = (file) => {
-    // Implement your logic to upload the image (e.g., upload to a server or cloud storage)
-    // After uploading, set the image URL in the profile state
-    const uploadedUrl = URL.createObjectURL(file); // This is just for demo purposes
-    setProfile((prev) => ({ ...prev, image: uploadedUrl }));
-    return false; // Prevents the default upload behavior
-  };
-
-  if (status === "loading") {
-    return (
-      <div className={styles["loading-container"]}>
-        <Spin size="large" />
-      </div>
-    );
-  }
-
-  if (!session) {
-    router.push("/login");
-    return null;
-  }
+  console.log(activeNavItem, prevActiveNavItem);
+  
 
   return (
-    <div className={styles["profile-page-container"]}>
-      <PageHeader title="Mans Profils" />
-      <Divider />
+    <GenericLayout>
+      <div className={styles["profile-page-container"]}>
+        <div className={styles["left-sidebar"]}>
 
-      <div className={styles["form-container"]}>
-        <label className={styles["form-label"]}>Vārds</label>
-        <Input
-          value={profile.name}
-          onChange={(e) => setProfile({ ...profile, name: e.target.value })}
-          placeholder="Name"
-        />
+          <div className={styles["left-sidebar-header"]}>
+            <div className={styles["left-sidebar-header-title"]}>
+              <span>Mans profils</span>
+            </div>
+          </div>
 
-        <label className={styles["form-label"]} style={{ marginTop: "1rem" }}>
-          E-pasts
-        </label>
-        <Input
-          value={profile.email}
-          onChange={(e) => setProfile({ ...profile, email: e.target.value })}
-          placeholder="Email"
-        />
+          {/* Sidebar items */}
+          <div className={styles["left-sidebar-items"]}>
+            {/* Indicator */}
+            <div
+              className={styles.indicator}
+              style={{ top: `${(activeNavItem - 1) * 8}em` }}
+            ></div>
+            {sidebarItems.map((item) => (
+              <div
+                key={item.id}
+                className={`${styles["left-sidebar-item"]} ${
+                  activeNavItem === item.id ? styles.active : ""
+                }`}
+                onClick={() => handleNavClick(item.id)}
+              >
+                {item.icon}
+                <span className={styles["left-sidebar-item-label"]}>
+                  {item.label}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
 
-        <label className={styles["form-label"]} style={{ marginTop: "1rem" }}>
-          Loma
-        </label>
-        <Select
-          value={profile.role}
-          onChange={(value) => setProfile({ ...profile, role: value })}
-          options={[
-            { label: "Admins", value: "ADMIN" },
-            { label: "Lietotājs", value: "USER" },
-          ]}
-        />
-
-        <label className={styles["form-label"]} style={{ marginTop: "1rem" }}>
-          Profila bilde
-        </label>
-        <Upload
-          beforeUpload={handleImageUpload}
-          showUploadList={false}
-          accept="image/*"
-        >
-          <Button icon={<UploadOutlined />}>Augšupielādēt bildi</Button>
-        </Upload>
-        {profile.image && (
-          <img
-            src={profile.image}
-            alt="Profile"
-            className={styles["profile-image-preview"]}
-            style={{ marginTop: "1rem" }}
-          />
-        )}
-
-        <Button
-          type="primary"
-          onClick={handleUpdateProfile}
-          loading={saving}
-          style={{ marginTop: "1.5rem" }}
-        >
-          Saglabāt izmaiņas
-        </Button>
+        <div className={`${styles['main-content']} ${activeNavItem > prevActiveNavItem ? 'slide-down' : 'slide-up'}`}>
+          {sidebarItems &&
+            sidebarItems.find((item) => item.id === activeNavItem)?.item}
+        </div>
       </div>
-    </div>
+    </GenericLayout>
   );
 };
 
