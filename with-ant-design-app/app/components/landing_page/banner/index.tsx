@@ -7,7 +7,7 @@ import styles from "./Banner.module.css"; // Ensure you create a CSS module for 
 import { Parallax } from "rc-scroll-anim";
 
 const Banner = () => {
-  const numberOfObjects = 50; // Define the number of cubes
+  const numberOfObjects = 90;
 
   const bannerRef = useRef<HTMLDivElement>(null);
   const [bannerSize, setBannerSize] = useState({ width: 0, height: 0 });
@@ -67,7 +67,7 @@ const Banner = () => {
       const initialX = generateBellCurvePosition(bannerSize.width);
       const initialY = generateUniformPosition(bannerSize.height);
 
-      const randomClass = Math.floor(Math.random() * 4);
+      const randomClass = Math.floor(Math.random() * 8);
       const cubeClass = `cube-${randomClass}`;
 
       //   console.log(bannerSize);
@@ -90,18 +90,17 @@ const Banner = () => {
         key={index}
         style={{
           position: "absolute",
-          width: "7px",
-          height: "7px",
+          width: "0.5rem",
+          height: "0.5rem",
           left: `calc(50% + ${x}px)`,
           top: `calc(50% + ${y}px)`,
-          opacity: layer / 4,
+          opacity: layer / 5,
           transform: `translate(-50%, -50%)`,
           animationDelay: `${index * 0.5}s`, // Delay based on index, modify as needed
           // transition: "left 0.1s linear, top 0.1s linear",
-          ...(layer && { '--scale': layer.toString() } as React.CSSProperties)
-
+          ...(layer && { '--scale': (3 + (layer / 2)).toString() } as React.CSSProperties)
         }}
-        className={`${styles[cubeClass]} ${styles.wander}`}
+        className={`${styles[cubeClass]} ${styles.wander} ${styles.cube}`}
       />
     );
   });
