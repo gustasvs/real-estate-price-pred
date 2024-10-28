@@ -8,13 +8,14 @@ import {
   MenuProps,
   Dropdown,
   Space,
+  Button,
 } from "antd";
 import Image from "next/image";
 
 import styles from "./Groups.module.css";
 import { useRouter } from "next/navigation";
 import NewGroupModal from "./new-card-modal";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { create } from "domain";
 
 const CardTable = ({
@@ -38,42 +39,37 @@ const CardTable = ({
 
   const [newGroupModalVisible, setNewGroupModalVisible] = useState(false);
 
+  const [editGroupId, setEditGroupId] = useState(null);
+  const [editGroupName, setEditGroupName] = useState('');
+
+
   const rowGutter: [number, number] = [16, 16];
   const colSpan: number = 24 / columnCount;
-
-  const items: MenuProps["items"] = [
-    {
-      key: "1",
-      label: (
-        <a
-          className={styles["dropdown-item"]}
-          target="_blank"
-          rel="noopener noreferrer"
-          href="https://www.antgroup.com"
-        >
-          1st menu item
-        </a>
-      ),
-    },
-    {
-      key: "4",
-      danger: true,
-      label: (
-        <span className={styles["dropdown-danger-item"]}>Dzēst grupu</span>
-      ),
-    },
-  ];
 
   const handleAddButtonClick = () => {
     setNewGroupModalVisible(true); // Open modal on add button click
   };
+  
+  const cardRef = useRef(null);
 
   return (
     <>
       <NewGroupModal
         open={newGroupModalVisible}
         setOpen={setNewGroupModalVisible}
+        isEditing={editGroupId !== null}
+        groupName={editGroupName}
+        setGroupName={setEditGroupName}
         addGroup={createGroup}
+        onSubmit={(groupName: string) => {
+          if (editGroupId !== null) {
+            updateGroup(editGroupId, groupName);
+            setEditGroupId(null);
+          } else {
+            createGroup(groupName);
+          }
+          setNewGroupModalVisible(false);
+        }}
       />
       <div
         style={{ display: "flex", justifyContent: "center" }}
@@ -102,32 +98,53 @@ const CardTable = ({
                 onClick={() => {
                   onCardClick(group.id);
                 }}
+                ref={cardRef}
               >
                 <div className={styles["edit-group-dropdown"]}>
-                      <Dropdown
-                        menu={{ items }}
-                        open={true}
-                        placement="bottomLeft"
-                        overlayClassName={styles["edit-group-dropdown-menu"]}
-                        getPopupContainer={(trigger) =>
-                          trigger.parentNode as HTMLElement
-                        }
-                        dropdownRender={(menu) => (
-                          <div
-                            className={styles["dropdown-container-wrapper"]}
-                          >
-                            {menu}
-                          </div>
-                        )}
-                        className={styles["edit-group-dropdown-container"]}
+                  <Dropdown
+                    placement="bottom"
+                    dropdownRender={(menu) => (
+                      <div className={styles["dropdown-container-wrapper"]}
+                      onMouseEnter={(e) => {
+                        e.stopPropagation();
+                        // set card to have hoeverd effect
+                        // cardRef.setState({hovered: true});
+                      }}
                       >
-                        <a onClick={(e) => e.preventDefault()}>
-                          <Space>
-                            <EditOutlined />
-                          </Space>
-                        </a>
-                      </Dropdown>
+                        <Button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setEditGroupId(group.id);
+                            setEditGroupName(group.name);
+                            setNewGroupModalVisible(true);
+                          }}
+                          
+                        >
+                          Edit
+                          <EditOutlined />
+                        </Button>
+                        <Button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteGroup(group.id);
+                          }}
+                          className={styles["delete-group-button"]}
+                        >
+                          Delete
+                          <CloseOutlined />
+                        </Button>
                       </div>
+                    )}
+                    className={styles["edit-group-dropdown-container"]}
+                  >
+                    <a onClick={(e) => {
+                      e.preventDefault(); e.stopPropagation()}}>
+                      <Space>
+                        <EditOutlined />
+                      </Space>
+                    </a>
+                  </Dropdown>
+                </div>
                 <div className={styles["content"]}>
                   {/* <Image
                     src={group.imageUrl}
@@ -177,7 +194,7 @@ const CardTable = ({
                     height={200}
                   />
                 </div>
-                <h4 style={{ color: "#ffffff" }}>{"Pievienot jaunu"}</h4>
+                <h4 style={{ color: "#ffffff" }}>{"Pievienot jaunu grupu"}</h4>
               </div>
             </div>
           </Col>

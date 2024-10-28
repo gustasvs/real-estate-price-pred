@@ -169,6 +169,7 @@
     transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
   }
 
+
   .edit-group-dropdown svg {
     color: #ffffff;
     width: 25px;
@@ -185,21 +186,19 @@
   color: var(--background-dark-secondary);
  }
 
- .edit-group-dropdown .dropdown-container-wrapper .ant-dropdown-menu {
-  background-color: var(--background-light-secondary) !important;
-  color: var(--background-dark-secondary);
+
+ .dropdown-container-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  outline: 1px solid var(--background-dark-secondary);
+  border-radius: 10px;
+  padding: 20px;
+  gap: 1em;
  }
 
   .delete-group-button {
-    position: absolute;
-    top: 30px;
-    right: 30px;
-    background: var(--group-main);
-    color: #ffffff;
-    border: none;
-    border-radius: 50%;
-    width: 10px;
-    height: 10px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -218,7 +217,7 @@
       transform: translateY(0);
     }
     50% {
-      transform: translateY(-3px);
+      transform: translateY(-2px);
     }
     100% {
       transform: translateY(0);

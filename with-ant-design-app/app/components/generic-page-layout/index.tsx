@@ -28,7 +28,7 @@ const GenericLayout: React.FC<{ children?: React.ReactNode, homePage?: boolean }
     <Navbar toggle={()=>{}} homePage={homePage}/>
     <Layout
       className={styles["layout-container"]}
-      style={{ backgroundColor: "var(--background-dark-secondary)" }}
+      style={{ backgroundColor: "var(--background-dark-main)" }}
     >
       <Content style={{ margin: homePage ? 'none' : '6rem 48px 0px 48px', borderRadius: borderRadiusLG }}
         className={styles["site-layout"]}
