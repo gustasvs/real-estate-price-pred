@@ -6,7 +6,7 @@ import Logo from "./Logo";
 import styles from "./Navbar.module.css"; // Import the new CSS module
 import Column from "antd/es/table/Column";
 import { Button, Divider } from "antd";
-import { DownOutlined } from "@ant-design/icons";
+import { DownOutlined, MoonOutlined, SunOutlined } from "@ant-design/icons";
 import SignUpModal from "./sign-up-modal";
 import LoginModal from "./log-in-modal";
 import { getSession, useSession } from "next-auth/react";
@@ -88,9 +88,31 @@ const Navbar = ({
           ) : (
             <div className={styles["profile-container"]}>
               <Dropdown
+              open={true}
                 dropdownRender={(menu) => (
                   <div className={styles["profile-dropdown-container"]} >
-                    {/* {menu} */}
+                    <div className={styles["profile-dropdown-header"]}>
+                      <UserIcon />
+                      <div className={styles["profile-dropdown-header-text"]}>
+                      <span className={styles["user-name"]}>
+                          {session?.user?.name}
+                        </span>
+                        <span className={styles["user-email"]}>
+                          {session?.user?.email}
+                        </span>
+                    </div>
+                    </div>
+
+                    <Divider className={styles["divider"]} />
+
+                    <div className={styles["color-mode-container"]}>
+                      <Button className={styles["color-mode-button"]}>
+                        <SunOutlined />
+                      </Button>
+                      <Button className={styles["color-mode-button"]}>
+                        <MoonOutlined />
+                      </Button>
+                    </div>
                     
                     <Button
                       className={styles["rounded-button"]}
@@ -128,6 +150,7 @@ const Navbar = ({
                       onClick={async () => {
                         console.log("logging out");
                         await logout();
+                        session ? console.log("logged out") : console.log("not logged out");
                       }}
                     >
                       <span>Izrakstīties</span>

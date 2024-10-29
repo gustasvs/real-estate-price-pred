@@ -39,10 +39,12 @@ export const {
       return session;
     },
     jwt: async ({ user, token }) => {
-      console.log("jwt callback", user, token);
+      // console.log("jwt callback", user, token);
       if (user) {
         token.sub = user.id;
+        token.picture = "none"; // do NOT include picture in token
       }
+      console.log("token returned after jwt callback", token);
       return token;
     },
   },

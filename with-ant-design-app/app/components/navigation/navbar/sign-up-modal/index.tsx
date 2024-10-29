@@ -7,6 +7,7 @@ import {
 } from "@ant-design/icons";
 import styles from "./SignUpModal.module.css";
 import { signIn } from "next-auth/react";
+// import { useRouter } from "next/router";
 
 interface SignUpModalProps {
   open: boolean;
@@ -15,6 +16,8 @@ interface SignUpModalProps {
 
 const SignUpModal: React.FC<SignUpModalProps> = ({ open, setOpen }) => {
   const [error, setError] = useState<string | null>(null);
+
+  // const router = useRouter();
 
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -59,14 +62,19 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ open, setOpen }) => {
       return;
     }
     
-    await signIn("credentials", {
+    const result = await signIn("credentials", {
       email: values.email,
       password: values.password,
       confirmPassword: values.confirmPassword,
       redirect: false, // Prevent automatic navigation on error
     });
-    
-    setError(null);
+
+    if (result && "error" in result) {
+      setError("Kļūda reģistrējoties! Lūdzu pārbaudiet ievadītos datus, vai mēģiniet vēlreiz vēlāk.");
+    } else {
+      setError(null);
+      // router.push("/profile");
+    }
   };
 
   return (
