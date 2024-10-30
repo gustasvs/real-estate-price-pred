@@ -10,10 +10,12 @@
 .masonry-table-container,
 .site-page-header {
     background-color: var(--background-dark-secondary);
+    border-radius: 1em;
 }
 
 .masonry-table-container {
     min-height: 70vh;
+    width: 100%;
 }
 
 .masonry-table-header {
@@ -108,12 +110,11 @@
     transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-.content-wrapper:hover .content {
+.content-wrapper:hover .content:not(.content-add) {
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;    
     overflow: visible;
 }
-
 
 .content-add {
     height: 250px;

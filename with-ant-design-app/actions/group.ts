@@ -48,6 +48,31 @@ const session = await auth();
   }
 };
 
+// Get minimal group info for sidebar
+export const getGroupsForSidebar = async () => {
+  const session = await auth();
+  console.log("session in groups", session);
+  const user = session?.user;
+  if (!user || !user.id) {
+    return { error: "Unauthorized" };
+  }
+  const userId = user.id;
+
+  try {
+    const groups = await db.residenceGroup.findMany({
+      where: { userId: userId },
+      select: {
+        id: true, // include only necessary fields
+        name: true,
+        // add any other fields required for the sidebar
+      },
+    });
+    return groups;
+  } catch (error) { 
+    console.error("Error getting groups for sidebar:", error);
+    return { error: "Failed to get groups for sidebar" };
+  }
+};
 
 
 // Create a new group

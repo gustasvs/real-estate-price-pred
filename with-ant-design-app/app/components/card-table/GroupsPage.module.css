@@ -1,7 +1,7 @@
 .groups-page {
     background: 
     radial-gradient(circle at center 240em,
-    var(--background-light-secondary) 95%, 
+    var(--background-dark-secondary) 95%, 
     transparent 50%
   );
   /* linear-gradient(

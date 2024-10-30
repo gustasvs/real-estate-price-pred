@@ -5,8 +5,12 @@ import { Button, Divider } from "antd";
 import styles from "./Banner.module.css"; // Ensure you create a CSS module for styling
 
 import { Parallax } from "rc-scroll-anim";
+import { useRouter } from "next/navigation";
 
 const Banner = () => {
+
+  const router = useRouter();
+
   const numberOfObjects = 90;
 
   const bannerRef = useRef<HTMLDivElement>(null);
@@ -139,7 +143,11 @@ const Banner = () => {
           <div className={styles.subtitle}>
             Izstrādājiet un pielāgojiet cenu modeļus, lai atspoguļotu jūsu uzņēmuma un klientu vajadzības
             </div>
-          <Button className={styles["get-started-button"]} type="primary" size="large">
+          <Button className={styles["get-started-button"]} type="primary" size="large"
+            onClick={() => {
+              router.push("/groups");
+            }}
+          >
             Pievieno savu pirmo objektu
           </Button>
 

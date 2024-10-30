@@ -30,7 +30,7 @@ const GenericLayout: React.FC<{ children?: React.ReactNode, homePage?: boolean }
       className={styles["layout-container"]}
       style={{ backgroundColor: "var(--background-dark-main)" }}
     >
-      <Content style={{ margin: homePage ? 'none' : '6rem 48px 0px 48px', borderRadius: borderRadiusLG }}
+      <Content style={{ margin: homePage ? 'none' : '6rem 2rem 3rem 3rem', borderRadius: borderRadiusLG }}
         className={styles["site-layout"]}
 
       >

@@ -43,8 +43,8 @@ const Sidebar: React.FC<SidebarProps> = ({
       <div className={styles["left-sidebar-items"]}>
         <div
           className={styles.indicator}
-          style={{ top: `${(activeNavItem - 1) * 8}em` }}
-        ></div>
+          style={{ top: `${activeNavItem * 8}em` }}
+        />
         {sidebarItems.map((item) => (
           <div
             key={item.id}

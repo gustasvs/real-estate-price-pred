@@ -10,6 +10,7 @@ import { IoSettingsOutline } from "react-icons/io5";
 import MyProfileForm from "../components/my-profile/my-profile-form/MyProfileForm";
 
 import { useRouter, useSearchParams } from "next/navigation";
+import Sidebar from "../components/navigation/sidebar/Sidebar";
 
 
 const sidebarItems = [
@@ -42,48 +43,16 @@ const UserProfilePage = () => {
   const [prevActiveNavItem, setPrevActiveNavItem] = useState(initialNavItem);
 
 
-  const handleNavClick = (newActiveNavItem: number) => {
+  const handleNavClick = (newActiveNavItem: number | string) => {
     setPrevActiveNavItem(activeNavItem);
-    setActiveNavItem(newActiveNavItem);
+    setActiveNavItem(Number(newActiveNavItem));
   };
-
-  console.log(activeNavItem, prevActiveNavItem);
-  
 
   return (
     <GenericLayout>
       <div className={styles["profile-page-container"]}>
-        <div className={styles["left-sidebar"]}>
 
-          <div className={styles["left-sidebar-header"]}>
-            <div className={styles["left-sidebar-header-title"]}>
-              <span>Mans profils</span>
-            </div>
-          </div>
-
-          {/* Sidebar items */}
-          <div className={styles["left-sidebar-items"]}>
-            {/* Indicator */}
-            <div
-              className={styles.indicator}
-              style={{ top: `${(activeNavItem - 1) * 8}em` }}
-            ></div>
-            {sidebarItems.map((item) => (
-              <div
-                key={item.id}
-                className={`${styles["left-sidebar-item"]} ${
-                  activeNavItem === item.id ? styles.active : ""
-                }`}
-                onClick={() => handleNavClick(item.id)}
-              >
-                {item.icon}
-                <span className={styles["left-sidebar-item-label"]}>
-                  {item.label}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
+          <Sidebar sidebarItems={sidebarItems} activeNavItem={activeNavItem} onNavClick={handleNavClick} title="Mans profils" />
 
         <div className={`${styles['main-content']} ${activeNavItem > prevActiveNavItem ? 'slide-down' : 'slide-up'}`}>
           {sidebarItems &&

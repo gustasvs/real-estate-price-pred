@@ -132,7 +132,7 @@ const Navbar = ({
           ) : (
             <div className={styles["profile-container"]}>
               <Dropdown
-                open={true}
+                // open={true}
                 dropdownRender={(menu) => (
                   <div
                     className={
@@ -199,7 +199,7 @@ const Navbar = ({
                         ]
                       }
                       onClick={() => {
-                        router.push("/profile");
+                        router.push("/groups");
                       }}
                     >
                       <FaHouse />

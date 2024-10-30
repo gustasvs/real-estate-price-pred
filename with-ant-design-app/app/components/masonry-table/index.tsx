@@ -89,59 +89,28 @@ const MasonryTable = ({
     return result;
   };
 
-  const rowPattern = [2, 3, 2]; // This defines the pattern of rows per column
-  const rowItems = distributeItems(objects, rowPattern);
+  const rowPattern = [2, 3, 2]; 
 
-  console.log("rowItems", rowItems);
+  const addItemPlaceholder = { id: null }; // Define the placeholder
+  const itemsWithPlaceholder = [...objects, addItemPlaceholder]; // Append the placeholder
 
-  const routes = [
-    {
-      path: "index",
-      breadcrumbName: "First-level Menu",
-    },
-    {
-      path: "first",
-      breadcrumbName: "Second-level Menu",
-    },
-    {
-      path: "second",
-      breadcrumbName: "Third-level Menu",
-    },
-  ];
+  const rowItemsWithAddItem = distributeItems(itemsWithPlaceholder, rowPattern); // Distribute normally
+
+
+  console.log("rowItems", rowItemsWithAddItem);
+
 
   // TODO implement flex grow from here: https://www.jiddo.ca/collection
 
   return (
     <div className={styles["masonry-table-container"]}>
-      <PageHeader
-        ghost={false}
-        onBack={() => window.history.back()}
-        title="Grupas objekti"
-        subTitle="Šeit var redzēt visus grupas objektus"
-        breadcrumb={{ items: routes }}
-        breadcrumbRender={(props, originBreadcrumb) => {
-          return originBreadcrumb;
-        }}
-        className={styles["site-page-header"]}
-        extra={[
-          <Button onClick={animateAndSort} key="3">
-            Kārtot pēc pievienošanas laika
-          </Button>,
-          <Button onClick={animateAndSort} key="2">
-            Kārtot pēc cenas
-          </Button>,
-          <Button onClick={animateAndSort} type="primary">
-            <span>Kārtot</span>
-          </Button>,
-        ]}
-      ></PageHeader>
       <Divider />
       {/* <div className={styles["masonry-table"]}> */}
       <Row
         gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}
         style={{ width: "90%", margin: "0 auto" }}
       >
-        {rowItems.map((itemsInRow, rowIndex) => (
+        {rowItemsWithAddItem.map((itemsInRow, rowIndex) => (
           <Row
             key={`row-${rowIndex}`}
             style={{ width: "100%" }}
@@ -153,6 +122,19 @@ const MasonryTable = ({
                 span={Math.min(24 / itemsInRow.length, 12)}
                 key={item.id}
               >
+
+              {item.id === null ? (
+                <div
+                  onClick={handleAddButtonClick}
+                  className={`${styles["content"]} ${styles["content-add"]}`}
+                >
+                  <div className={styles["content-add-image"]}>
+                    <PlusOutlined style={{ fontSize: "48px", color: "#fff" }} />
+                  </div>
+                  <span className={styles["content-add-title"]}>Pievienot jaunu objektu</span>
+                </div>
+              ) : (
+
                 <div
                   id={`item-${item.id}`}
                   className={styles["content"]}
@@ -351,6 +333,7 @@ const MasonryTable = ({
                     </div>
                   </div>
                 </div>
+              )}
               </Col>
             ))}
           </Row>
