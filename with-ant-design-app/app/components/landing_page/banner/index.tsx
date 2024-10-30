@@ -149,6 +149,7 @@ const Banner = () => {
             }}
           >
             Pievieno savu pirmo objektu
+            <div className={styles["loader"]}></div>
           </Button>
 
           {/* <div>

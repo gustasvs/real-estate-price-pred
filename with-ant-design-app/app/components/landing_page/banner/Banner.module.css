@@ -73,6 +73,16 @@
     align-items: center;
 }
 
+.loader {
+    background: url("/loader/loader.gif");
+    width: 100px;
+    height: 100px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+  filter: grayscale(100%);
+  }
+
 .get-started-button:hover {
     background-color: var(--background-dark-secondary);
     color: var(--background-light-secondary);
