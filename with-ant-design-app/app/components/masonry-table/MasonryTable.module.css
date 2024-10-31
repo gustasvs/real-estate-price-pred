@@ -147,7 +147,7 @@
 
 
 .content {
-    height: 300px;
+    height: 260px;
     break-inside: avoid;
     margin-bottom: 20px;
     background-color: var(--background-dark-main);
@@ -198,10 +198,25 @@
     background-color: var(--background-light-secondary);
 }
 
+.content-image-container {
+    position: relative;
+    width: 110%;
+    outline: 2px solid red;
+    margin-left: 0;
+    margin-right: 0;
+    transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.content-wrapper:hover .content-image-container {
+    margin-left: -5%;
+    margin-right: -5%;
+}
+
 .content-image {
-    display: inline-block;
-    width: auto;
-    height: 250px;
+    width: 33.3333333333%;
+    height: 100%;
+    object-fit: cover;
+
     max-width: 50%;
     background-size: auto 100%;
     background-repeat: no-repeat;
@@ -219,20 +234,21 @@
 }
 
 .content-wrapper:hover .content-image {
-    transform: translateY(-49px) translateX(-40px);
+    transform: translateY(-70px);
     border-radius: 1em;
-    max-width: 30%;
 }
 
 .content-images-other {
+    display: inline-block;
     position: absolute;
-    width: 100%;
+
+    /* width: 2/3 */
+    width: 66.6666666667%;
     height: 100%;
     top: 0;
-    left: 0;
-    margin-left: 21px;
+    left: 33.3333333333%;
     transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
-    transform: translateX(0) translateY(0);
+    transform: translateX(-33.3333333333%) translateY(0);
     overflow: hidden;
 }
 
@@ -240,22 +256,26 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 30%;
-    height: 250px;
+    width: 50%;
+    height: 100%;
+    object-fit: cover;
     transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
     border-radius: 1em;
+    opacity: 0;
 }
 
 .content-wrapper:hover .content-images-other {
-    transform: translateY(-70px);
+    transform: translateY(-70px) translateX(0);
 }
 
 .content-wrapper:hover .content-images-other img:nth-of-type(1) {
-    left: 35%;
+    left: 0;
+    opacity: 1;
 }
 
 .content-wrapper:hover .content-images-other img:nth-of-type(2) {
-    left: 69%;
+    left: 50%;
+    opacity: 1;
 }
 
 
@@ -268,6 +288,8 @@
     align-items: center;
     padding: 10px;
     z-index: 35;
+
+    overflow: visible;
 }
 
 .content-title-name {
@@ -429,13 +451,14 @@
     vertical-align: middle;
 }
 
+.content-description-action-favourite svg,
 .content-description-action-edit svg {
     width: 20px;
     height: 20px;
 }
 
 .content-description-action:hover .content-description-action-edit svg {
-    fill: var(--background-light-secondary);
+    fill: var(--background-dark-main);
 }
 
 .content-description-action-delete {

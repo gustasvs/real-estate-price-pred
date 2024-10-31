@@ -2,6 +2,8 @@
 
 import {
   EditOutlined,
+  HeartFilled,
+  HeartOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
 import {
@@ -189,59 +191,61 @@ const MasonryTable = ({
                     }}
                   >
                     <div
-                      className={styles["content-image"]}
-                    >
-                      <img
-                        src={
-                          item.pictures[0]?.startsWith(
-                            "data:image"
-                          )
-                            ? item.pictures[0]
-                            : `data:image/png;base64,${item.pictures[0]}`
-                        }
-                        alt="content"
-                        style={{
-                          height: "100%", // Ensure image matches the container's height
-                          // width: "auto",
-                          display: "block", // Remove any inline image spacing issues
-                        }}
-                      />
-                    </div>
-                    {/* other images */}
-                    <div
                       className={
-                        styles["content-images-other"]
+                        styles["content-image-container"]
                       }
                     >
-                      {item.pictures.length > 1 &&
-                        item.pictures
-                          .slice(1, 3)
-                          .map(
-                            (
-                              picture: string,
-                              index: number
-                            ) => {
-                              return (
-                                <img
-                                  src={
-                                    picture?.startsWith(
-                                      "data:image"
-                                    )
-                                      ? picture
-                                      : `data:image/png;base64,${picture}`
-                                  }
-                                  alt="content"
-                                  style={{
-                                    height: "100%", // Ensure image matches the container's height
-                                    width: "auto", // Maintain aspect ratio and scale the width accordingly
-                                    display: "block", // Remove any inline image spacing issues
-                                  }}
-                                />
-                              );
-                            }
-                          )}
+                      <div
+                        className={styles["content-image"]}
+                      >
+                        <img
+                          src={
+                            item.pictures[0]?.startsWith(
+                              "data:image"
+                            )
+                              ? item.pictures[0]
+                              : `data:image/png;base64,${item.pictures[0]}`
+                          }
+                          alt="content"
+                          style={{
+                            height: "100%", // Ensure image matches the container's height
+                            // width: "auto",
+                            display: "block", // Remove any inline image spacing issues
+                          }}
+                        />
+                      </div>
+                      {/* other images */}
+                      <div
+                        className={
+                          styles["content-images-other"]
+                        }
+                      >
+                        {item.pictures.length > 1 &&
+                          item.pictures
+                            .slice(1, 3)
+                            .map(
+                              (
+                                picture: string,
+                                index: number
+                              ) => {
+                                return (
+                                  <img
+                                    src={
+                                      picture?.startsWith(
+                                        "data:image"
+                                      )
+                                        ? picture
+                                        : `data:image/png;base64,${picture}`
+                                    }
+                                    alt="content"
+                                  />
+                                );
+                              }
+                            )}
+                      </div>
                     </div>
 
+                    {/* TITLE */}
                     <div
                       className={
                         styles["content-title-wrapper"]
@@ -518,6 +522,19 @@ const MasonryTable = ({
                               ]
                             }
                           >
+                            <Button
+                              type="primary"
+                              onClick={() =>
+                                onCardEdit(item.id)
+                              }
+                              className={`${styles["content-description-action"]} ${styles["content-description-action-favourite"]}`}
+                            >
+                              {item.isFavourite ? (
+                                <HeartFilled />
+                              ) : (
+                                <HeartOutlined />
+                              )}
+                            </Button>
                             <Button
                               type="primary"
                               onClick={() =>
