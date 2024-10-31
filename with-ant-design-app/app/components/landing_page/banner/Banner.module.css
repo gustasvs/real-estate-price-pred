@@ -73,36 +73,75 @@
     align-items: center;
 }
 
+.loader {
+    background: url("/loader/loader.gif");
+    width: 100px;
+    height: 100px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+  filter: grayscale(100%);
+  }
+
 .get-started-button:hover {
     background-color: var(--background-dark-secondary);
     color: var(--background-light-secondary);
 }
 
-/* Ring */
-.cube-0 {
+/* .cube-0 {
     border: 1px solid rgba(255, 255, 255, 0.8);
     border-radius: 50%;
     background-color: transparent;
   }
   
-  /* Square with smooth borders */
   .cube-1 {
     background-color: rgba(255, 255, 255, 0.8);
     border-radius: 5px;
   }
   
-  /* Filled square */
   .cube-2 {
     background-color: rgba(255, 255, 255, 0.8);
   }
-  /* triangle */
   .cube-3 {
     width: 0;
     height: 0;
     border-left: 3px solid transparent;
     border-right: 3px solid transparent;
     border-bottom: 6px solid rgba(255, 255, 255, 0.8);
+  } */
+
+  .cube {
+    background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  filter: invert(1);
   }
+
+.cube-0 {
+  background: url("/banner-icons/house1.png");
+}
+.cube-1 {
+  background: url("/banner-icons/house2.png");
+}
+
+.cube-2 {
+  background: url("/banner-icons/house3.png");
+}
+
+.cube-3 {
+  background: url("/banner-icons/house4.png");
+}
+
+.cube-4 {
+  background-image: url("/banner-icons/house5.png");
+}
+
+.cube-5 {
+  background-image: url("/banner-icons/house6.png");
+}
+.cube-6 {
+  background-image: url("/banner-icons/house7.png");
+}
   
   @keyframes wander {
     0% { transform: translate(0px, 0px) rotate(0deg) scale(var(--scale)); }

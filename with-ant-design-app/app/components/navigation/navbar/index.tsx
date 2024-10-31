@@ -6,7 +6,16 @@ import Logo from "./Logo";
 import styles from "./Navbar.module.css"; // Import the new CSS module
 import Column from "antd/es/table/Column";
 import { Button, Divider } from "antd";
-import { DownOutlined } from "@ant-design/icons";
+import {
+  DownOutlined,
+  HeartFilled,
+  HeartOutlined,
+  MoonFilled,
+  MoonOutlined,
+  SunFilled,
+  SunOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 import SignUpModal from "./sign-up-modal";
 import LoginModal from "./log-in-modal";
 import { getSession, useSession } from "next-auth/react";
@@ -14,6 +23,21 @@ import { Session } from "next-auth";
 import { logout } from "../../../../actions/auth";
 import Dropdown from "antd/es/dropdown/dropdown";
 import { useRouter } from "next/navigation";
+import UserIcon from "../../user-icon/UserIcon";
+import ColorThemeSwitch from "./dark-mode-switch/ColorThemeSwitch";
+import {
+  IoLogOutOutline,
+  IoLogOutSharp,
+  IoSettings,
+  IoSettingsOutline,
+  IoSettingsSharp,
+} from "react-icons/io5";
+import {
+  FaHouse,
+  FaHouseChimneyWindow,
+} from "react-icons/fa6";
+
+import { BiLogOut } from "react-icons/bi";
 
 const Navbar = ({
   toggle,
@@ -29,8 +53,12 @@ const Navbar = ({
 
   const router = useRouter();
 
-  const [signUpModalOpen, setSignUpModalOpen] = useState(false);
-  const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const [currentTheme, setCurrentTheme] = useState("light");
+
+  const [signUpModalOpen, setSignUpModalOpen] =
+    useState(false);
+  const [loginModalOpen, setLoginModalOpen] =
+    useState(false);
 
   return (
     <div
@@ -44,18 +72,32 @@ const Navbar = ({
             <Logo />
           </div>
           <div className={styles["menu-container"]}>
-            <Link href="/#about" className={styles["menu-item"]}>
+            <Link
+              href="/#about"
+              className={styles["menu-item"]}
+            >
               <span>Par lapu</span>
-              <DownOutlined className={styles["down-icon"]} />
+              <DownOutlined
+                className={styles["down-icon"]}
+              />
             </Link>
-            <Link href="/#services" className={styles["menu-item"]}>
+            <Link
+              href="/#services"
+              className={styles["menu-item"]}
+            >
               <span>Mani dati</span>
             </Link>
-            <Link href="/#projects" className={styles["menu-item"]}>
+            <Link
+              href="/#projects"
+              className={styles["menu-item"]}
+            >
               <span>Projekti</span>
             </Link>
 
-            <Link href="/#contacts" className={styles["menu-item"]}>
+            <Link
+              href="/#contacts"
+              className={styles["menu-item"]}
+            >
               <span>Kontakti</span>
             </Link>
           </div>
@@ -69,7 +111,10 @@ const Navbar = ({
               >
                 <span>Autorizēties</span>
               </Button>
-              <LoginModal open={loginModalOpen} setOpen={setLoginModalOpen} />
+              <LoginModal
+                open={loginModalOpen}
+                setOpen={setLoginModalOpen}
+              />
               <Button
                 className={`${styles["rounded-button"]} ${styles["button-fill"]}`}
                 // ghost
@@ -87,66 +132,137 @@ const Navbar = ({
           ) : (
             <div className={styles["profile-container"]}>
               <Dropdown
+                // open={true}
                 dropdownRender={(menu) => (
-                  <div className={styles["profile-dropdown-container"]} >
-                    {/* {menu} */}
-                    
-                    <Button
-                      className={styles["rounded-button"]}
+                  <div
+                    className={
+                      styles["profile-dropdown-container"]
+                    }
+                  >
+                    <div
+                      className={
+                        styles["profile-dropdown-header"]
+                      }
+                    >
+                      <UserIcon />
+                      <div
+                        className={
+                          styles[
+                            "profile-dropdown-header-text"
+                          ]
+                        }
+                      >
+                        <span
+                          className={styles["user-name"]}
+                        >
+                          {session?.user?.name}
+                        </span>
+                        <span
+                          className={styles["user-email"]}
+                        >
+                          {session?.user?.email}
+                        </span>
+                      </div>
+                    </div>
+
+                    <Divider
+                      className={styles["divider"]}
+                    />
+
+                    <ColorThemeSwitch
+                      currentTheme={currentTheme}
+                      setCurrentTheme={setCurrentTheme}
+                    />
+
+                    <Divider
+                      className={styles["divider"]}
+                    />
+
+                    <div
+                      className={
+                        styles[
+                          "profile-dropdown-navigation-button"
+                        ]
+                      }
                       onClick={() => {
                         router.push("/profile");
                       }}
                     >
+                      <UserOutlined />
                       <span>Mans profils</span>
-                    </Button>
+                    </div>
 
-                    <Button
-                      className={styles["rounded-button"]}
+                    <div
+                      className={
+                        styles[
+                          "profile-dropdown-navigation-button"
+                        ]
+                      }
                       onClick={() => {
                         router.push("/groups");
                       }}
                     >
+                      <FaHouse />
                       <span>Mani objekti</span>
-                    </Button>
+                    </div>
 
-                    <Button
-                      className={styles["rounded-button"]}
+                    <div
+                      className={
+                        styles[
+                          "profile-dropdown-navigation-button"
+                        ]
+                      }
+                      onClick={() => {
+                        router.push("/groups");
+                      }}
+                    >
+                      <HeartFilled />
+                      <span>Mani atzīmētie objekti</span>
+                    </div>
+
+                    <div
+                      className={
+                        styles[
+                          "profile-dropdown-navigation-button"
+                        ]
+                      }
                       onClick={() => {
                         console.log("settings");
                       }}
                     >
+                      <IoSettingsSharp />
                       <span>Iestatījumi</span>
-                    </Button>
+                    </div>
 
-                    <Divider style={{ margin: "-0.5em 0", backgroundColor: "white"
+                    <Divider
+                      className={styles["divider"]}
+                    />
 
-                     }} />
-
-                    <Button
-                      className={styles["rounded-button"]}
-                      onClick={async () => {
-                        console.log("logging out");
-                        await logout();
+                    <div
+                      className={
+                        styles[
+                          "profile-dropdown-navigation-button"
+                        ]
+                      }
+                      onClick={() => {
+                        console.log("logout");
                       }}
                     >
-                      <span>Izrakstīties</span>
-                    </Button>
+                      <BiLogOut />
+                      <span>Iziet</span>
+                    </div>
                   </div>
                 )}
               >
                 <div className={styles["user-box"]}>
-                <span className={styles["user-email"]}>
-                  {session?.user?.email}
-                </span>
-                {session?.user?.image ? (
-                  <img
-                    src={session?.user?.image}
-                    alt="User Image"
-                    className={styles["user-image"]}
+                  <UserIcon />
+                  <span className={styles["user-email"]}>
+                    {session?.user?.name ||
+                      session?.user?.email}
+                  </span>
+                  <DownOutlined
+                    className={styles["down-icon"]}
                   />
-                ) : (
-                  <div className={styles["blank-user-image"]} />
-                )}
                 </div>
               </Dropdown>
             </div>

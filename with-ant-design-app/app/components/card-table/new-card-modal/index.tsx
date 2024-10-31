@@ -8,16 +8,20 @@ interface NewGroupModalProps {
   open: boolean;
   setOpen: (open: boolean) => void;
   addGroup: (groupName: string) => void;
+  onSubmit: (groupName: string) => void;
+  isEditing?: boolean;
+  groupName: string;
+  setGroupName: (groupName: string) => void;
 }
 
-const NewGroupModal: React.FC<NewGroupModalProps> = ({ open, setOpen, addGroup }) => {
-  const [groupName, setGroupName] = useState('');
+const NewGroupModal: React.FC<NewGroupModalProps> = ({ open, setOpen, addGroup, onSubmit, isEditing, groupName, setGroupName }) => {
 
   const handleOk = () => {
-    addGroup(groupName);
+    onSubmit(groupName);
     setOpen(false);
-    setGroupName('');  // Reset the input field after adding the group
+    setGroupName('');  // Reset the input field after operation
   };
+  
 
   const handleClose = () => {
     setOpen(false);
@@ -26,7 +30,7 @@ const NewGroupModal: React.FC<NewGroupModalProps> = ({ open, setOpen, addGroup }
 
   return (
     <Modal
-      title="Create New Group"
+    title={isEditing ? "Edit Group" : "Create New Group"}
       open={open}
       onOk={handleOk}
       onCancel={handleClose}
@@ -35,7 +39,7 @@ const NewGroupModal: React.FC<NewGroupModalProps> = ({ open, setOpen, addGroup }
           Cancel
         </Button>,
         <Button key="submit" type="primary" onClick={handleOk} className={styles.submitButton}>
-          Add Group
+          {isEditing ? "Update Group" : "Add Group"}
         </Button>,
       ]}
       className={styles.modal}

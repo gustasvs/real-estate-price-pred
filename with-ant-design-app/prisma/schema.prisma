@@ -29,6 +29,8 @@ model User {
   role           UserRole?       @default(ADMIN)
   Authenticator  Authenticator[]
 
+  isFirstLogin Boolean @default(true)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
