@@ -16,6 +16,21 @@ import {
 } from "../../../actions/groupObjects";
 import { getGroup as getGroupApi } from "../../../actions/group";
 
+export interface ResidenceObjectType {
+  id: string;
+  name?: string,
+  address?: string,
+  area?: number,
+  description?: string,
+  bedroomCount?: number,
+  bathroomCount?: number,
+  parkingCount?: number,
+  price?: number,
+  predictedPrice?: number,
+  pictures?: string[]
+}
+
+
 const GroupPage = ({ searchParams }: { searchParams: any }) => {
   const router = useRouter();
 
@@ -23,17 +38,9 @@ const GroupPage = ({ searchParams }: { searchParams: any }) => {
   
   const group_id = Array.isArray(params.group_id) ? params.group_id[0] : params.group_id;
 
-  interface ObjectType {
-    id: string;
-    name: string;
-    description: string;
-    pictures: string[];
-    groupId: string;
-    createdAt: Date;
-    updatedAt: Date;
-  }
+  
 
-  const [objects, setObjects] = useState<ObjectType[]>([]);
+  const [objects, setObjects] = useState<ResidenceObjectType[]>([]);
   const [loading, setLoading] = useState(false);
 
   const [groupDetails, setGroupDetails] = useState({});
@@ -77,7 +84,8 @@ const GroupPage = ({ searchParams }: { searchParams: any }) => {
 
   const updateObject = async (
     id: string,
-    objectData: { name: string; description: string; pictures: string[] }
+    objectData: ResidenceObjectType
+  
   ) => {
     const result = await updateObjectApi(id, objectData);
     await fetchObjects();

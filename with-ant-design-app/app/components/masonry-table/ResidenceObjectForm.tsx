@@ -61,6 +61,7 @@ const ResidenceObjectForm = () => {
     groupId: string;
     createdAt: Date;
     updatedAt: Date;
+    address: string;
   }
 
   interface ErrorData {
@@ -82,19 +83,16 @@ const ResidenceObjectForm = () => {
           return;
         }
 
-        if ("pictures" in data) {
-          form.setFieldsValue({
-            ...data,
-            pictures: data.pictures.map((url, index) => ({
-              uid: index,
-              name: `image-${index}.jpg`,
-              status: "done",
-              url, // existing image URL
-            })),
-          });
-        }
-
+        if (data && !('error' in data)) {
+        const fileList = data.pictures.map((url, index) => ({
+          uid: -index,
+          name: `Image ${index + 1}`,
+          status: 'done',
+          url: url
+        }));
+        form.setFieldsValue({ ...data, pictures: fileList });
         setInitialData(data);
+      }
       }
     };
     fetchObjectData();
@@ -107,19 +105,31 @@ const ResidenceObjectForm = () => {
     const submitFunction = objectId ? updateObjectApi : createObjectApi;
 
     const picturePromises = values.pictures.map(async (file: any) => {
-      const compressedFile = await imageCompression(file.originFileObj, {
-        maxSizeMB: 0.05,
-        maxWidthOrHeight: 400,
-      });
+      if (file.status === 'new') {
+        const compressedFile = await imageCompression(file.originFileObj, {
+          maxSizeMB: 0.05,
+          maxWidthOrHeight: 400,
+        });
 
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(compressedFile); // Convert compressed image to base64
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = (error) => reject(error);
-      });
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(compressedFile); // Convert compressed image to base64
+          reader.onload = () => resolve({ base64: reader.result, status: 'new' });
+          reader.onerror = (error) => reject(error);
+        });
+      } else if (file.status === 'deleted') {
+        return Promise.resolve({ base64: file.originFileObj, status: 'deleted' });
+      } else {
+        return Promise.resolve({ base64: file.originFileObj, status: 'unchanged' });
+      }
     });
+
+    
+    console.log("picturePromises", picturePromises);
+
     const pictures = await Promise.all(picturePromises);
+
+    console.log("pictures", pictures);
 
     const res = await submitFunction(group_id as string, {
       ...values,

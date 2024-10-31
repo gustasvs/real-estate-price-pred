@@ -13,6 +13,7 @@ import { useRouter } from "next/navigation";
 import Layout from "react-masonry-list";
 import { PageHeader } from "@ant-design/pro-components";
 import { useState } from "react";
+import { ResidenceObjectType } from "../../groups/[group_id]/page";
 
 const MasonryTable = ({
   columnCount,
@@ -30,7 +31,7 @@ const MasonryTable = ({
   deleteObject: (id: string) => void;
   updateObject: (
     id: string,
-    objectData: { name: string; description: string; pictures: string[] }
+    objectData: ResidenceObjectType
   ) => void;
   loading?: boolean;
 }): JSX.Element => {

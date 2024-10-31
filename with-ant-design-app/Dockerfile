@@ -1,25 +1,16 @@
-# Use the official Node.js image as the base
 FROM node:22
 
-# Set the working directory inside the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json
 COPY package*.json ./
 
-# Install dependencies
 RUN npm install
 
-# Install Prisma CLI globally
-RUN npm install prisma --save-dev
-
-# Copy the rest of the app's source code
 COPY . .
 
+# optionally run these to initialise the database
+# RUN npx prisma generate
 # RUN npx prisma db push
-
-# Run Prisma generate to create Prisma Client
-RUN npx prisma generate
 
 # Expose the Next.js port
 EXPOSE 3000
