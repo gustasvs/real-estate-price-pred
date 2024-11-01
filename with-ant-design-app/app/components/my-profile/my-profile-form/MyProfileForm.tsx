@@ -159,10 +159,10 @@ const MyProfileForm = () => {
   return (
     <Form
       initialValues={{
-        name: session?.user?.name ? session?.user?.name : "Lietotāja vārds",
+        name: session?.user?.name ? session?.user?.name : "",
         email: session?.user
           ? session?.user?.email
-          : "Lietotāja e-pasts",
+          : "",
       }
       }
       form={form}

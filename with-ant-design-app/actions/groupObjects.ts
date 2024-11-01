@@ -103,6 +103,7 @@ export const getObjects = async (groupId: string) => {
     parkingCount?: number,
     price?: number,
     predictedPrice?: number,
+    groupId?: string,
     pictures?: { base64: string, status: string }[]
   }) => {
     try {

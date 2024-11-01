@@ -9,8 +9,9 @@ RUN npm install
 COPY . .
 
 # optionally run these to initialise the database
-# RUN npx prisma generate
-# RUN npx prisma db push
+RUN npx prisma generate
+RUN npx prisma db push
+RUN npx prisma migrate dev
 
 # Expose the Next.js port
 EXPOSE 3000

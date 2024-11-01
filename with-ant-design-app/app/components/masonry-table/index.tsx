@@ -35,6 +35,7 @@ import { ResidenceObjectType } from "../../groups/[group_id]/page";
 const MasonryTable = ({
   columnCount,
   onCardEdit = () => {},
+  onCardFavorite = () => {},
   objects,
   createObject = () => {},
   deleteObject = () => {},
@@ -42,7 +43,8 @@ const MasonryTable = ({
   loading = false,
 }: {
   columnCount: number;
-  onCardEdit?: (id: number) => void;
+  onCardEdit?: (id: string) => void;
+  onCardFavorite?: (id: string) => void;
   objects: any[];
   createObject: () => void;
   deleteObject: (id: string) => void;
@@ -524,10 +526,12 @@ const MasonryTable = ({
                           >
                             <Button
                               type="primary"
-                              onClick={() =>
-                                onCardEdit(item.id)
-                              }
-                              className={`${styles["content-description-action"]} ${styles["content-description-action-favourite"]}`}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                e.preventDefault();
+                                onCardFavorite(item.id);
+                              }}
+                              className={`${styles["content-description-action"]} ${styles["content-description-action-favourite"]} ${item.isFavourite ? styles["content-description-action-favourite-active"] : ""}`}
                             >
                               {item.isFavourite ? (
                                 <HeartFilled />

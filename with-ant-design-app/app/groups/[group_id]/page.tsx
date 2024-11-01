@@ -32,7 +32,8 @@ export interface ResidenceObjectType {
   parkingCount?: number,
   price?: number,
   predictedPrice?: number,
-  pictures?: string[]
+  pictures?: string[],
+  favorite: boolean
 }
 
 
@@ -138,6 +139,18 @@ const GroupPage = ({ searchParams }: { searchParams: any }) => {
     await fetchObjects();
   };
 
+  const onCardFavorite = async (id: string) => {
+    const object = objects.find((object) => object.id === id);
+    if (!object) {
+      return;
+    }
+    const updatedObject = await updateObjectApi(id, {
+      ...object,
+      favorite: !object.favorite,
+    });
+    await fetchObjects();
+  }
+
   const openNewObjectForm = () => {
     router.push(`/groups/${group_id}/new-object`);
   };
@@ -160,6 +173,7 @@ const GroupPage = ({ searchParams }: { searchParams: any }) => {
           router.push(`/groups/${group_id}/${id}`);
         }}
         objects={objects}
+        onCardFavorite={onCardFavorite}
         createObject={openNewObjectForm}
         deleteObject={deleteObject}
         updateObject={updateObject}

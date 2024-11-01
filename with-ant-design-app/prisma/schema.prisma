@@ -54,6 +54,8 @@ model Residence {
   address     String
   area        Float
   description String
+  
+  favourite Boolean @default(false)
 
   bedroomCount  Int
   bathroomCount Int

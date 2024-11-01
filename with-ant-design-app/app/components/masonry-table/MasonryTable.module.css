@@ -57,7 +57,6 @@
     background-color: var(--text-brighter);
     color: var(--background-dark-secondary);
     font-size: 20px;
-    font-family: fantasy;
     display: flex;
     flex-direction: column;
     border-bottom-left-radius: 1em;
@@ -431,17 +430,16 @@
 }
 
 .content-description-action {
-    border-radius: 1em;
-    background-color: var(--background-dark-secondary);
-    color: var(--background-light-secondary);
+    border-radius: 5px;
+    background-color: transparent;
+    color: var(--background-dark-secondary);
+    outline: 2px solid var(--background-dark-main);
     padding: 0.5em 1em;
     transition: background-color 0.3s ease;
 }
 
 .content-description-action-edit {
     background: transparent;
-    outline: 2px solid var(--background-dark-main);
-    border-radius: 5px;
     color: var(--background-dark-secondary);
 }
 
@@ -455,6 +453,10 @@
 .content-description-action-edit svg {
     width: 20px;
     height: 20px;
+}
+
+.content-description-action-favourite-active svg {
+    color: var(--background-favourite);
 }
 
 .content-description-action:hover .content-description-action-edit svg {
