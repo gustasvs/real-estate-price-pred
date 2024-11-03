@@ -54,6 +54,7 @@ const MyFavouritedObjects = () => {
         deleteObject={() => {}}
         updateObject={() => {}}
         loading={false}
+        showNavigateToGroup={true}
       />
     </>
   );

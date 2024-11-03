@@ -115,13 +115,13 @@ const Statistics: React.FC = () => {
 
   return (
     <div className={styles["statistics"]}>
-      <Carousel dotPosition={dotPosition} style={{}}>
         <OverPack
           style={{
             overflow: "hidden",
-            // height: "60vh",
-            width: "70%",
+            height: "100%",
+            // width: "70%",
             display: "flex",
+            justifyContent: "center",
           }}
         >
           <QueueAnim
@@ -181,8 +181,6 @@ const Statistics: React.FC = () => {
             ))}
           </QueueAnim>
         </OverPack>
-        <></>
-      </Carousel>
     </div>
   );
 };

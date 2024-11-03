@@ -1,9 +1,9 @@
 
 
 .statistics {
-  /* background-color: var(--background-gray); */
-  background-color: var(--background-light-secondary);
-  height: 80vh;
+  background-color: var(--background-gray);
+  /* background-color: var(--background-light-secondary); */
+  height: 500px;
 }
 
 .code-box-shape {
@@ -39,22 +39,20 @@
 
 .statistic-container {
   display: flex;
-  /* justify-content: center; */
-  margin-left: 12.5%;
+  padding-left: 12.5vw;
   width: 100%;
-  /* margin-right: auto; */
   height: 50vh;
-  margin-top: 100px;
-  /* gap: 50px; */
+  margin-top: 90px;
 }
 
 .statistic {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  /* justify-content: center; */
   align-items: center;
+  transform: translateX(12.5%);
   
-  width: 25%;
+  width: 25vw;
   aspect-ratio: 1 / 1;
 }
 

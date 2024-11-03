@@ -8,7 +8,12 @@ import { SessionProvider } from "next-auth/react";
 import { ConfigProvider } from "antd";
 import theme from "./themeConfig";
 
-const inter = Inter({ subsets: ["latin"] });
+import { Roboto } from 'next/font/google'
+ 
+const roboto = Roboto({
+  weight: '400',
+  subsets: ['latin'],
+})
 
 export const metadata: Metadata = {
   title: "LOCALHOST 3000",
@@ -18,7 +23,7 @@ export const metadata: Metadata = {
 function RootLayout({ children }: React.PropsWithChildren) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={roboto.className}>
         <SessionProvider>
         <ConfigProvider theme={theme}>
           {children}
