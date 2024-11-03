@@ -28,6 +28,35 @@ export const getObjects = async (groupId: string) => {
   }
 };
 
+export const getMyFavoriteObjects = async () => {
+  const session = await auth();
+  if (!session) {
+    return { error: "User not authenticated" };
+  }
+
+  if (!session.user || !session.user.id) {
+    return { error: "Unauthorized" };
+  }
+
+
+  // TODO add userId to residence object
+  try {
+    const objects = await db.residence.findMany({
+      where: {
+        favourite: true,
+        residenceGroup: {
+          userId: session.user.id,
+        },
+      },
+    });
+    return objects;
+  } catch (error) {
+    console.error("Error fetching favorite objects:", error);
+    return { error: "Failed to get favorite objects" };
+  }
+};
+
+
 // model Residence {
 //   id          String @id @default(uuid())
 //   name        String
@@ -69,6 +98,7 @@ export const createObject = async (
   try {
     console.log("objectData", objectData);
 
+
     const newObject = await db.residence.create({
       data: {
         name: objectData.name,
@@ -105,16 +135,21 @@ export const updateObject = async (
     predictedPrice?: number;
     groupId?: string;
     pictures?: { base64: string; status: string }[];
-    favorite?: boolean;
+    favourite?: boolean;
   }
 ) => {
   try {
     // Handle non-picture data updates separately
     const { pictures, ...dataWithoutPictures } = objectData;
 
+
+    const validData = Object.fromEntries(
+      Object.entries(dataWithoutPictures).filter(([key, value]) => value !== undefined && value !== null)
+    );
+
     const updatedObject = await db.residence.update({
       where: { id: objectId },
-      data: dataWithoutPictures,
+      data: validData
     });
 
     // Only proceed with picture handling if pictures are provided

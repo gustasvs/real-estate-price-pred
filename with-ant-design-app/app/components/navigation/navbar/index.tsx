@@ -213,7 +213,7 @@ const Navbar = ({
                         ]
                       }
                       onClick={() => {
-                        router.push("/groups");
+                        router.push("/profile?page=1");
                       }}
                     >
                       <HeartFilled />
@@ -227,7 +227,7 @@ const Navbar = ({
                         ]
                       }
                       onClick={() => {
-                        console.log("settings");
+                        router.push("/profile?page=2");
                       }}
                     >
                       <IoSettingsSharp />
@@ -246,6 +246,7 @@ const Navbar = ({
                       }
                       onClick={() => {
                         console.log("logout");
+                        logout()
                       }}
                     >
                       <BiLogOut />

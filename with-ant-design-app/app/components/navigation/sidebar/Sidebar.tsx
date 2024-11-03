@@ -15,6 +15,7 @@ interface SidebarProps {
   activeNavItem: number;
   onNavClick: (id: number | string) => void;
   title?: string;
+  slowLoading?: boolean;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
@@ -22,6 +23,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   activeNavItem,
   onNavClick,
   title,
+  slowLoading = false,
 }) => {
   const router = useRouter();
 

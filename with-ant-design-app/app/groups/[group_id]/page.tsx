@@ -5,9 +5,6 @@ import { Modal, Table } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import { useParams, useRouter } from "next/navigation";
 import GenericLayout from "../../components/generic-page-layout";
-import CardTable from "../../components/card-table";
-
-import Layout from "react-masonry-list";
 import MasonryTable from "../../components/masonry-table";
 import {
   getObjects as getObjectsApi,
@@ -32,8 +29,8 @@ export interface ResidenceObjectType {
   parkingCount?: number,
   price?: number,
   predictedPrice?: number,
-  pictures?: string[],
-  favorite: boolean
+  pictures?: { base64: string; status: string }[],
+  favourite: boolean
 }
 
 
@@ -83,7 +80,10 @@ const GroupPage = ({ searchParams }: { searchParams: any }) => {
       const objects = await getObjectsApi(group_id);
       if (Array.isArray(objects)) {
         console.log("objects", objects);
-        setObjects(objects);
+        setObjects(objects.map(object => ({
+          ...object,
+          pictures: object.pictures.map(picture => ({ base64: picture, status: 'unknown' }))
+        })));
       } else {
         console.error(
           "Error fetching objects:",
@@ -145,8 +145,7 @@ const GroupPage = ({ searchParams }: { searchParams: any }) => {
       return;
     }
     const updatedObject = await updateObjectApi(id, {
-      ...object,
-      favorite: !object.favorite,
+      favourite: !object.favourite,
     });
     await fetchObjects();
   }
@@ -169,9 +168,6 @@ const GroupPage = ({ searchParams }: { searchParams: any }) => {
 
       <MasonryTable
         columnCount={4}
-        onCardEdit={(id) => {
-          router.push(`/groups/${group_id}/${id}`);
-        }}
         objects={objects}
         onCardFavorite={onCardFavorite}
         createObject={openNewObjectForm}

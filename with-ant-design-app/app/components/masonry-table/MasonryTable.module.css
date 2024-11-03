@@ -10,7 +10,7 @@
 
 .masonry-table-container,
 .site-page-header {
-    background-color: var(--background-dark-secondary);
+    background-color: var(--background-dark-main);
     border-radius: 1em;
 }
 
@@ -149,7 +149,7 @@
     height: 260px;
     break-inside: avoid;
     margin-bottom: 20px;
-    background-color: var(--background-dark-main);
+    background-color: var(--background-dark-secondary);
     border-radius: 1em;
     /* overflow: hidden; */
     transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
@@ -200,7 +200,7 @@
 .content-image-container {
     position: relative;
     width: 110%;
-    outline: 2px solid red;
+    /* outline: 2px solid red; */
     margin-left: 0;
     margin-right: 0;
     transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
@@ -430,12 +430,18 @@
 }
 
 .content-description-action {
+    display: flex;
+    gap: 0.5em;
     border-radius: 5px;
     background-color: transparent;
     color: var(--background-dark-secondary);
     outline: 2px solid var(--background-dark-main);
     padding: 0.5em 1em;
     transition: background-color 0.3s ease;
+    height: 2em;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.8rem;
 }
 
 .content-description-action-edit {
@@ -468,5 +474,5 @@
 }
 
 .content-description-action:hover {
-    background-color: var(--background-dark-main);
+    background-color: var(--text-bright);
 }

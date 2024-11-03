@@ -34,7 +34,6 @@ import { ResidenceObjectType } from "../../groups/[group_id]/page";
 
 const MasonryTable = ({
   columnCount,
-  onCardEdit = () => {},
   onCardFavorite = () => {},
   objects,
   createObject = () => {},
@@ -43,7 +42,6 @@ const MasonryTable = ({
   loading = false,
 }: {
   columnCount: number;
-  onCardEdit?: (id: string) => void;
   onCardFavorite?: (id: string) => void;
   objects: any[];
   createObject: () => void;
@@ -54,6 +52,9 @@ const MasonryTable = ({
   ) => void;
   loading?: boolean;
 }): JSX.Element => {
+
+  // const router = useRouter();
+
   const [openedDescriptions, setOpenedDescriptions] =
     useState<{ [key: number]: boolean }>({});
 
@@ -146,6 +147,12 @@ const MasonryTable = ({
         gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}
         style={{ width: "90%", margin: "0 auto" }}
       >
+        {loading && (
+          <div className={styles["loading"]}>
+            <div className={styles["loading-spinner"]} />
+          </div>
+        )}
+
         {rowItemsWithAddItem.map((itemsInRow, rowIndex) => (
           <Row
             key={`row-${rowIndex}`}
@@ -511,9 +518,7 @@ const MasonryTable = ({
                               }
                             >
                               <FaCarSide />
-                              <span>{`${
-                                item.parkingCount ?? "2"
-                              } Stāvvietas`}</span>
+                              <span>{`${item.parkingCount } Auto stāvvieta`}</span>
                             </div>
                           </div>
 
@@ -524,31 +529,29 @@ const MasonryTable = ({
                               ]
                             }
                           >
-                            <Button
-                              type="primary"
+                            <div
                               onClick={(e) => {
                                 e.stopPropagation();
                                 e.preventDefault();
                                 onCardFavorite(item.id);
                               }}
-                              className={`${styles["content-description-action"]} ${styles["content-description-action-favourite"]} ${item.isFavourite ? styles["content-description-action-favourite-active"] : ""}`}
+                              className={`${styles["content-description-action"]} ${styles["content-description-action-favourite"]} ${item.favourite ? styles["content-description-action-favourite-active"] : ""}`}
                             >
-                              {item.isFavourite ? (
+                              {item.favourite ? (
                                 <HeartFilled />
                               ) : (
                                 <HeartOutlined />
                               )}
-                            </Button>
-                            <Button
-                              type="primary"
-                              onClick={() =>
-                                onCardEdit(item.id)
+                            </div>
+                            <div
+                              onClick={() => 
+                                router.push(`/groups/${item.groupId}/${item.id}`)
                               }
                               className={`${styles["content-description-action"]} ${styles["content-description-action-edit"]}`}
                             >
                               <EditOutlined />
                               Rediģēt
-                            </Button>
+                            </div>
                           </div>
                         </div>
                       </div>

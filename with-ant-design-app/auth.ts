@@ -44,7 +44,7 @@ export const {
         token.sub = user.id;
         token.picture = "none"; // do NOT include picture in token
       }
-      console.log("token returned after jwt callback", token);
+      // console.log("token returned after jwt callback", token);
       return token;
     },
   },

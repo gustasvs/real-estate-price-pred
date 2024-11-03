@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { Divider } from "antd";
 import { PageHeader } from "@ant-design/pro-components";
 import { HeartOutlined, UploadOutlined, UserOutlined } from "@ant-design/icons";
@@ -11,6 +11,7 @@ import MyProfileForm from "../components/my-profile/my-profile-form/MyProfileFor
 
 import { useRouter, useSearchParams } from "next/navigation";
 import Sidebar from "../components/navigation/sidebar/Sidebar";
+import MyFavouritedObjects from "../components/my-profile/my-profile-form/my-favourited-objects/MyFavouritedObjects";
 
 
 const sidebarItems = [
@@ -24,13 +25,13 @@ const sidebarItems = [
     id: 1,
     icon: <HeartOutlined />,
     label: "Atzīmetas dzīvesvietas",
-    item: <div>Atzīmetas dzīvesvietas</div>,
+    item: <MyFavouritedObjects />
   },
   {
     id: 2,
     icon: <IoSettingsOutline />,
     label: "Iestatījumi",
-    item: <div>Iestatījumi</div>,
+    item: <div>Settings</div>,
   },
 ];
 
@@ -39,21 +40,21 @@ const UserProfilePage = () => {
   const searchParams = useSearchParams();
   
   const initialNavItem = Number(searchParams.get("page")) || 0;
-  const [activeNavItem, setActiveNavItem] = useState(initialNavItem);
+  // const [activeNavItem, setActiveNavItem] = useState(initialNavItem);
+  const activeNavItem = initialNavItem;
   const [prevActiveNavItem, setPrevActiveNavItem] = useState(initialNavItem);
 
-  // Update the URL search params when activeNavItem changes
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    params.set("page", activeNavItem.toString());
-    router.replace(`${window.location.pathname}?${params.toString()}`);
-  }, [activeNavItem]);
 
 
   const handleNavClick = (newActiveNavItem: number | string) => {
     setPrevActiveNavItem(activeNavItem);
-    setActiveNavItem(Number(newActiveNavItem));
+    // router.push(`/profile?page=${newActiveNavItem}`, { shallow: true } as any);
+    window.history.pushState(null, "", `?page=${newActiveNavItem}`);
+    // setActiveNavItem(Number(newActiveNavItem));
   };
+
+  // TODO slowLoading for sidebar items for group page
+  // TODO this means that the sidebar items will be loaded only when clicked
 
   return (
     <GenericLayout>
@@ -62,8 +63,11 @@ const UserProfilePage = () => {
           <Sidebar sidebarItems={sidebarItems} activeNavItem={activeNavItem} onNavClick={handleNavClick} title="Mans profils" />
 
         <div className={`${styles['main-content']} ${activeNavItem > prevActiveNavItem ? 'slide-down' : 'slide-up'}`}>
+          {/* <Suspense fallback={<div style={{ height: "60vh", backgroundColor: "white",
+          width: "100%", display: "flex", justifyContent: "center", alignItems: "center" }} />}> */}
           {sidebarItems &&
             sidebarItems.find((item) => item.id === activeNavItem)?.item}
+          {/* </Suspense> */}
         </div>
       </div>
     </GenericLayout>
