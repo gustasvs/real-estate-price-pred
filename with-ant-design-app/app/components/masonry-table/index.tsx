@@ -40,6 +40,7 @@ const MasonryTable = ({
   deleteObject = () => {},
   updateObject = () => {},
   loading = false,
+  showNavigateToGroup = false,
 }: {
   columnCount: number;
   onCardFavorite?: (id: string) => void;
@@ -51,9 +52,10 @@ const MasonryTable = ({
     objectData: ResidenceObjectType
   ) => void;
   loading?: boolean;
+  showNavigateToGroup?: boolean;
 }): JSX.Element => {
 
-  // const router = useRouter();
+  const router = useRouter();
 
   const [openedDescriptions, setOpenedDescriptions] =
     useState<{ [key: number]: boolean }>({});
@@ -510,6 +512,7 @@ const MasonryTable = ({
                                   "2 Dušas"}
                               </span>
                             </div>
+                            {item.parkingCount && (
                             <div
                               className={
                                 styles[
@@ -518,8 +521,8 @@ const MasonryTable = ({
                               }
                             >
                               <FaCarSide />
-                              <span>{`${item.parkingCount } Auto stāvvieta`}</span>
                             </div>
+                            )}
                           </div>
 
                           <div
@@ -552,6 +555,18 @@ const MasonryTable = ({
                               <EditOutlined />
                               Rediģēt
                             </div>
+
+                            {showNavigateToGroup && (
+                              
+                              <div
+                                onClick={() => router.push(`/groups/${item.groupId}`)}
+                                className={`${styles["content-description-action"]} ${styles["content-description-action-navigate"]}`}
+                              >
+                                <FaChevronUp />
+                                Apskatīt grupu
+                              </div>
+                            )}
+
                           </div>
                         </div>
                       </div>
