@@ -68,39 +68,6 @@ const Navbar = ({
     >
       <div className={styles.container}>
         <div className={styles.content}>
-          <div className={styles["logo-container"]}>
-            <Logo />
-          </div>
-          <div className={styles["menu-container"]}>
-            <Link
-              href="/#about"
-              className={styles["menu-item"]}
-            >
-              <span>Par lapu</span>
-              <DownOutlined
-                className={styles["down-icon"]}
-              />
-            </Link>
-            <Link
-              href="/#services"
-              className={styles["menu-item"]}
-            >
-              <span>Mani dati</span>
-            </Link>
-            <Link
-              href="/#projects"
-              className={styles["menu-item"]}
-            >
-              <span>Projekti</span>
-            </Link>
-
-            <Link
-              href="/#contacts"
-              className={styles["menu-item"]}
-            >
-              <span>Kontakti</span>
-            </Link>
-          </div>
           {!session ? (
             <div className={styles["profile-container"]}>
               <Button

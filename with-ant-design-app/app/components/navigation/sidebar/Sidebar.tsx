@@ -1,7 +1,12 @@
 import React from "react";
 import styles from "./Sidebar.module.css"; // Create Sidebar.module.css if separate styles needed
-import { ArrowLeftOutlined } from "@ant-design/icons";
+import {
+  ArrowLeftOutlined,
+  GitlabOutlined,
+} from "@ant-design/icons";
 import { useRouter } from "next/navigation";
+import Logo from "../navbar/Logo";
+import { BiBookAdd } from "react-icons/bi";
 
 interface SidebarProps {
   sidebarItems: {
@@ -29,7 +34,16 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <div className={styles["left-sidebar"]}>
-      <div className={styles["left-sidebar-header"]}>
+      <div className={styles["left-sidebar-company-logo"]}>
+        <span
+          className={styles["left-sidebar-company-title"]}
+        >
+          Icn
+        </span>
+        <Logo />
+      </div>
+
+      {/* <div className={styles["left-sidebar-header"]}>
         <div
           className={styles["left-sidebar-back-arrow"]}
           onClick={() => router.back()}
@@ -41,13 +55,47 @@ const Sidebar: React.FC<SidebarProps> = ({
         >
           <span>{title}</span>
         </div>
-      </div>
+      </div> */}
       <div className={styles["left-sidebar-items"]}>
         <div
           className={styles.indicator}
           style={{ top: `${activeNavItem * 8}em` }}
         />
-        {sidebarItems.map((item) => (
+
+        <div className={styles["left-sidebar-group"]}>
+          <span
+            className={styles["left-sidebar-group-title"]}
+          >
+            Sakums
+          </span>
+
+          <div
+            key="home"
+            className={styles["left-sidebar-item"]}
+          >
+            <GitlabOutlined />
+            <span
+              className={styles["left-sidebar-item-label"]}
+            >
+              Sākums
+            </span>
+          </div>
+        </div>
+
+        <
+
+        <div
+          key="my-groups"
+          className={styles["left-sidebar-item"]}
+        >
+          <BiBookAdd />
+          <span
+            className={styles["left-sidebar-item-label"]}
+          >
+            Manas grupas
+          </span>
+        </div>
+        {sidebarItems?.map((item) => (
           <div
             key={item.id}
             className={`${styles["left-sidebar-item"]} ${

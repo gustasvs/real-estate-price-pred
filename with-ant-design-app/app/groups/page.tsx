@@ -6,12 +6,12 @@ import GenericLayout from "../components/generic-page-layout";
 
 import { useRouter } from "next/navigation";
 import { Divider } from "antd";
-import { PageHeader } from "@ant-design/pro-components";
 import { createGroup  as createGroupApi, 
   deleteGroup as deleteGroupApi,
   getGroups as getGroupsApi,
   updateGroup as updateGroupApi} from "../../actions/group";
 import { update } from "react-spring";
+import PageHeader from "../components/generic-page-layout/page-header/PageHeader";
 
 const GroupsPage = () => {
 
@@ -90,6 +90,9 @@ const GroupsPage = () => {
 
   return (
     <GenericLayout>
+
+      <PageHeader title="Groups" breadcrumbItems={[{ label: "Groups", path: "/groups" }]} />
+
       <Divider />
         <CardTable columnCount={3} onCardClick={(id: number) => navigateToGroup(id)} groups={groups} deleteGroup={deleteGroup} 
         createGroup={createGroup} updateGroup={updateGroup} loading={loading}

@@ -1,8 +1,9 @@
 .navbar {
     position: absolute;
     top: 0;
-    width: 100%;
+    width: fit-content;
     height: 4rem;
+    right: 0;
     /* Adjust this height as needed */
     display: flex;
     align-items: center;
@@ -101,7 +102,7 @@
     display: flex;
     gap: 1em;
     width: 30%;
-    justify-content: right;
+    /* justify-content: right; */
     align-items: center;
 }
 

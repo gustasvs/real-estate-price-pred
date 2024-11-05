@@ -17,6 +17,7 @@ import {
   getGroupsForSidebar as getGroupsForSidebarApi,
 } from "../../../actions/group";
 import Sidebar from "../../components/navigation/sidebar/Sidebar";
+import PageHeader from "../../components/generic-page-layout/page-header/PageHeader";
 
 export interface ResidenceObjectType {
   id: string;
@@ -157,15 +158,17 @@ const GroupPage = ({ searchParams }: { searchParams: any }) => {
   console.log("sidebarItems", sidebarItems);
 
   return (
-    <GenericLayout>
-      <div style={{ display: "flex", flexDirection: "row" }}>
-      <Sidebar
+    <GenericLayout
+      sidebarItems={sidebarItems}
+    >
+      <div style={{ display: "flex", flexDirection: "column", gap: "2em" }}>
+      {/* <Sidebar
         sidebarItems={sidebarItems}
         activeNavItem={sidebarItems ? sidebarItems.findIndex((item) => item.object_id === group_id) : 0}
         onNavClick={(object_id) => {router.push(`/groups/${object_id}`)}}
         title={group ? group.name : "Mana grupa"}
-      />
-
+      /> */}
+      <PageHeader title={group ? group.name : "Mana grupa"} breadcrumbItems={[{ label: "Grupas", path: "/groups" }]} />
       <MasonryTable
         columnCount={4}
         objects={objects}

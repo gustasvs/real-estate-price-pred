@@ -1,0 +1,17 @@
+.title {
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--background-light-main);
+}
+
+.breadcrumbItem span{
+    /* font-size: 1.5rem; */
+    /* font-weight: 600; */
+    color: var(--background-light-main);
+    /* fill: var(--background-light-secondary); */
+    /* background-color: var(--background-light-secondary); */
+}
+
+.breadcrumb .ant-breadcrumb-separator {
+    color: var(--background-light-main);
+}

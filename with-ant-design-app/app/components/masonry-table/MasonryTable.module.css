@@ -35,7 +35,7 @@
 
 .content-wrapper:hover {
     z-index: 9;
-    transform: scale(1.05);
+    transform: scale(1.03);
 }
 
 .content-description-wrapper {
