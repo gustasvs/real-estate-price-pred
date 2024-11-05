@@ -8,6 +8,7 @@ import Column from "antd/es/table/Column";
 import { Button, Divider } from "antd";
 import {
   DownOutlined,
+  HddOutlined,
   HeartFilled,
   HeartOutlined,
   MoonFilled,
@@ -37,7 +38,8 @@ import {
   FaHouseChimneyWindow,
 } from "react-icons/fa6";
 
-import { BiLogOut } from "react-icons/bi";
+import { BiDotsVertical, BiLogOut } from "react-icons/bi";
+import { FaHamburger } from "react-icons/fa";
 
 const Navbar = ({
   toggle,
@@ -228,9 +230,7 @@ const Navbar = ({
                     {session?.user?.name ||
                       session?.user?.email}
                   </span>
-                  <DownOutlined
-                    className={styles["down-icon"]}
-                  />
+                  <BiDotsVertical />
                 </div>
               </Dropdown>
             </div>

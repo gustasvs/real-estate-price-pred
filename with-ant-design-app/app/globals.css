@@ -5,6 +5,7 @@
 
   --foreground-rgb: #dddddd;
   --background-dark-main: #222426;
+  --background-dark-main-hover: #323738;
   /* --background-dark-secondary: #35393b; */
 
   --background-dark-secondary: #595c5e;
@@ -28,7 +29,6 @@
 }
 
 body {
-  font-family: "DINNextW1G", sans-serif;
   margin: 0;
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(

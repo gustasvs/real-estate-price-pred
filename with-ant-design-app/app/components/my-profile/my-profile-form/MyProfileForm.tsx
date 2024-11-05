@@ -180,6 +180,7 @@ const MyProfileForm = () => {
           >
             {console.log("fileList", fileList)}
             <Upload
+              maxCount={1}
               listType="picture-circle"
               fileList={fileList}
               // onPreview={handlePreview}

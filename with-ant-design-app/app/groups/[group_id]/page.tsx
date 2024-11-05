@@ -21,21 +21,24 @@ import PageHeader from "../../components/generic-page-layout/page-header/PageHea
 
 export interface ResidenceObjectType {
   id: string;
-  name?: string,
-  address?: string,
-  area?: number,
-  description?: string,
-  bedroomCount?: number,
-  bathroomCount?: number,
-  parkingCount?: number,
-  price?: number,
-  predictedPrice?: number,
-  pictures?: { base64: string; status: string }[],
-  favourite: boolean
+  name?: string;
+  address?: string;
+  area?: number;
+  description?: string;
+  bedroomCount?: number;
+  bathroomCount?: number;
+  parkingCount?: number;
+  price?: number;
+  predictedPrice?: number;
+  pictures?: { base64: string; status: string }[];
+  favourite: boolean;
 }
 
-
-const GroupPage = ({ searchParams }: { searchParams: any }) => {
+const GroupPage = ({
+  searchParams,
+}: {
+  searchParams: any;
+}) => {
   const router = useRouter();
 
   const params = useParams();
@@ -44,11 +47,11 @@ const GroupPage = ({ searchParams }: { searchParams: any }) => {
     ? params.group_id[0]
     : params.group_id;
 
-    const [group, setGroup] = useState<any>(null);
+  const [group, setGroup] = useState<any>(null);
 
-  
-
-  const [objects, setObjects] = useState<ResidenceObjectType[]>([]);
+  const [objects, setObjects] = useState<
+    ResidenceObjectType[]
+  >([]);
   const [loading, setLoading] = useState(false);
 
   interface SidebarItemType {
@@ -58,9 +61,10 @@ const GroupPage = ({ searchParams }: { searchParams: any }) => {
     label: string;
     item: JSX.Element;
   }
-  
-  const [sidebarItems, setSidebarItems] = useState<SidebarItemType[]>([]);
 
+  const [sidebarItems, setSidebarItems] = useState<
+    SidebarItemType[]
+  >([]);
 
   const fetchGroupDetails = async () => {
     try {
@@ -81,10 +85,15 @@ const GroupPage = ({ searchParams }: { searchParams: any }) => {
       const objects = await getObjectsApi(group_id);
       if (Array.isArray(objects)) {
         console.log("objects", objects);
-        setObjects(objects.map(object => ({
-          ...object,
-          pictures: object.pictures.map(picture => ({ base64: picture, status: 'unknown' }))
-        })));
+        setObjects(
+          objects.map((object) => ({
+            ...object,
+            pictures: object.pictures.map((picture) => ({
+              base64: picture,
+              status: "unknown",
+            })),
+          }))
+        );
       } else {
         console.error(
           "Error fetching objects:",
@@ -101,7 +110,7 @@ const GroupPage = ({ searchParams }: { searchParams: any }) => {
   const fetchGroupsForSidebar = async () => {
     try {
       const groups = await getGroupsForSidebarApi();
-      
+
       if (Array.isArray(groups)) {
         setSidebarItems(
           groups.map((group, index) => ({
@@ -134,14 +143,15 @@ const GroupPage = ({ searchParams }: { searchParams: any }) => {
   const updateObject = async (
     id: string,
     objectData: ResidenceObjectType
-  
   ) => {
     const result = await updateObjectApi(id, objectData);
     await fetchObjects();
   };
 
   const onCardFavorite = async (id: string) => {
-    const object = objects.find((object) => object.id === id);
+    const object = objects.find(
+      (object) => object.id === id
+    );
     if (!object) {
       return;
     }
@@ -149,7 +159,7 @@ const GroupPage = ({ searchParams }: { searchParams: any }) => {
       favourite: !object.favourite,
     });
     await fetchObjects();
-  }
+  };
 
   const openNewObjectForm = () => {
     router.push(`/groups/${group_id}/new-object`);
@@ -158,26 +168,39 @@ const GroupPage = ({ searchParams }: { searchParams: any }) => {
   console.log("sidebarItems", sidebarItems);
 
   return (
-    <GenericLayout
-      sidebarItems={sidebarItems}
-    >
-      <div style={{ display: "flex", flexDirection: "column", gap: "2em" }}>
-      {/* <Sidebar
+    <GenericLayout sidebarItems={sidebarItems}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "2em",
+        }}
+      >
+        {/* <Sidebar
         sidebarItems={sidebarItems}
         activeNavItem={sidebarItems ? sidebarItems.findIndex((item) => item.object_id === group_id) : 0}
         onNavClick={(object_id) => {router.push(`/groups/${object_id}`)}}
         title={group ? group.name : "Mana grupa"}
       /> */}
-      <PageHeader title={group ? group.name : "Mana grupa"} breadcrumbItems={[{ label: "Grupas", path: "/groups" }]} />
-      <MasonryTable
-        columnCount={4}
-        objects={objects}
-        onCardFavorite={onCardFavorite}
-        createObject={openNewObjectForm}
-        deleteObject={deleteObject}
-        updateObject={updateObject}
-        loading={loading}
-      />
+        <PageHeader
+          title={group ? group.name : "Mana grupa"}
+          breadcrumbItems={[
+            { label: "Manas grupas", path: "/groups" },
+            {
+              label: group ? group.name : "Mana grupa",
+              path: `/groups/${group_id}`,
+            },
+          ]}
+        />
+        <MasonryTable
+          columnCount={4}
+          objects={objects}
+          onCardFavorite={onCardFavorite}
+          createObject={openNewObjectForm}
+          deleteObject={deleteObject}
+          updateObject={updateObject}
+          loading={loading}
+        />
       </div>
     </GenericLayout>
   );

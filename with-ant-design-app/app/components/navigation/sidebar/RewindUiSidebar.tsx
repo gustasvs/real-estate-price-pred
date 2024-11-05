@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Sidebar,
   Menu,
@@ -11,75 +11,182 @@ import {
 import Logo from "../navbar/Logo";
 
 import styles from "./Sidebar.module.css";
-import { LeftSquareFilled, LeftSquareOutlined } from "@ant-design/icons";
+import {
+  HddOutlined,
+  HeartOutlined,
+  HomeOutlined,
+  LeftSquareFilled,
+  LeftSquareOutlined,
+  PlusOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
+import { getGroupsForSidebar } from "../../../../actions/group";
+import { NextPageContext } from "next";
+import NavLink from "../../NavLink/NavLink";
+import { useParams, usePathname, useSearchParams } from "next/navigation";
+import { Divider } from "antd";
+import { FaGears, FaPersonFalling } from "react-icons/fa6";
 
 const RewindUiSidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
 
+  const pathname = usePathname();
+  const params = useSearchParams();
+
+  console.log("pathname", pathname, "params", params);
+
+  const [groups, setGroups] = useState<any>(null);
+  useEffect(() => {
+    getGroupsForSidebar().then((groups) => {
+      setGroups(groups);
+    });
+  }, []);
+
   return (
-    <Sidebar
-      collapsed={collapsed}
-      rootStyles={{
-        [`.${sidebarClasses.container}`]: {
-            backgroundColor: 'var(--background-dark-main)',
-          },
-        [`.${menuClasses.button}`]: {
-            color: 'var(--background-light-secondary)',
-            backgroundColor: 'var(--background-dark-secondary)',
-
-            '&:hover': {
-                backgroundColor: 'var(--background-dark-secondary)',
-                color: 'var(--background-light-main)',
-            },
-          },
-        [`.${menuClasses.active}`]: {
-                backgroundColor: 'var(--background-dark-main)',
-                color: 'var(--text-brighter)',
-            },
-
-        [`.${menuClasses.subMenuContent}`]: {
-            backgroundColor: 'var(--background-dark-secondary)',
-            // borderRadius: '1em',
-            },
-            // hover
+    <div
+      style={{
+        display: "flex",
+        position: "relative",
       }}
     >
-      <div className={styles["left-sidebar-company-logo"]}>
-        <Logo />
-        <span
-          className={styles["left-sidebar-company-title"]}
-        >
-          Icn
-        </span>
-        <div className={styles[`left-sidebar-collapse`]}>
-            <div
-                className={styles[`${collapsed ? "collapsed" : ""}`]}
-                onClick={() => setCollapsed(!collapsed)}
-            >
-                <LeftSquareFilled />
-            </div>
-        </div>
-      </div>
-      <Menu
-        // menuItemStyles={{
-        //     button: ({ level, active, disabled }) => {
-        //         return {
-        //           backgroundColor: active ? '#eecef9' : undefined,
-        //         };
-        //     },
-        //   }}
+      <div
+        className={`${styles[`left-sidebar-collapse`]}
+      ${
+        collapsed
+          ? styles[`left-sidebar-collapse-collapsed`]
+          : ``
+      }
+      `}
+        onClick={() => setCollapsed(!collapsed)}
       >
-        <SubMenu label="Manas Grupas">
-        
+        <LeftSquareFilled />
+      </div>
+      <Sidebar
+        collapsed={collapsed}
+        rootStyles={{
+          [`.${sidebarClasses.container}`]: {
+            color: "var(--background-light-main)",
+            backgroundColor: "var(--background-dark-main)",
+            paddingLeft: ".5rem",
+          },
+          [`.${menuClasses.button}`]: {
+            color: "var(--background-light-main)",
+            backgroundColor: "var(--background-dark-main)",
+            height: "3em",
+            "a": {
+              textWrap: "wrap",
+            },
+
+            "&:hover": {
+              borderRadius: "10px",
+              backgroundColor:
+                "var(--background-dark-main-hover) !important",
+              color: "var(--background-light-main)",
+            },
+          },
+          [`.${menuClasses.active}`]: {
+            backgroundColor: "var(--background-light-main)",
+            color: "var(--background-dark-main)",
+            borderRadius: "10px",
+            "&:hover": {
+              backgroundColor:
+                "var(--background-light-secondary) !important",
+              color: "var(--background-dark-main)",
+            },
+            "&:hover span": {
+              backgroundColor:
+                "var(--background-light-secondary) !important",
+              color: "var(--background-dark-main)",
+            },
+          },
+          [`.${menuClasses.label}`]: {
+            // color: "inherit",
+            backgroundColor: "inherit",
+            "&:hover": {
+              color: "inherit",
+              backgroundColor: "inherit",
+            },
+          },
+
+          [`.${menuClasses.subMenuContent}`]: {
+            backgroundColor:
+              "var(--background-dark-main)",
+          },
+
+          [`.${menuClasses.SubMenuExpandIcon}`]: {
+            paddingBottom: "10px"
+          }
+        }}
+      >
+        <div
+          className={styles["left-sidebar-company-logo"]}
+        >
+          <Logo />
+          <span
+            className={styles["left-sidebar-company-title"]}
+          >
+            Icn
+          </span>
+        </div>
+        <Menu>
           <MenuItem
-            active={true}
-          > Pie charts </MenuItem>
-          <MenuItem> Line charts </MenuItem>
-        </SubMenu>
-        <MenuItem> Documentation </MenuItem>
-        <MenuItem> Calendar </MenuItem>
-      </Menu>
-    </Sidebar>
+            icon={<HomeOutlined />}
+            href="/"
+            active={pathname === "/"}
+          >
+            Sākums
+          </MenuItem>
+          {/* </SubMenu> */}
+
+          <SubMenu
+            icon={<HddOutlined />}
+            active={pathname === "/groups"}
+            label={"Manas Grupas"}
+          >
+            {groups?.map((group: any) => (
+              <MenuItem
+                key={group.id}
+                href={`/groups/${group.id}`}
+                active={pathname === `/groups/${group.id}`}
+              >
+                {group.name}
+              </MenuItem>
+            ))}
+            <MenuItem>
+              <PlusOutlined />
+              <NavLink href="/groups/new">
+                Pievienot jaunu
+              </NavLink>
+            </MenuItem>
+          </SubMenu>
+
+          <SubMenu
+            label="Mans profils"
+            icon={<UserOutlined />}
+          >
+            <MenuItem
+              icon={<FaPersonFalling />}
+              active={pathname === "/profile"&& params.get("page") === "0"}
+            >
+              <NavLink href="/profile?page=0">Lietotāja informācija</NavLink>  
+              
+            </MenuItem>
+            <MenuItem
+              icon={<HeartOutlined />}
+              active={pathname === "/profile" && params.get("page") === "1"}
+            >
+              <NavLink href="/profile?page=1">Atzīmetas dzīvesvietas</NavLink>
+            </MenuItem>
+            <MenuItem
+              active={pathname === "/profile" && params.get("page") === "2"}
+              icon={<FaGears />}
+            >
+              <NavLink href="/profile?page=2">Iestatījumi</NavLink>
+            </MenuItem>
+          </SubMenu>
+        </Menu>
+      </Sidebar>
+    </div>
   );
 };
 
