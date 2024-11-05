@@ -18,7 +18,9 @@ interface PageHeaderProps {
 
 const PageHeader: React.FC<PageHeaderProps> = ({ title, breadcrumbItems }) => {
   return (
-    <div>
+    <div
+      className={styles.pageHeader}
+    >
       <Breadcrumb
         >
         <Breadcrumb.Item
@@ -31,7 +33,10 @@ const PageHeader: React.FC<PageHeaderProps> = ({ title, breadcrumbItems }) => {
           <Breadcrumb.Item href={item.path} key={index}
           className={styles.breadcrumbItem}
           >
-            <span>{item.label}</span>
+            {/* <span> */}
+              {item.label}
+
+            {/* </span> */}
           </Breadcrumb.Item>
         ))}
       </Breadcrumb>

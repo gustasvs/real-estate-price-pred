@@ -29,7 +29,7 @@
 
 .numberdisplay {
   display: inline-block;
-  color: var(--background-dark-main);
+  color: var(--text-brighter);
   /* color: rgb(255, 255, 255); */
   font-size: 1.1rem;
   font-weight: 700;
@@ -62,7 +62,7 @@
 }
 
 .statistic-label-text {
-  color: var(--background-dark-main);
+  color: var(--text-bright);
   font-size: 1rem;
   font-weight: 600;
   transition: transform 0.2s ease-in-out;

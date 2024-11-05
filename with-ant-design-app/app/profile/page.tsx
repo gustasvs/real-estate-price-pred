@@ -2,7 +2,6 @@
 
 import React, { Suspense, useEffect, useState } from "react";
 import { Divider } from "antd";
-import { PageHeader } from "@ant-design/pro-components";
 import { HeartOutlined, UploadOutlined, UserOutlined } from "@ant-design/icons";
 import styles from "./Profile.module.css";
 import GenericLayout from "../components/generic-page-layout";
@@ -12,6 +11,7 @@ import MyProfileForm from "../components/my-profile/my-profile-form/MyProfileFor
 import { useRouter, useSearchParams } from "next/navigation";
 import Sidebar from "../components/navigation/sidebar/Sidebar";
 import MyFavouritedObjects from "../components/my-profile/my-profile-form/my-favourited-objects/MyFavouritedObjects";
+import PageHeader from "../components/generic-page-layout/page-header/PageHeader";
 
 
 const sidebarItems = [
@@ -46,21 +46,36 @@ const UserProfilePage = () => {
 
 
 
-  const handleNavClick = (newActiveNavItem: number | string) => {
-    setPrevActiveNavItem(activeNavItem);
-    // router.push(`/profile?page=${newActiveNavItem}`, { shallow: true } as any);
-    window.history.pushState(null, "", `?page=${newActiveNavItem}`);
-    // setActiveNavItem(Number(newActiveNavItem));
-  };
+  // const handleNavClick = (newActiveNavItem: number | string) => {
+  //   setPrevActiveNavItem(activeNavItem);
+  //   // router.push(`/profile?page=${newActiveNavItem}`, { shallow: true } as any);
+  //   window.history.pushState(null, "", `?page=${newActiveNavItem}`);
+  //   // setActiveNavItem(Number(newActiveNavItem));
+  // };
 
   // TODO slowLoading for sidebar items for group page
   // TODO this means that the sidebar items will be loaded only when clicked
 
   return (
     <GenericLayout>
+      <PageHeader
+        title="Mans profils"
+        breadcrumbItems={[
+          {
+            label: "Mans profils",
+            path: "/profile",
+          },
+          {
+            label: sidebarItems.find((item) => item.id === activeNavItem)?.label || "Lietotāja informācija",
+            path: `/profile?page=${activeNavItem}`,
+          }
+          
+        ]}
+      />
+
       <div className={styles["profile-page-container"]}>
 
-          <Sidebar sidebarItems={sidebarItems} activeNavItem={activeNavItem} onNavClick={handleNavClick} title="Mans profils" />
+          {/* <Sidebar sidebarItems={sidebarItems} activeNavItem={activeNavItem} onNavClick={handleNavClick} title="Mans profils" /> */}
 
         <div className={`${styles['main-content']} ${activeNavItem > prevActiveNavItem ? 'slide-down' : 'slide-up'}`}>
           {/* <Suspense fallback={<div style={{ height: "60vh", backgroundColor: "white",

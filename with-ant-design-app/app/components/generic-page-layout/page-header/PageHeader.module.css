@@ -1,17 +1,43 @@
+.pageHeader {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
+
 .title {
     font-size: 2rem;
     font-weight: 600;
-    color: var(--background-light-main);
+    color: var(--text-bright);
 }
 
-.breadcrumbItem span{
-    /* font-size: 1.5rem; */
-    /* font-weight: 600; */
+
+.breadcrumbItem {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    transform: scale(1);
     color: var(--background-light-main);
-    /* fill: var(--background-light-secondary); */
-    /* background-color: var(--background-light-secondary); */
+    transition: all 0.88s cubic-bezier(0.23, 1, 0.32, 1) !important;
 }
 
-.breadcrumb .ant-breadcrumb-separator {
-    color: var(--background-light-main);
+.breadcrumbItem::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -5px;
+    left: 0;
+    background-color: var(--background-light-secondary);
+    transition: width 0.48s cubic-bezier(0.23, 1, 0.32, 1);
+    opacity: 0.5;
+}
+
+.breadcrumbItem:hover::after {
+    width: 100%;
+}
+
+/* this is for the home icon in breadcrumbs */
+.breadcrumbItem:hover span {
+    color: var(--text-brighter);
 }

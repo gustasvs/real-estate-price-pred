@@ -294,15 +294,28 @@
 .content-title-name {
     color: var(--background-light-secondary);
     margin-left: 50%;
-    font-size: 32px;
+    font-size: 2rem;
     font-weight: 700;
     transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.content-title-name-without-images {
+    margin-left: 0;
+    text-align: center;
+    font-size: 3rem;
+    width: 100%;
+    /* cheeky fix */
+    padding-right: 40px;
 }
 
 .content-wrapper:hover .content-title-name {
     transform: translateY(90px);
     margin-left: 40%;
     color: var(--text-brighter);
+}
+
+.content-wrapper:hover .content-title-name-without-images {
+    margin-left: 0;
 }
 
 .content-description-header {

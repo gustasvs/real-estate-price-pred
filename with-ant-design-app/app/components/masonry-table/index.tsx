@@ -54,7 +54,6 @@ const MasonryTable = ({
   loading?: boolean;
   showNavigateToGroup?: boolean;
 }): JSX.Element => {
-
   const router = useRouter();
 
   const [openedDescriptions, setOpenedDescriptions] =
@@ -198,63 +197,71 @@ const MasonryTable = ({
                     className={styles["content"]}
                     key={item.id}
                     style={{
-                      marginBottom: 20, // Maintain bottom margin for spacing
+                      marginBottom: 20,
                     }}
                   >
-                    <div
-                      className={
-                        styles["content-image-container"]
-                      }
-                    >
-                      <div
-                        className={styles["content-image"]}
-                      >
-                        <img
-                          src={
-                            item.pictures[0]?.startsWith(
-                              "data:image"
-                            )
-                              ? item.pictures[0]
-                              : `data:image/png;base64,${item.pictures[0]}`
+                    {item.pictures &&
+                      Array.isArray(item.pictures) &&
+                      item.pictures.length && (
+                        <div
+                          className={
+                            styles[
+                              "content-image-container"
+                            ]
                           }
-                          alt="content"
-                          style={{
-                            height: "100%", // Ensure image matches the container's height
-                            // width: "auto",
-                            display: "block", // Remove any inline image spacing issues
-                          }}
-                        />
-                      </div>
-                      {/* other images */}
-                      <div
-                        className={
-                          styles["content-images-other"]
-                        }
-                      >
-                        {item.pictures.length > 1 &&
-                          item.pictures
-                            .slice(1, 3)
-                            .map(
-                              (
-                                picture: string,
-                                index: number
-                              ) => {
-                                return (
-                                  <img
-                                    src={
-                                      picture?.startsWith(
-                                        "data:image"
-                                      )
-                                        ? picture
-                                        : `data:image/png;base64,${picture}`
-                                    }
-                                    alt="content"
-                                  />
-                                );
+                        >
+                          <div
+                            className={
+                              styles["content-image"]
+                            }
+                          >
+                            <img
+                              src={
+                                item.pictures[0]?.startsWith(
+                                  "data:image"
+                                )
+                                  ? item.pictures[0]
+                                  : `data:image/png;base64,${item.pictures[0]}`
                               }
-                            )}
-                      </div>
-                    </div>
+                              alt="content"
+                              style={{
+                                height: "100%", // Ensure image matches the container's height
+                                // width: "auto",
+                                display: "block", // Remove any inline image spacing issues
+                              }}
+                            />
+                          </div>
+                          {/* other images */}
+                          <div
+                            className={
+                              styles["content-images-other"]
+                            }
+                          >
+                            {item.pictures.length > 1 &&
+                              item.pictures
+                                .slice(1, 3)
+                                .map(
+                                  (
+                                    picture: string,
+                                    index: number
+                                  ) => {
+                                    return (
+                                      <img
+                                        src={
+                                          picture?.startsWith(
+                                            "data:image"
+                                          )
+                                            ? picture
+                                            : `data:image/png;base64,${picture}`
+                                        }
+                                        alt="content"
+                                      />
+                                    );
+                                  }
+                                )}
+                          </div>
+                        </div>
+                      )}
 
                     {/* TITLE */}
                     <div
@@ -263,9 +270,17 @@ const MasonryTable = ({
                       }
                     >
                       <span
-                        className={
+                        className={`${
                           styles["content-title-name"]
-                        }
+                        } ${
+                          item.pictures &&
+                          Array.isArray(item.pictures) &&
+                          item.pictures.length
+                            ? ""
+                            : styles[
+                                "content-title-name-without-images"
+                              ]
+                        }`}
                       >
                         {item.name}
                       </span>
@@ -513,15 +528,15 @@ const MasonryTable = ({
                               </span>
                             </div>
                             {item.parkingCount && (
-                            <div
-                              className={
-                                styles[
-                                  "content-description-house-area"
-                                ]
-                              }
-                            >
-                              <FaCarSide />
-                            </div>
+                              <div
+                                className={
+                                  styles[
+                                    "content-description-house-area"
+                                  ]
+                                }
+                              >
+                                <FaCarSide />
+                              </div>
                             )}
                           </div>
 
@@ -538,7 +553,21 @@ const MasonryTable = ({
                                 e.preventDefault();
                                 onCardFavorite(item.id);
                               }}
-                              className={`${styles["content-description-action"]} ${styles["content-description-action-favourite"]} ${item.favourite ? styles["content-description-action-favourite-active"] : ""}`}
+                              className={`${
+                                styles[
+                                  "content-description-action"
+                                ]
+                              } ${
+                                styles[
+                                  "content-description-action-favourite"
+                                ]
+                              } ${
+                                item.favourite
+                                  ? styles[
+                                      "content-description-action-favourite-active"
+                                    ]
+                                  : ""
+                              }`}
                             >
                               {item.favourite ? (
                                 <HeartFilled />
@@ -547,8 +576,10 @@ const MasonryTable = ({
                               )}
                             </div>
                             <div
-                              onClick={() => 
-                                router.push(`/groups/${item.groupId}/${item.id}`)
+                              onClick={() =>
+                                router.push(
+                                  `/groups/${item.groupId}/${item.id}`
+                                )
                               }
                               className={`${styles["content-description-action"]} ${styles["content-description-action-edit"]}`}
                             >
@@ -557,16 +588,18 @@ const MasonryTable = ({
                             </div>
 
                             {showNavigateToGroup && (
-                              
                               <div
-                                onClick={() => router.push(`/groups/${item.groupId}`)}
+                                onClick={() =>
+                                  router.push(
+                                    `/groups/${item.groupId}`
+                                  )
+                                }
                                 className={`${styles["content-description-action"]} ${styles["content-description-action-navigate"]}`}
                               >
                                 <FaChevronUp />
                                 Apskatīt grupu
                               </div>
                             )}
-
                           </div>
                         </div>
                       </div>
