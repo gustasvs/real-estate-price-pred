@@ -4,13 +4,17 @@
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
 
-.input {
+.footer {
+    display: flex;
+    justify-content: space-between;
     margin-top: 20px;
-    padding: 8px 16px;
-    font-size: 16px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    transition: border-color 0.3s ease-in-out;
+}
+
+.input {
+    margin-top: 1em;
+    width: 100%;
+    /* border: 1px solid #ccc; */
+    /* transition: border-color 0.3s ease-in-out; */
 }
 
 .input:focus {
@@ -43,6 +47,7 @@
 }
 
 .cancelButton {
+    width: 50%;
     background-color: var(--background-light-secondary);
     color: var(--background-dark-secondary);
     transition: background-color 0.2s, transform 0.2s;

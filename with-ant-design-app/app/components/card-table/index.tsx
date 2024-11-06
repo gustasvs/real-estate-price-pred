@@ -100,51 +100,19 @@ const CardTable = ({
                 }}
                 ref={cardRef}
               >
-                <div className={styles["edit-group-dropdown"]}>
-                  <Dropdown
-                    placement="bottom"
-                    dropdownRender={(menu) => (
-                      <div className={styles["dropdown-container-wrapper"]}
-                      onMouseEnter={(e) => {
-                        e.stopPropagation();
-                        // set card to have hoeverd effect
-                        // cardRef.setState({hovered: true});
-                      }}
-                      >
-                        <Button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setEditGroupId(group.id);
-                            setEditGroupName(group.name);
-                            setNewGroupModalVisible(true);
-                          }}
-                          
-                        >
-                          Edit
-                          <EditOutlined />
-                        </Button>
-                        <Button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            deleteGroup(group.id);
-                          }}
-                          className={styles["delete-group-button"]}
-                        >
-                          Delete
-                          <CloseOutlined />
-                        </Button>
-                      </div>
-                    )}
-                    className={styles["edit-group-dropdown-container"]}
-                  >
-                    <a onClick={(e) => {
-                      e.preventDefault(); e.stopPropagation()}}>
+                <div className={styles["edit-group-dropdown"]}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setEditGroupId(group.id);
+                    setEditGroupName(group.name);
+                    setNewGroupModalVisible(true);
+                  }}
+                >
+
                       <Space>
                         <EditOutlined />
                       </Space>
-                    </a>
-                  </Dropdown>
-                </div>
+                      </div>
                 <div className={styles["content"]}>
                   {/* <Image
                     src={group.imageUrl}

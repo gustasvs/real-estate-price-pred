@@ -27,7 +27,7 @@ import InputLabel from "../../input-fields/InputFields";
 import { styled, TextField } from "@mui/material";
 
 
-const StyledTextField = styled(TextField)({
+export const StyledTextField = styled(TextField)({
 
   '& label': {
     color: '#A0AAB4',

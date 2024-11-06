@@ -200,9 +200,9 @@ const MasonryTable = ({
                       marginBottom: 20,
                     }}
                   >
-                    {item.pictures &&
+                    {Boolean(item.pictures &&
                       Array.isArray(item.pictures) &&
-                      item.pictures.length && (
+                      item.pictures.length) && (
                         <div
                           className={
                             styles[

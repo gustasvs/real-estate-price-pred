@@ -73,6 +73,7 @@ const RewindUiSidebar = () => {
             color: "var(--background-light-main)",
             backgroundColor: "var(--background-dark-main)",
             height: "3em",
+            paddingLeft: "1em",
             "a": {
               textWrap: "wrap",
             },
@@ -109,6 +110,8 @@ const RewindUiSidebar = () => {
           },
 
           [`.${menuClasses.subMenuContent}`]: {
+            marginLeft: "2rem",
+            borderLeft: "1px solid var(--background-light-secondary)",
             backgroundColor:
               "var(--background-dark-main)",
           },
@@ -152,11 +155,11 @@ const RewindUiSidebar = () => {
                 {group.name}
               </MenuItem>
             ))}
-            <MenuItem>
-              <PlusOutlined />
-              <NavLink href="/groups/new">
+            <MenuItem
+              icon={<PlusOutlined />}
+              href="/groups/new"
+            >
                 Pievienot jaunu
-              </NavLink>
             </MenuItem>
           </SubMenu>
 
@@ -167,21 +170,30 @@ const RewindUiSidebar = () => {
             <MenuItem
               icon={<FaPersonFalling />}
               active={pathname === "/profile"&& params.get("page") === "0"}
+              href="/profile?page=0"
             >
-              <NavLink href="/profile?page=0">Lietotāja informācija</NavLink>  
+              {/* <NavLink href="/profile?page=0"> */}
+              Lietotāja informācija
+              {/* </NavLink>   */}
               
             </MenuItem>
             <MenuItem
               icon={<HeartOutlined />}
               active={pathname === "/profile" && params.get("page") === "1"}
+              href="/profile?page=1"
             >
-              <NavLink href="/profile?page=1">Atzīmetas dzīvesvietas</NavLink>
+              {/* <NavLink href="/profile?page=1"> */}
+              Atzīmetas dzīvesvietas
+              {/* </NavLink> */}
             </MenuItem>
             <MenuItem
               active={pathname === "/profile" && params.get("page") === "2"}
               icon={<FaGears />}
+              href="/profile?page=2"
             >
-              <NavLink href="/profile?page=2">Iestatījumi</NavLink>
+              {/* <NavLink href="/profile?page=2"> */}
+              Iestatījumi
+              {/* </NavLink> */}
             </MenuItem>
           </SubMenu>
         </Menu>

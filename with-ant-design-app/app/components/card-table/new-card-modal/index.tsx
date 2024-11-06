@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Button, Input, Modal } from 'antd';
 import styles from './NewGroupModal.module.css'; // Import the CSS module
+import { StyledTextField } from '../../my-profile/my-profile-form/MyProfileForm';
 
 interface NewGroupModalProps {
   open: boolean;
@@ -30,27 +31,41 @@ const NewGroupModal: React.FC<NewGroupModalProps> = ({ open, setOpen, addGroup, 
 
   return (
     <Modal
-    title={isEditing ? "Edit Group" : "Create New Group"}
+      title={isEditing ? "Labot grupu" : "Izveidot jaunu grupu"}
       open={open}
       onOk={handleOk}
       onCancel={handleClose}
-      footer={[
+      footer={
+        <div
+          className={styles.footer}
+        >
         <Button key="back" onClick={handleClose} className={styles.cancelButton}>
-          Cancel
-        </Button>,
+          Atcelt
+        </Button>
         <Button key="submit" type="primary" onClick={handleOk} className={styles.submitButton}>
-          {isEditing ? "Update Group" : "Add Group"}
-        </Button>,
-      ]}
+          {isEditing ? "Labot" : "Pievienot"}
+        </Button>
+        </div>
+      }
       className={styles.modal}
     >
-      <Input
+      {/* <Input
         placeholder="Enter group name"
         value={groupName}
         onChange={(e) => setGroupName(e.target.value)}
         className={styles.input}
         maxLength={50}
-      />
+      /> */}
+  <StyledTextField
+    id="outlined-basic"
+    label="Grupas nosaukums"
+    variant="outlined"
+    value={groupName}
+    onChange={(e) => setGroupName(e.target.value)}
+    className={styles.input}
+    // maxLength={50}
+  />
+        
     </Modal>
   );
 };

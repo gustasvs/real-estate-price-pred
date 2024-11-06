@@ -38,7 +38,7 @@ import {
   FaHouseChimneyWindow,
 } from "react-icons/fa6";
 
-import { BiDotsVertical, BiLogOut } from "react-icons/bi";
+import { BiDotsVertical, BiLogOut, BiSolidBuildings } from "react-icons/bi";
 import { FaHamburger } from "react-icons/fa";
 
 const Navbar = ({
@@ -171,7 +171,7 @@ const Navbar = ({
                         router.push("/groups");
                       }}
                     >
-                      <FaHouse />
+                      <BiSolidBuildings />
                       <span>Mani objekti</span>
                     </div>
 
