@@ -50,7 +50,7 @@ const GroupsPage = () => {
       const groups = await getGroupsApi();
       if (Array.isArray(groups)) {
         const groupsData = groups.map((group) => {
-          return { id: group.id, name: group.name, imageUrl: getGroupsImage(group.id) };
+          return { id: group.id, name: group.name, imageUrl: getGroupsImage(group.id), createdAt: group.createdAt };
         });
         console.log("groups", groupsData);
         setGroups(groupsData);
@@ -91,7 +91,7 @@ const GroupsPage = () => {
   return (
     <GenericLayout>
 
-      <PageHeader title="Groups" breadcrumbItems={[{ label: "Groups", path: "/groups" }]} />
+      <PageHeader title="Manas grupas" breadcrumbItems={[{ label: "Manas grupas", path: "/groups" }]} />
 
       <Divider />
         <CardTable columnCount={3} onCardClick={(id: number) => navigateToGroup(id)} groups={groups} deleteGroup={deleteGroup} 

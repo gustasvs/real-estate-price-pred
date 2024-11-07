@@ -1,4 +1,8 @@
-import { CloseOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  CloseOutlined,
+  EditOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
 import {
   Card,
   Row,
@@ -17,6 +21,7 @@ import { useRouter } from "next/navigation";
 import NewGroupModal from "./new-card-modal";
 import { useRef, useState } from "react";
 import { create } from "domain";
+import { BiBuildings } from "react-icons/bi";
 
 const CardTable = ({
   columnCount,
@@ -32,16 +37,19 @@ const CardTable = ({
   groups: any[];
   deleteGroup: (id: string) => void;
   createGroup: (groupName: string) => void;
-  updateGroup: (groupId: string, newGroupName: string) => void;
+  updateGroup: (
+    groupId: string,
+    newGroupName: string
+  ) => void;
   loading?: boolean;
 }): JSX.Element => {
   const router = useRouter();
 
-  const [newGroupModalVisible, setNewGroupModalVisible] = useState(false);
+  const [newGroupModalVisible, setNewGroupModalVisible] =
+    useState(false);
 
   const [editGroupId, setEditGroupId] = useState(null);
-  const [editGroupName, setEditGroupName] = useState('');
-
+  const [editGroupName, setEditGroupName] = useState("");
 
   const rowGutter: [number, number] = [16, 16];
   const colSpan: number = 24 / columnCount;
@@ -49,7 +57,7 @@ const CardTable = ({
   const handleAddButtonClick = () => {
     setNewGroupModalVisible(true); // Open modal on add button click
   };
-  
+
   const cardRef = useRef(null);
 
   return (
@@ -72,7 +80,10 @@ const CardTable = ({
         }}
       />
       <div
-        style={{ display: "flex", justifyContent: "center" }}
+        style={{
+          display: "flex",
+          justifyContent: "center",
+        }}
         className={styles["groups-page"]}
       >
         <Row
@@ -100,7 +111,8 @@ const CardTable = ({
                 }}
                 ref={cardRef}
               >
-                <div className={styles["edit-group-dropdown"]}
+                <div
+                  className={styles["edit-group-dropdown"]}
                   onClick={(e) => {
                     e.stopPropagation();
                     setEditGroupId(group.id);
@@ -108,11 +120,10 @@ const CardTable = ({
                     setNewGroupModalVisible(true);
                   }}
                 >
-
-                      <Space>
-                        <EditOutlined />
-                      </Space>
-                      </div>
+                  <Space>
+                    <EditOutlined />
+                  </Space>
+                </div>
                 <div className={styles["content"]}>
                   {/* <Image
                     src={group.imageUrl}
@@ -130,9 +141,33 @@ const CardTable = ({
                       borderRadius: "10px",
                     }}
                   ></div>
-                  <span className={styles["card-content-title"]}>
-                    {group.name}
-                  </span>
+                  <div
+                    className={styles["card-content-title"]}
+                  >
+                    <div
+                      className={
+                        styles["card-content-title-text"]
+                      }
+                    >
+                      <span>{group.name}</span>
+                      <span
+                        className={
+                          styles[
+                            "card-content-title-object-count"
+                          ]
+                        }
+                      >
+                        {group.objectCount ?? 2}{" "}
+                        <BiBuildings />
+                      </span>
+                    </div>
+                    <span className={styles["created-at"]}>
+                      Pievienota:{" "}
+                      {new Date(
+                        group.createdAt
+                      ).toLocaleDateString()}
+                    </span>
+                  </div>
                 </div>
               </div>
             </Col>
@@ -149,7 +184,9 @@ const CardTable = ({
               onClick={handleAddButtonClick}
             >
               <div className={styles["content"]}>
-                <div className={styles["card-content-image"]}>
+                <div
+                  className={styles["card-content-image"]}
+                >
                   <PlusOutlined
                     style={
                       {
@@ -162,7 +199,9 @@ const CardTable = ({
                     height={200}
                   />
                 </div>
-                <h4 style={{ color: "#ffffff" }}>{"Pievienot jaunu grupu"}</h4>
+                <h4 style={{ color: "#ffffff" }}>
+                  {"Pievienot jaunu grupu"}
+                </h4>
               </div>
             </div>
           </Col>

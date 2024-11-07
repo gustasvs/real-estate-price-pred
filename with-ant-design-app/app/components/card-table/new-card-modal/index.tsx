@@ -56,6 +56,11 @@ const NewGroupModal: React.FC<NewGroupModalProps> = ({ open, setOpen, addGroup, 
         className={styles.input}
         maxLength={50}
       /> */}
+      <div
+        style={{
+          marginTop: "2em",
+        }}
+      >
   <StyledTextField
     id="outlined-basic"
     label="Grupas nosaukums"
@@ -65,7 +70,7 @@ const NewGroupModal: React.FC<NewGroupModalProps> = ({ open, setOpen, addGroup, 
     className={styles.input}
     // maxLength={50}
   />
-        
+      </div>
     </Modal>
   );
 };

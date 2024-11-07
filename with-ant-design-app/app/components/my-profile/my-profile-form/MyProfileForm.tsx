@@ -26,6 +26,11 @@ import { MDCTextField } from "@material/textfield";
 import InputLabel from "../../input-fields/InputFields";
 import { styled, TextField } from "@mui/material";
 
+import AvatarEditor from 'react-avatar-editor'
+import Dropzone from 'react-dropzone'
+import { profile } from "console";
+
+
 
 export const StyledTextField = styled(TextField)({
 
@@ -147,6 +152,8 @@ const MyProfileForm = () => {
         name: session.user?.name,
         email: session.user?.email,
       });
+    
+      setUserPicture(session.user?.image || "");
     }
   }, [session]);
 
@@ -155,6 +162,15 @@ const MyProfileForm = () => {
     console.log("fieldValues", form.getFieldsValue());
 
   }, [form]);
+
+  const [userPicture, setUserPicture] = useState<string | File>(session?.user?.image || "");
+
+  const handleDrop = (dropped) => {
+    console.log("dropped", dropped);
+    setUserPicture(URL.createObjectURL(dropped[0]));
+  }
+
+  const [editorHovered, setEditorHovered] = useState(false);
 
   return (
     <Form
@@ -178,21 +194,42 @@ const MyProfileForm = () => {
             valuePropName="fileList"
             getValueFromEvent={normFile}
           >
-            {console.log("fileList", fileList)}
-            <Upload
-              maxCount={1}
-              listType="picture-circle"
-              fileList={fileList}
-              // onPreview={handlePreview}
-              onChange={handleChange}
-              className={styles["profile-image"]}
+            <div
+              className={styles["profile-image-container"]}
+              onMouseEnter={() => setEditorHovered(true)}
+              onMouseLeave={() => setEditorHovered(false)}
             >
-              {fileList.length < 1 && (
-                <div className={styles["upload-icon"]}>
-                  <UploadOutlined />
-                </div>
-              )}
-            </Upload>
+              <div className={styles["profile-image-edit"]}>
+                <EditOutlined 
+                  onClick={() => document.getElementById('avatarUpload')?.click()}
+                />
+              <input
+                type="file"
+                id="avatarUpload"
+                style={{ display: 'none' }}
+                accept="image/*"
+                onChange={(event) => {
+                  if (!event.target.files) return;
+                  const file = event.target.files[0];
+                  if (file) {
+                    setUserPicture(URL.createObjectURL(file));
+                  }
+                }}
+              />
+            </div>
+            <AvatarEditor
+              image={userPicture || ""}
+              width={200}
+              height={200}
+              backgroundColor="transparent"
+              border={editorHovered ? 50 : 0}
+              // color={[255, 255, 255, 0.6]}
+              // scale={1.2}
+              rotate={0}
+              borderRadius={0}
+              className={`${styles["profile-image"]} ${editorHovered ? styles["profile-image-hovered"] : ""}`}
+            />
+            </div>
           </Form.Item>
 
           {/* </div> */}

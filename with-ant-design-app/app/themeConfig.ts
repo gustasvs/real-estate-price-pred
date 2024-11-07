@@ -8,7 +8,9 @@ const theme: ThemeConfig = {
       colorTextSecondary: "#dddddd",
       borderRadiusLG: 16,
       fontFamily: "inherit"
+      // width: 200,
     },
+    
     Breadcrumb: {
       fontSize: 16,
       colorText: "var(--background-light-main)",

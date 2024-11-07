@@ -1,11 +1,9 @@
-
 .groups-page {
-  background: 
-  radial-gradient(circle at center 240em,
-  var(--background-dark-secondary) 95%, 
-  transparent 50%
-);
-/* linear-gradient(
+  background:
+    radial-gradient(circle at center 240em,
+      var(--background-dark-secondary) 95%,
+      transparent 50%);
+  /* linear-gradient(
     to bottom,
     var(--background-dark-secondary) 0%, 
     var(--background-dark-secondary) 8%,
@@ -16,178 +14,179 @@
 }
 
 
-/* From Uiverse.io by gharsh11032000 */ 
+/* From Uiverse.io by gharsh11032000 */
 .card {
-    margin-top: 50px;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    /* width: 250px; */
-    border-radius: 24px;
-    line-height: 1.6;
-    transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
-  }
+  margin-top: 50px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* width: 250px; */
+  border-radius: 24px;
+  line-height: 1.6;
+  transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
+}
 
-  .card-add .content {
-    background: var(--group-secondary);
-    border: var(--group-main) 5px solid;
-    padding: 36px;
-  }
-
-
-  .content {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 24px;
-    padding: 36px;
-    border-radius: 22px;
-    color: #ffffff;
-    overflow: hidden;
-    background: var(--group-main);
-    transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
-  }
-  
-  .content::before {
-    position: absolute;
-    content: "";
-    top: -4%;
-    left: 50%;
-    width: 90%;
-    height: 90%;
-    transform: translate(-50%);
-    background: var(--group-secondary);
-    z-index: -1;
-    transform-origin: bottom;
-  
-    border-radius: inherit;
-    transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
-  }
-  
-  .content::after {
-    position: absolute;
-    content: "";
-    top: -8%;
-    left: 50%;
-    width: 80%;
-    height: 80%;
-    transform: translate(-50%);
-    background: var(--group-third);
-    z-index: -2;
-    transform-origin: bottom;
-    border-radius: inherit;
-    transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
-  }
-
-  .card-add .content::before {
-    display: none;
-  }
-  .card-add .content::after {
-    top: -4%;
-    width: 90%;
-    height: 90%;
-  }
+.card-add .content {
+  background: var(--group-secondary);
+  border: var(--group-main) 5px solid;
+  padding: 36px;
+}
 
 
-  
-  .content svg {
-    width: 100px;
-    height: 100px;
-  }
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  padding: 36px;
+  border-radius: 22px;
+  color: #ffffff;
+  overflow: hidden;
+  background: var(--group-main);
+  transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
+}
 
-  .card-content-image {
-    width: 200px;
-    height: 200px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .content .para {
-    z-index: 1;
-    opacity: 1;
-    font-size: 18px;
-    transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
-  }
-  
-  .content .link {
-    z-index: 1;
-    color: #fea000;
-    text-decoration: none;
-    font-family: inherit;
-    font-size: 16px;
-    transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
-  }
-  
-  .content .link:hover {
-    text-decoration: underline;
-  }
+.content::before {
+  position: absolute;
+  content: "";
+  top: -4%;
+  left: 50%;
+  width: 90%;
+  height: 90%;
+  transform: translate(-50%);
+  background: var(--group-secondary);
+  z-index: -1;
+  transform-origin: bottom;
 
-  .card {
-    transform: translate(0px, 0px);
-  }
-  
-  .card:hover {
-    transform: translate(0px, -16px);
-  }
-  
-  .card .content::after,
-  .card .content::before {
-    opacity: 1;
-  }
+  border-radius: inherit;
+  transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
+}
 
-  .card:hover .content::before {
-    rotate: -8deg;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 1;
-  }
-  
-  .card:hover .content::after {
-    rotate: 8deg;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 1;
-  }
-  
-  .edit-group-dropdown {
-    position: absolute;
-    top: 40px;
-    right: 30px;
-    background: var(--group-main);
-    border: none;
-    border-radius: 50%;
-    width: 10px;
-    height: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
-  }
+.content::after {
+  position: absolute;
+  content: "";
+  top: -8%;
+  left: 50%;
+  width: 80%;
+  height: 80%;
+  transform: translate(-50%);
+  background: var(--group-third);
+  z-index: -2;
+  transform-origin: bottom;
+  border-radius: inherit;
+  transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.card-add .content::before {
+  display: none;
+}
+
+.card-add .content::after {
+  top: -4%;
+  width: 90%;
+  height: 90%;
+}
 
 
-  .edit-group-dropdown svg {
-    color: #ffffff;
-    width: 25px;
-    height: 25px;
-    opacity: 0.6;
-  }
 
-  .edit-group-dropdown svg:hover {
-    opacity: 1;
-  }
+.content svg {
+  width: 100px;
+  height: 100px;
+}
 
- .dropdown-item {
+.card-content-image {
+  width: 200px;
+  height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.content .para {
+  z-index: 1;
+  opacity: 1;
+  font-size: 18px;
+  transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.content .link {
+  z-index: 1;
+  color: #fea000;
+  text-decoration: none;
+  font-family: inherit;
+  font-size: 16px;
+  transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.content .link:hover {
+  text-decoration: underline;
+}
+
+.card {
+  transform: translate(0px, 0px);
+}
+
+.card:hover {
+  transform: translate(0px, -16px);
+}
+
+.card .content::after,
+.card .content::before {
+  opacity: 1;
+}
+
+.card:hover .content::before {
+  rotate: -8deg;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 1;
+}
+
+.card:hover .content::after {
+  rotate: 8deg;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 1;
+}
+
+.edit-group-dropdown {
+  position: absolute;
+  top: 40px;
+  right: 30px;
+  background: var(--group-main);
+  border: none;
+  border-radius: 50%;
+  width: 10px;
+  height: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+
+.edit-group-dropdown svg {
+  color: #ffffff;
+  width: 25px;
+  height: 25px;
+  opacity: 0.6;
+}
+
+.edit-group-dropdown svg:hover {
+  opacity: 1;
+}
+
+.dropdown-item {
   background-color: var(--background-light-secondary);
   color: var(--background-dark-secondary);
- }
+}
 
 
- .dropdown-container-wrapper {
+.dropdown-container-wrapper {
   position: relative;
   display: flex;
   justify-content: center;
@@ -196,66 +195,69 @@
   border-radius: 10px;
   padding: 20px;
   gap: 1em;
- }
+}
 
-  .delete-group-button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
+.delete-group-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.delete-group-button svg {
+  width: 25px;
+  height: 25px;
+  opacity: 0.6;
+}
+
+@keyframes bob {
+  0% {
+    transform: translateY(0);
   }
 
-  .delete-group-button svg {
-    width: 25px;
-    height: 25px;
-    opacity: 0.6;
-  }
-  
-  @keyframes bob {
-    0% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-2px);
-    }
-    100% {
-      transform: translateY(0);
-    }
+  50% {
+    transform: translateY(-2px);
   }
 
-  .delete-group-button svg:hover {
-    opacity: 1;
-    animation: bob 0.48s infinite;
-
-    /* red filter */
-    filter: invert() invert(17%) sepia(75%) saturate(5060%) hue-rotate(7deg) brightness(78%) contrast(130%) drop-shadow(0 0 0.5rem #D10000);
+  100% {
+    transform: translateY(0);
   }
+}
+
+.delete-group-button svg:hover {
+  opacity: 1;
+  animation: bob 0.48s infinite;
+
+  /* red filter */
+  filter: invert() invert(17%) sepia(75%) saturate(5060%) hue-rotate(7deg) brightness(78%) contrast(130%) drop-shadow(0 0 0.5rem #D10000);
+}
 
 
-  .ant-popconfirm-buttons {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-  }
+.ant-popconfirm-buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
 
-  .delete-group-button-popover-ok {
-    width: 60%;
-    border-radius: 10px;
-    background-color: var(--background-dark-secondary);
-    transition: transform 0.48s cubic-bezier(0.23, 1, 0.32, 1);
-  }
+.delete-group-button-popover-ok {
+  width: 60%;
+  border-radius: 10px;
+  background-color: var(--background-dark-secondary);
+  transition: transform 0.48s cubic-bezier(0.23, 1, 0.32, 1);
+}
 
-  .delete-group-button-popover-cancel {
-    float: left;
-    width: 30%;
+.delete-group-button-popover-cancel {
+  float: left;
+  width: 30%;
 
-    border-radius: 10px;
+  border-radius: 10px;
 
-    background-color: var(--background-light-secondary);
-    color: var(--background-dark-secondary);
-    transition: transform 0.48s cubic-bezier(0.23, 1, 0.32, 1);
-  }
+  background-color: var(--background-light-secondary);
+  color: var(--background-dark-secondary);
+  transition: transform 0.48s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
 .delete-group-button-popover-ok:hover,
 .delete-group-button-popover-cancel:hover {
   transform: scale(1.05);
@@ -264,10 +266,41 @@
 .card-content-title {
   position: absolute;
   font-family: 'Poppins', sans-serif;
-  font-size: 24px;
+  font-size: 1.3rem;
   font-weight: 600;
   width: 200px;
   top: 260px;
   /* word-break: break-all; */
   word-wrap: break-word;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-content-title-text {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  color: var(--text-brighter);
+}
+
+.card-content-title-object-count {
+  font-size: .9rem;
+  font-weight: 500;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: .3em;
+  color: var(--background-light-secondary);
+}
+
+.card-content-title-text svg {
+  color: var(--background-light-main);
+  width: 20px;
+  height: 20px;
+  font-size: 1rem;
+}
+
+.created-at {
+  font-size: .8rem;
+  color: var(--background-light-main);
 }

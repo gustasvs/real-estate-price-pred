@@ -38,3 +38,23 @@ body {
     )
     rgb(var(--background-dark-secondary));
 }
+
+/* .ant-upload,
+.ant-upload-select,
+.ant-upload-list-item-container,
+.ant-upload-wrapper .ant-upload-list-picture-circle,
+.ant-upload.ant-upload-select {
+  width: 100% !important;
+  height: 100% !important;
+} */
+
+/* .ant-upload-select-picture-card {
+  width: 100% !important;
+  height: 100% !important;
+} */
+
+/* .ant-upload-select,
+.ant-upload-list-item-container {
+  width: unset !important;
+  height: unset !important;
+} */
