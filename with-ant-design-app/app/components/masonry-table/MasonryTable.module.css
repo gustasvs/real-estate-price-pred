@@ -35,7 +35,7 @@
 
 .content-wrapper:hover {
     z-index: 9;
-    transform: scale(1.03);
+    transform: scale(1.05);
 }
 
 .content-description-wrapper {
@@ -63,15 +63,16 @@
     border-bottom-right-radius: 1em;
     padding: 1em;
 
-    border-left: 5px solid var(--background-dark-main);
-    border-right: 5px solid var(--background-dark-main);
+    border-style: solid;
+    border-color: var(--text-brighter);
 
-    border-bottom: 5px solid var(--background-dark-main);
+    border-left: 5px;
+    border-right: 5px;
 
-    transform: scaleY(1);
-    /* transform: scaleY(
-    - /  
-    +0); */
+    border-bottom: 5px;
+
+    /* transform: scaleY(1); */
+    transform: scaleY(0);
     transform-origin: top center;
     transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
 }
@@ -157,6 +158,7 @@
     display: flex;
     flex-direction: row;
     transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
+    transition: border-radius none;
 }
 
 .content-wrapper:hover .content:not(.content-add) {

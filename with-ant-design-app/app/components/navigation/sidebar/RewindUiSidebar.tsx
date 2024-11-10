@@ -23,7 +23,11 @@ import {
 import { getGroupsForSidebar } from "../../../../actions/group";
 import { NextPageContext } from "next";
 import NavLink from "../../NavLink/NavLink";
-import { useParams, usePathname, useSearchParams } from "next/navigation";
+import {
+  useParams,
+  usePathname,
+  useSearchParams,
+} from "next/navigation";
 import { Divider } from "antd";
 import { FaGears, FaPersonFalling } from "react-icons/fa6";
 
@@ -64,61 +68,104 @@ const RewindUiSidebar = () => {
       <Sidebar
         collapsed={collapsed}
         rootStyles={{
+          [`.${menuClasses.subMenuRoot}`]: {
+            borderRadius: "10px",
+          },
           [`.${sidebarClasses.container}`]: {
             color: "var(--background-light-main)",
             backgroundColor: "var(--background-dark-main)",
             paddingLeft: ".5rem",
           },
           [`.${menuClasses.button}`]: {
+            borderRadius: "10px",
             color: "var(--background-light-main)",
             backgroundColor: "var(--background-dark-main)",
             height: "3em",
             paddingLeft: "1em",
-            "a": {
+            a: {
               textWrap: "wrap",
             },
-
             "&:hover": {
               borderRadius: "10px",
               backgroundColor:
-                "var(--background-dark-main-hover) !important",
-              color: "var(--background-light-main)",
+                "var(--background-dark-secondary) !important",
+              color: "var(--background-light-secondary)",
             },
           },
-          [`.${menuClasses.active}`]: {
-            backgroundColor: "var(--background-light-main)",
-            color: "var(--background-dark-main)",
-            borderRadius: "10px",
-            "&:hover": {
-              backgroundColor:
-                "var(--background-light-secondary) !important",
-              color: "var(--background-dark-main)",
-            },
-            "&:hover span": {
-              backgroundColor:
-                "var(--background-light-secondary) !important",
-              color: "var(--background-dark-main)",
+          [`.${menuClasses.icon}`]: {
+            svg: {
+              fontSize: "0.5rem" // TODO not applied
             },
           },
           [`.${menuClasses.label}`]: {
-            // color: "inherit",
+            color: "inherit",
+            backgroundColor: "inherit",
+            textWrap: "wrap",
+            "&:hover": {
+              color: "inherit",
+              backgroundColor: "inherit",
+            },
+          },
+          [`.${menuClasses.icon}`]: {
+            color: "inherit",
             backgroundColor: "inherit",
             "&:hover": {
               color: "inherit",
               backgroundColor: "inherit",
             },
           },
+          [`.${menuClasses.menuItemRoot}`]: {
+            borderRadius: "10px",
+          },
 
           [`.${menuClasses.subMenuContent}`]: {
             marginLeft: "2rem",
-            borderLeft: "1px solid var(--background-light-secondary)",
-            backgroundColor:
-              "var(--background-dark-main)",
+            borderLeft:
+              "1px solid var(--background-light-secondary)",
+            backgroundColor: "var(--background-dark-main)",
           },
 
           [`.${menuClasses.SubMenuExpandIcon}`]: {
-            paddingBottom: "10px"
-          }
+            paddingBottom: "10px",
+          },
+
+          [`.${menuClasses.active}`]: {
+            backgroundColor: "var(--background-gray)",
+            color: "var(--background-dark-main)",
+            "&:hover": {
+              backgroundColor:
+                "var(--background-gray) !important",
+              color: "var(--background-dark-main)",
+            },
+
+            [`.${menuClasses.button}`]: {
+              backgroundColor: "var(--background-gray)",
+              color: "var(--background-dark-main)",
+              "&:hover": {
+                backgroundColor:
+                  "var(--background-light-secondary) !important",
+                color: "var(--background-dark-main)",
+              },
+            },
+            [`.${menuClasses.subMenuContent}`]: {
+              [`.${menuClasses.menuItemRoot}`]: {
+                backgroundColor: "var(--background-gray)",
+                [`.${menuClasses.button}`]: {
+                  borderRadius: "10px",
+                },
+                [`.${menuClasses.active}`]: {
+                  backgroundColor:
+                    "var(--background-light-secondary)",
+                  color: "var(--background-dark-main)",
+                  "&:hover": {
+                    backgroundColor:
+                      "var(--background-light-main) !important",
+                    color: "var(--background-dark-main)",
+                  },
+                },
+              },
+            },
+          },
         }}
       >
         <div
@@ -143,7 +190,7 @@ const RewindUiSidebar = () => {
 
           <SubMenu
             icon={<HddOutlined />}
-            active={pathname === "/groups"}
+            active={pathname.includes("/groups")}
             label={"Manas Grupas"}
           >
             {groups?.map((group: any) => (
@@ -159,27 +206,33 @@ const RewindUiSidebar = () => {
               icon={<PlusOutlined />}
               href="/groups/new"
             >
-                Pievienot jaunu
+              Pievienot jaunu
             </MenuItem>
           </SubMenu>
 
           <SubMenu
             label="Mans profils"
             icon={<UserOutlined />}
+            active={pathname === "/profile"}
           >
             <MenuItem
               icon={<FaPersonFalling />}
-              active={pathname === "/profile"&& params.get("page") === "0"}
+              active={
+                pathname === "/profile" &&
+                (params.get("page") === "0" || !params.get("page"))
+              }
               href="/profile?page=0"
             >
               {/* <NavLink href="/profile?page=0"> */}
               Lietotāja informācija
               {/* </NavLink>   */}
-              
             </MenuItem>
             <MenuItem
               icon={<HeartOutlined />}
-              active={pathname === "/profile" && params.get("page") === "1"}
+              active={
+                pathname === "/profile" &&
+                params.get("page") === "1"
+              }
               href="/profile?page=1"
             >
               {/* <NavLink href="/profile?page=1"> */}
@@ -187,7 +240,10 @@ const RewindUiSidebar = () => {
               {/* </NavLink> */}
             </MenuItem>
             <MenuItem
-              active={pathname === "/profile" && params.get("page") === "2"}
+              active={
+                pathname === "/profile" &&
+                params.get("page") === "2"
+              }
               icon={<FaGears />}
               href="/profile?page=2"
             >

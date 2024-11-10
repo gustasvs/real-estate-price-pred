@@ -5,6 +5,7 @@ import { Breadcrumb } from 'antd';
 import { HomeOutlined } from '@ant-design/icons';
 
 import styles from './PageHeader.module.css';
+import { useRouter } from 'next/navigation';
 
 type BreadcrumbItem = {
   label: string;
@@ -17,6 +18,7 @@ interface PageHeaderProps {
 }
 
 const PageHeader: React.FC<PageHeaderProps> = ({ title, breadcrumbItems }) => {
+  const router = useRouter();
   return (
     <div
       className={styles.pageHeader}
@@ -25,12 +27,17 @@ const PageHeader: React.FC<PageHeaderProps> = ({ title, breadcrumbItems }) => {
         >
         <Breadcrumb.Item
           className={styles.breadcrumbItem}
-
+          onClick={() => {
+            router.push('/');
+          }}
         >
           <HomeOutlined />
         </Breadcrumb.Item>
         {breadcrumbItems.map((item, index) => (
-          <Breadcrumb.Item href={item.path} key={index}
+          <Breadcrumb.Item key={index}
+          onClick={() => {
+            router.push(item.path);
+          }}
           className={styles.breadcrumbItem}
           >
             {/* <span> */}

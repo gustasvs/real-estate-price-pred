@@ -36,6 +36,7 @@
     "react-parallax": "^3.5.1",
     "react-pro-sidebar": "^1.1.0",
     "react-spring": "^9.7.4",
+    "redis": "^4.7.0",
     "tsparticles": "^3.5.0"
   },
   "devDependencies": {

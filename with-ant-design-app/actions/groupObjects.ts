@@ -96,7 +96,19 @@ export const createObject = async (
   }
 ) => {
   try {
-    console.log("objectData", objectData);
+
+    
+  const session = await auth();
+
+  const user = session?.user;
+
+  if (!user || !user.id) {
+    return { error: "Unauthorized" };
+  }
+
+  const userId = user.id;
+
+  console.log("objectData", objectData);
 
 
     const newObject = await db.residence.create({
@@ -114,6 +126,9 @@ export const createObject = async (
         predictedPrice: objectData.predictedPrice,
       },
     });
+
+    
+
     return newObject;
   } catch (error) {
     console.error("Error creating object:", error);

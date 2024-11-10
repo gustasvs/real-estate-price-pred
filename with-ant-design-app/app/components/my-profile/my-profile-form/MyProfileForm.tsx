@@ -13,6 +13,7 @@ import {
   Form,
   Input,
   message,
+  Popover,
   Row,
   Upload,
   UploadProps,
@@ -20,7 +21,7 @@ import {
 
 import styles from "./MyProfileForm.module.css";
 import UserIcon from "../../user-icon/UserIcon";
-import { EditOutlined, UploadOutlined } from "@ant-design/icons";
+import { EditOutlined, QuestionCircleOutlined, UploadOutlined } from "@ant-design/icons";
 import { MDCTextField } from "@material/textfield";
 
 import InputLabel from "../../input-fields/InputFields";
@@ -196,12 +197,53 @@ const MyProfileForm = () => {
           >
             <div
               className={styles["profile-image-container"]}
-              onMouseEnter={() => setEditorHovered(true)}
-              onMouseLeave={() => setEditorHovered(false)}
+              // onMouseEnter={() => setEditorHovered(true)}
+              // onMouseLeave={() => setEditorHovered(false)}
+              // onBlur={(e) => {
+              //   if (!e.currentTarget.contains(e.relatedTarget as Node)
+              //     && e.relatedTarget !== document.getElementById('avatarUpload')  
+              // ) {
+              //     setEditorHovered(false);
+              //   }
+              // }}
             >
-              <div className={styles["profile-image-edit"]}>
+              {editorHovered && (
+                  <div className={styles["profile-image-edit-buttons"]} >
+                    <Button 
+                      onClick={() => {
+                        setEditorHovered(false)
+                        setUserPicture(session?.user?.image || "")
+                      }}
+                    >
+                      Atcelt
+                    </Button>
+                    <Button 
+                      type="primary"
+                      onClick={() => setEditorHovered(false)}
+                    >
+                      Apstiprināt
+                    </Button>
+                    <Popover
+                      placement="top"
+                      content={(
+                        <span className={styles["profile-image-edit-buttons-info-text"]}>
+                          Šī poga tikai apstiprina jaunās bildes izmēru. Saglabāt var nospiežot "Saglabāt izmaiņas" pogu.
+                        </span>
+                      )} 
+
+                    >
+                      <div className={styles["profile-image-edit-buttons-info"]}>
+                    <QuestionCircleOutlined />
+                    </div>
+                    </Popover>
+                  </div> 
+                )}
+              <div className={`${styles["profile-image-edit"]} ${styles[`${editorHovered ? "hidden" : ""}`]}`}>
                 <EditOutlined 
-                  onClick={() => document.getElementById('avatarUpload')?.click()}
+                  onClick={() => {
+                    setEditorHovered(true)
+                    document.getElementById('avatarUpload')?.click()
+                  }}
                 />
               <input
                 type="file"

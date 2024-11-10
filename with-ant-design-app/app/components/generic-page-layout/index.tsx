@@ -53,13 +53,6 @@ const GenericLayout: React.FC<{
       >
         <Navbar toggle={() => {}} homePage={homePage} />
         {!homePage && (
-          // <Sidebar
-          //   sidebarItems={sidebarItems}
-          //   // sidebarItemParent={'groups'}
-          //   activeNavItem={0}
-          //   onNavClick={(id) => {}}
-          //   title="Title"
-          // />
           <RewindUiSidebar />
         )}
         <Layout
