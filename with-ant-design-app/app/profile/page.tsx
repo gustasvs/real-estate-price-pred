@@ -30,7 +30,7 @@ const sidebarItems = [
   {
     id: 2,
     icon: <IoSettingsOutline />,
-    label: "Iestatījumi",
+    label: "Personalizācija un iestatījumi",
     item: <div>Settings</div>,
   },
 ];

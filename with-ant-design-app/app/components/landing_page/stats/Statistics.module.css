@@ -127,7 +127,8 @@
   height: 80px;
   width: 80px;
   /* filter: invert(1) invert(20%) sepia(17%) saturate(183%) hue-rotate(156deg) brightness(95%) contrast(92%);  */
-  filter: invert(.1) sepia(17%) saturate(183%) hue-rotate(156deg) brightness(95%) contrast(92%);
+  /* filter: invert(.1) sepia(17%) saturate(183%) hue-rotate(156deg) brightness(95%) contrast(92%); */
+  color: var(--background-dark-secondary);
 }
 
 /* New particle container for the particles */

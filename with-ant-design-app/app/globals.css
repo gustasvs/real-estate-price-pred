@@ -39,22 +39,29 @@ body {
     rgb(var(--background-dark-secondary));
 }
 
-/* .ant-upload,
-.ant-upload-select,
-.ant-upload-list-item-container,
-.ant-upload-wrapper .ant-upload-list-picture-circle,
-.ant-upload.ant-upload-select {
-  width: 100% !important;
-  height: 100% !important;
-} */
+:root.light-theme {
+  --foreground-rgb: #222222; /* Darkened for contrast against lighter background */
+  --background-dark-main: #dddddd; /* Lightened main background */
+  --background-dark-main-hover: #eaeaea; /* Lightened hover background */
 
-/* .ant-upload-select-picture-card {
-  width: 100% !important;
-  height: 100% !important;
-} */
+  --background-dark-secondary: #a6a9ab; /* Lighter secondary background */
+  /* Original darker secondary for contrast */
+  /* --background-dark-secondary: #cacccd; */
 
-/* .ant-upload-select,
-.ant-upload-list-item-container {
-  width: unset !important;
-  height: unset !important;
-} */
+  --background-light-main: #444444; /* Darkened to contrast light theme */
+  --background-light-secondary: #222222; /* Darkened further for contrast */
+  --background-gray: #808080; /* Neutral gray unchanged */
+  --background-favourite: #ffb341; /* Favorite color unchanged for branding consistency */
+
+  --text-bright: #171717; /* Darkened for readability on light background */
+  --text-brighter: #0a0a0a; /* Even darker for emphasis */
+
+  --secondary-color: #d3e1bb; /* Lightened complementary color */
+  --secondary-color-transparent: #d3e1bb5d; /* Transparency adjusted for light background */
+  --link-color: #c355f5; /* Lightened link color for better visibility */
+
+  --group-main: #dddddde4; /* Main group background lightened */
+  --group-secondary: #56585ac5; /* Secondary group background darkened for contrast */
+  --group-third: #42454dad; /* Third group background darkened for distinction */
+
+}

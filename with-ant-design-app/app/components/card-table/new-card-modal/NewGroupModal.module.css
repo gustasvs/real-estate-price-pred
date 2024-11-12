@@ -1,13 +1,22 @@
 .modal {
     top: 20%;
     padding: 28px 24px;
-    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
 
 .footer {
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
+}
+.closeIcon {
+    fill: var(--background-light-secondary);
+    color: var(--background-light-secondary);
+    padding: 10px;
+}
+
+.closeIcon:hover {
+    color: var(--text-brighter);
+    background-color: var(--background-dark-main);
 }
 
 .input {
@@ -31,36 +40,25 @@
     font-weight: bold;
     border-radius: 30px;
     width: 100%;
-    height: 56px;
+    height: 2rem;
 }
 
 .submitButton {
-    background-color: var(--background-dark-secondary);
-    color: var(--background-light-secondary);
-    transition: background-color 0.2s, transform 0.2s;
+    transition: all .2s cubic-bezier(.68,-0.35,.27,1);
 }
 
 .submitButton:hover {
-    background-color: var(--background-light-secondary);
-    color: var(--background-dark-secondary);
     transform: scale(1.05);
 }
 
 .cancelButton {
     width: 50%;
-    background-color: var(--background-light-secondary);
-    color: var(--background-dark-secondary);
-    transition: background-color 0.2s, transform 0.2s;
+    transition: all .2s cubic-bezier(.78,-0.35,.27,1);
 }
 
 .cancelButton:hover {
-    background-color: var(--background-dark-secondary);
-    transform: scale(1.05);
+    transform: scale(1.04);
     outline: none;
-}
-
-.cancelButton:hover span {
-    color: var(--background-dark-main);
 }
 
 /* Additional Styling for Other Elements as Needed */

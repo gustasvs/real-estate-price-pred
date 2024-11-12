@@ -36,15 +36,15 @@ import { profile } from "console";
 export const StyledTextField = styled(TextField)({
 
   '& label': {
-    color: '#A0AAB4',
+    color: "var(--background-light-main)",
   },
 
   '& input': {
-    color: '#6F7E8C',
+    color: "var(--background-light-secondary)",
   },
 
   '& label.Mui-focused': {
-    color: '#A0AAB4',
+    color: "var(--background-light-main)",
   },
   '& .MuiInput-underline:after': {
     borderBottomColor: '#B2BAC2',
@@ -143,7 +143,7 @@ const MyProfileForm = () => {
     return e && e.fileList;
   };
 
-  const handleChange = ({ fileList: newFileList }) => setFileList(newFileList);
+  const handleChange = ({ fileList: newFileList }: { fileList: any }) => setFileList(newFileList);
 
   useEffect(() => {
     // fill form with user data
@@ -165,11 +165,6 @@ const MyProfileForm = () => {
   }, [form]);
 
   const [userPicture, setUserPicture] = useState<string | File>(session?.user?.image || "");
-
-  const handleDrop = (dropped) => {
-    console.log("dropped", dropped);
-    setUserPicture(URL.createObjectURL(dropped[0]));
-  }
 
   const [editorHovered, setEditorHovered] = useState(false);
 
@@ -287,8 +282,6 @@ const MyProfileForm = () => {
 
         <div className={styles["text-field-container"]}>
           <Row gutter={8} justify="center">
-            {/* First row: Name and Email */}
-            {console.log(session)}
             <Col span={8}>
               <Form.Item
                 name="name"

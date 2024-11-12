@@ -96,8 +96,8 @@
 }
 
 .card-content-image {
-  width: 200px;
-  height: 200px;
+  width: 280px;
+  height: 280px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -170,7 +170,7 @@
 
 
 .edit-group-dropdown svg {
-  color: #ffffff;
+  color: var(--text-bright);
   width: 25px;
   height: 25px;
   opacity: 0.6;
@@ -266,10 +266,10 @@
 .card-content-title {
   position: absolute;
   font-family: 'Poppins', sans-serif;
-  font-size: 1.3rem;
   font-weight: 600;
-  width: 200px;
-  top: 260px;
+  width: 80%;
+  /* top: 260px; */
+  bottom: 30px;
   /* word-break: break-all; */
   word-wrap: break-word;
   display: flex;
@@ -281,9 +281,16 @@
   flex-direction: row;
   justify-content: space-between;
   color: var(--text-brighter);
+  display: flex;
+}
+
+.card-content-title-text-name {
+  width: 100%;
+  font-size: clamp(1rem, 22px, 1.6rem);
 }
 
 .card-content-title-object-count {
+  width: 40px;
   font-size: .9rem;
   font-weight: 500;
   display: flex;

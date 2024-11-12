@@ -34,6 +34,10 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  theme String?
+  fontSize String?
+  colorMode String?
+
   residenceGroups ResidenceGroup[]
 }
 

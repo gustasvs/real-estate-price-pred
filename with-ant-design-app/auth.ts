@@ -42,6 +42,9 @@ export const {
       // console.log("jwt callback", user, token);
       if (user) {
         token.sub = user.id;
+
+        token.theme = user.theme || "light";
+
         token.picture = "none"; // do NOT include picture in token
       }
       // console.log("token returned after jwt callback", token);

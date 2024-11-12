@@ -32,7 +32,7 @@ import { Divider } from "antd";
 import { FaGears, FaPersonFalling } from "react-icons/fa6";
 
 const RewindUiSidebar = () => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
 
   const pathname = usePathname();
   const params = useSearchParams();
@@ -66,6 +66,7 @@ const RewindUiSidebar = () => {
         <LeftSquareFilled />
       </div>
       <Sidebar
+        width="320px"
         collapsed={collapsed}
         rootStyles={{
           [`.${menuClasses.subMenuRoot}`]: {
@@ -80,8 +81,8 @@ const RewindUiSidebar = () => {
             borderRadius: "10px",
             color: "var(--background-light-main)",
             backgroundColor: "var(--background-dark-main)",
-            height: "3em",
-            paddingLeft: "1em",
+            height: "4em",
+            padding: "1em",
             a: {
               textWrap: "wrap",
             },
@@ -94,13 +95,20 @@ const RewindUiSidebar = () => {
           },
           [`.${menuClasses.icon}`]: {
             svg: {
-              fontSize: "0.5rem" // TODO not applied
+              fontSize: "0.5rem", // TODO not applied
             },
           },
           [`.${menuClasses.label}`]: {
             color: "inherit",
             backgroundColor: "inherit",
             textWrap: "wrap",
+            textOverflow: "ellipsis",
+            whiteSpace: "normal",
+            overflow: "hidden",
+            WebkitBoxOrient: "vertical",
+            WebkitLineClamp: "2",
+            display: "-webkit-box",
+            lineHeight: "1.4em",
             "&:hover": {
               color: "inherit",
               backgroundColor: "inherit",
@@ -119,10 +127,17 @@ const RewindUiSidebar = () => {
           },
 
           [`.${menuClasses.subMenuContent}`]: {
-            marginLeft: "2rem",
+            marginLeft: "1rem",
+            marginTop: "1rem",
+            marginBottom: "1rem",
+            borderBottomRightRadius: "10px",
             borderLeft:
-              "1px solid var(--background-light-secondary)",
+              "1px solid var(--background-light-main)",
             backgroundColor: "var(--background-dark-main)",
+            [`.${menuClasses.menuItemRoot}`]: {
+              marginLeft: "1rem",
+              width: "calc(100% - 2rem)",
+            },
           },
 
           [`.${menuClasses.SubMenuExpandIcon}`]: {
@@ -133,8 +148,7 @@ const RewindUiSidebar = () => {
             backgroundColor: "var(--background-gray)",
             color: "var(--background-dark-main)",
             "&:hover": {
-              backgroundColor:
-                "var(--background-gray) !important",
+              backgroundColor: "var(--background-gray)",
               color: "var(--background-dark-main)",
             },
 
@@ -166,6 +180,17 @@ const RewindUiSidebar = () => {
               },
             },
           },
+          [`.${menuClasses.menuItemRoot} .${menuClasses.subMenuRoot} .${menuClasses.active}`]:
+            {
+              [`.${menuClasses.button}`]: {
+                "&:hover": {
+                  [`.${menuClasses.icon}`]: {
+                    backgroundColor:
+                      "var(--background-light-secondary) !important",
+                  },
+                },
+              },
+            },
         }}
       >
         <div
@@ -198,6 +223,7 @@ const RewindUiSidebar = () => {
                 key={group.id}
                 href={`/groups/${group.id}`}
                 active={pathname === `/groups/${group.id}`}
+                title={group.name}
               >
                 {group.name}
               </MenuItem>
@@ -219,7 +245,8 @@ const RewindUiSidebar = () => {
               icon={<FaPersonFalling />}
               active={
                 pathname === "/profile" &&
-                (params.get("page") === "0" || !params.get("page"))
+                (params.get("page") === "0" ||
+                  !params.get("page"))
               }
               href="/profile?page=0"
             >

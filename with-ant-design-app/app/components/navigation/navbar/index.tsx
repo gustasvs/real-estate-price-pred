@@ -40,6 +40,7 @@ import {
 
 import { BiDotsVertical, BiLogOut, BiSolidBuildings } from "react-icons/bi";
 import { FaHamburger } from "react-icons/fa";
+import { useThemeContext } from "../../../context/ThemeContext";
 
 const Navbar = ({
   toggle,
@@ -56,6 +57,10 @@ const Navbar = ({
   const router = useRouter();
 
   const [currentTheme, setCurrentTheme] = useState("light");
+
+  const { theme, toggleTheme } = useThemeContext();
+
+
 
   const [signUpModalOpen, setSignUpModalOpen] =
     useState(false);
@@ -139,8 +144,8 @@ const Navbar = ({
                     />
 
                     <ColorThemeSwitch
-                      currentTheme={currentTheme}
-                      setCurrentTheme={setCurrentTheme}
+                      currentTheme={theme}
+                      setCurrentTheme={toggleTheme}
                     />
 
                     <Divider

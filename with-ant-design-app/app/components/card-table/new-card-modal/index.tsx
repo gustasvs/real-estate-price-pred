@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from 'react';
-import { Button, Input, Modal } from 'antd';
-import styles from './NewGroupModal.module.css'; // Import the CSS module
-import { StyledTextField } from '../../my-profile/my-profile-form/MyProfileForm';
+import React, { useState } from "react";
+import { Button, Input, Modal } from "antd";
+import styles from "./NewGroupModal.module.css"; // Import the CSS module
+import { StyledTextField } from "../../my-profile/my-profile-form/MyProfileForm";
+import { CloseOutlined } from "@ant-design/icons";
 
 interface NewGroupModalProps {
   open: boolean;
@@ -15,36 +16,52 @@ interface NewGroupModalProps {
   setGroupName: (groupName: string) => void;
 }
 
-const NewGroupModal: React.FC<NewGroupModalProps> = ({ open, setOpen, addGroup, onSubmit, isEditing, groupName, setGroupName }) => {
-
+const NewGroupModal: React.FC<NewGroupModalProps> = ({
+  open,
+  setOpen,
+  addGroup,
+  onSubmit,
+  isEditing,
+  groupName,
+  setGroupName,
+}) => {
   const handleOk = () => {
     onSubmit(groupName);
     setOpen(false);
-    setGroupName('');  // Reset the input field after operation
+    setGroupName(""); // Reset the input field after operation
   };
-  
 
   const handleClose = () => {
     setOpen(false);
-    setGroupName('');  // Reset the input field on close
+    setGroupName(""); // Reset the input field on close
   };
 
   return (
     <Modal
-      title={isEditing ? "Labot grupu" : "Izveidot jaunu grupu"}
+      title={
+        isEditing ? "Labot grupu" : "Izveidot jaunu grupu"
+      }
       open={open}
       onOk={handleOk}
       onCancel={handleClose}
+      closeIcon={<CloseOutlined className={styles.closeIcon}/>}
       footer={
-        <div
-          className={styles.footer}
-        >
-        <Button key="back" onClick={handleClose} className={styles.cancelButton}>
-          Atcelt
-        </Button>
-        <Button key="submit" type="primary" onClick={handleOk} className={styles.submitButton}>
-          {isEditing ? "Labot" : "Pievienot"}
-        </Button>
+        <div className={styles.footer}>
+          <Button
+            key="back"
+            onClick={handleClose}
+            className={styles.cancelButton}
+          >
+            Atcelt
+          </Button>
+          <Button
+            key="submit"
+            type="primary"
+            onClick={handleOk}
+            className={styles.submitButton}
+          >
+            {isEditing ? "Labot" : "Pievienot"}
+          </Button>
         </div>
       }
       className={styles.modal}
@@ -61,15 +78,15 @@ const NewGroupModal: React.FC<NewGroupModalProps> = ({ open, setOpen, addGroup, 
           marginTop: "2em",
         }}
       >
-  <StyledTextField
-    id="outlined-basic"
-    label="Grupas nosaukums"
-    variant="outlined"
-    value={groupName}
-    onChange={(e) => setGroupName(e.target.value)}
-    className={styles.input}
-    // maxLength={50}
-  />
+        <StyledTextField
+          id="outlined-basic"
+          label="Grupas nosaukums"
+          variant="outlined"
+          value={groupName}
+          onChange={(e) => setGroupName(e.target.value)}
+          className={styles.input}
+          // maxLength={50}
+        />
       </div>
     </Modal>
   );

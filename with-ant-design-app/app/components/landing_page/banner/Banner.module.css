@@ -55,9 +55,6 @@
 }
 
 .get-started-button {
-    font-family: Pitch Sans;
-    background-color: var(--background-light-secondary);
-    color: var(--background-dark-secondary);
     border-radius: 30px;
     height: 48px;
     width: 30%;
@@ -112,9 +109,9 @@
 
   .cube {
     background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  filter: invert(1);
+    background-repeat: no-repeat;
+    background-position: center;
+    filter: invert(1);
   }
 
 .cube-0 {

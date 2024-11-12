@@ -63,3 +63,26 @@ export const updateUserProfile = async (profileData: {
     return { error: "Failed to update user profile" };
   }
 };
+
+
+export const updateUserTheme = async (theme: string) => {
+  const session = await auth();
+  const user = session?.user;
+
+  if (!user || !user.id) {
+    return { error: "Unauthorized" };
+  }
+
+  try {
+    const updatedUser = await db.user.update({
+      where: { id: user.id },
+      data: {
+        theme,
+      },
+    });
+    return { user: updatedUser };
+  } catch (error) {
+    console.error("Error updating user theme:", error);
+    return { error: "Failed to update user theme" };
+  }
+}

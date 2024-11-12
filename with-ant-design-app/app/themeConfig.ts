@@ -24,10 +24,27 @@ const theme: ThemeConfig = {
       linkHoverColor: "var(--text-brighter)"
     },
     Button: {
-      defaultHoverBg: "var(--background-dark-secondary)",
-      defaultHoverColor: "var(--background-light-secondary)",
-      colorPrimary: "var(--background-light-secondary)",
-      colorPrimaryBgHover: "var(--background-dark-secondary)",
+      defaultBg: "var(--background-dark-secondary)",
+      defaultColor: "var(--background-light-secondary)",
+      defaultHoverColor: "var(--text-bright)",
+      defaultHoverBg: "var(--background-dark-main)",
+
+      defaultActiveBg: "var(--background-dark-main)",
+      defaultActiveColor: "var(--text-brighter)",
+
+      colorPrimary: "var(--background-light-main)", // primary button background
+      primaryColor: "var(--background-dark-main)", // primary button text color on hover..
+      colorPrimaryHover: "var(--background-light-secondary)", // primary button background on hover
+
+      colorPrimaryActive: "var(--background-light-secondary)", // primary button background on active
+      colorPrimaryTextActive: "var(--background-dark-main)", // primary button text color on active
+
+    },
+    Modal: {
+      contentBg: "var(--background-dark-main)",
+      headerBg: "var(--background-dark-main)",
+      colorTextHeading: "var(--background-light-secondary)",
+      colorText: "var(--background-light-secondary)",
     }
   },
   token: {

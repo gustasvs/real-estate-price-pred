@@ -51,7 +51,7 @@ const CardTable = ({
   const [editGroupId, setEditGroupId] = useState(null);
   const [editGroupName, setEditGroupName] = useState("");
 
-  const rowGutter: [number, number] = [16, 16];
+  const rowGutter: [number, number] = [8, 32];
   const colSpan: number = 24 / columnCount;
 
   const handleAddButtonClick = () => {
@@ -89,7 +89,7 @@ const CardTable = ({
         <Row
           gutter={rowGutter}
           style={{
-            width: columnCount < 4 ? "70%" : "80%",
+            width: columnCount < 4 ? "90%" : "100%",
             marginTop: 60,
             marginBottom: 60,
             // justifyContent: "space-between",
@@ -136,8 +136,8 @@ const CardTable = ({
                       background: `url(${group.imageUrl})`,
                       backgroundSize: "cover",
                       backgroundPosition: "center",
-                      width: "200px",
-                      height: "280px",
+                      width: "280px",
+                      height: "380px",
                       borderRadius: "10px",
                     }}
                   ></div>
@@ -149,7 +149,13 @@ const CardTable = ({
                         styles["card-content-title-text"]
                       }
                     >
-                      <span>{group.name}</span>
+                      <span
+                        className={
+                          styles[
+                            "card-content-title-text-name"
+                          ]
+                        }
+                      >{group.name}</span>
                       <span
                         className={
                           styles[
