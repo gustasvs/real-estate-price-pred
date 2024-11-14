@@ -5,3 +5,4 @@ backend/data/processed_dataset
 
 
 __pycache__
+/backend/models/vit_regression_model.pth
