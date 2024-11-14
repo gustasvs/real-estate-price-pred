@@ -3,12 +3,14 @@ import numpy as np
 import torch
 import torch.nn as nn
 from torch.optim import Adam
-from transformers import ViTImageProcessor, ViTModel
+from transformers import ViTImageProcessor
 from torch.utils.data import DataLoader, Dataset
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
 import torchvision.transforms as T
 from sklearn.preprocessing import MinMaxScaler
+
+import matplotlib.pyplot as plt
 
 import time
 
@@ -16,23 +18,27 @@ import transformers
 transformers.logging.set_verbosity_error()
 
 
-
 from load_images import load_images
 from load_prices import load_prices
 
+from config.settings import BATCH_SIZE, ENABLE_DEV_LOGS, LEARNING_RATE, LOSS_FUNCT, EPOCHS, BATCHES_TO_AGGREGATE
+
+from model.google_vit_model import get_vit_model
+
+model = get_vit_model()
 
 # Define the custom dataset
 class ImageDataset(Dataset):
     def __init__(self, images, prices, feature_extractor):
-        self.images = images  # List of image paths or PIL images
-        self.prices = prices  # List of prices
+        self.images = images 
+        self.prices = prices
         self.feature_extractor = feature_extractor
 
     def __len__(self):
         return len(self.images)
 
     def __getitem__(self, idx):
-        sample_images = self.images[idx]  # List of images for the current instance
+        sample_images = self.images[idx]
         price = self.prices[idx]
         
         # Preprocess and stack images
@@ -41,140 +47,44 @@ class ImageDataset(Dataset):
             for img in sample_images
         ])
 
-        print("Current instance pixel values shape: ", sample_images_extracted.shape)
+        if ENABLE_DEV_LOGS: print("current sample shape: ", sample_images_extracted.shape)
 
         return sample_images_extracted, torch.tensor(price, dtype=torch.float32)
 
 
-# Load the base ViT model without head
-base_model = ViTModel.from_pretrained("google/vit-base-patch16-224")
-
-
-
-class ImageAggregator(nn.Module):
-    def __init__(self, aggregation_method="mean"):
-        super(ImageAggregator, self).__init__()
-        self.aggregation_method = aggregation_method
-
-    def forward(self, embeddings):
-        if self.aggregation_method == "mean":
-            return torch.mean(embeddings, dim=0);
-            # return torch.mean(embeddings, dim=1)  # Correct dimension for mean pooling
-        # Implement other methods as needed
-        return embeddings  # Fallback
-
-
-
-class CustomViTHead(nn.Module):
-    def __init__(self):
-        super(CustomViTHead, self).__init__()
-        self.dropout = nn.Dropout(0.3)
-        self.fc1 = nn.Linear(768, 256)
-        self.fc2 = nn.Linear(256, 1)  # Ensure output shape is [batch_size, 1]
-
-    def forward(self, x):
-        x = self.dropout(x)
-        x = self.fc1(x)
-        x = nn.functional.relu(x)
-        x = self.fc2(x)
-        return x.squeeze(-1)  # Change here to ensure output shape matches target shape
-
-
-
-
-# Combine base model with custom head
-class ViTMultiImageRegressionModel(nn.Module):
-    def __init__(self, base_model, aggregator, custom_head):
-        super(ViTMultiImageRegressionModel, self).__init__()
-        self.base_model = base_model
-        self.aggregator = aggregator
-        self.custom_head = custom_head
-
-    def forward(self, batch):
-        batch_embeddings = []
-        
-        # create embeddings for all images in one sample in batch
-        for sample in batch:
-            # You only need to stack if instance_images is a list of tensors, otherwise directly use the tensor.
-            instance_embeddings = [self.base_model(pixel_values=image.unsqueeze(0)).last_hidden_state[:, 0, :]
-                                   for image in sample]
-            instance_embeddings = torch.cat(instance_embeddings, dim=0)
-            batch_embeddings.append(instance_embeddings)
-        
-        aggregated_embeddings = torch.stack([
-            self.aggregator(instance) for instance in batch_embeddings
-        ])
-
-        print("Aggregated embeddings shape: ", aggregated_embeddings.shape)
-        
-        # Pass aggregated embedding through regression head
-        output = self.custom_head(aggregated_embeddings)
-        print("Final output shape: ", output.shape)
-        return output
-
-
-
-
-aggregator = ImageAggregator(aggregation_method="mean")
-custom_head = CustomViTHead()
-model = ViTMultiImageRegressionModel(base_model, aggregator, custom_head)
-
-import matplotlib.pyplot as plt
-import torchvision.transforms as transforms
-
-# Add this function to convert tensor to image
-def show_image_from_tensor(tensor):
-    """
-    Display an image from the tensor passed to the model.
-    Args:
-        tensor (torch.Tensor): Tensor with shape [3, 224, 224] (after preprocessing).
-    """
-    # Convert tensor to PIL image
-    inv_normalize = transforms.Normalize(
-        mean=[-0.5, -0.5, -0.5],
-        std=[1/0.5, 1/0.5, 1/0.5]
-    )
-    tensor = inv_normalize(tensor)  # Revert normalization
-    image = transforms.ToPILImage()(tensor.cpu()).convert("RGB")
-
-    # Plot image
-    plt.imshow(image)
-    plt.axis("off")
-    plt.show()
-
-
 # Modify the train function to include this display
-def train(model, dataloader, criterion, optimizer, device, epoch):
+def train(model, dataloader, optimizer, device, epoch):
     model.train()
     running_loss = 0
     start_time = time.time()
     total_batches = len(dataloader)
-    
+
+    optimizer.zero_grad()
+
     for batch_idx, (sample, prices) in enumerate(dataloader, 1):
 
         sample = [instance.to(device) for instance in sample]
 
-        print("one input in batch shape: ", sample[0].shape)  # Should print [8, 2, 3, 224, 224] for a batch size of 8
+        if ENABLE_DEV_LOGS: print("one input in batch shape: ", sample[0].shape)  # Should print [8, 2, 3, 224, 224] for a batch size of 8
 
         prices = prices.to(device)
 
-        print("prices shape (should be batch size): ", prices.shape)
+        if ENABLE_DEV_LOGS: print("prices shape (should be batch size): ", prices.shape)
 
-        optimizer.zero_grad()
+        
 
         outputs = model(sample)
-        loss = criterion(outputs, prices) 
+        loss = LOSS_FUNCT(outputs, prices) 
         loss.backward()
-        optimizer.step()
 
-        # Update running loss
+        if (batch_idx + 1) % BATCHES_TO_AGGREGATE == 0 or batch_idx == total_batches:
+            optimizer.step()
+            optimizer.zero_grad()
+
+        # update running loss
         running_loss += loss.item()
-
-        # Display the first image in the batch once per epoch (optional)
-        # if batch_idx == 1:
-        #     show_image_from_tensor(pixel_values[0])
-
-        # Log detailed information per batch
+        
+        #  logs
         if batch_idx % 10 == 0 or batch_idx == total_batches:
             elapsed_time = time.time() - start_time
             avg_loss = running_loss / batch_idx
@@ -183,12 +93,15 @@ def train(model, dataloader, criterion, optimizer, device, epoch):
                 f"Batch Loss = {loss.item():.4f}, Avg Loss = {avg_loss:.4f}, "
                 f"Elapsed Time = {elapsed_time:.2f}s"
             )
+            # print last output and real outputs
+            print("Last output: ", outputs[-1].item())
+            print("Real output: ", prices[-1].item())
 
     return running_loss / total_batches
 
 
 # Validation setup
-def validate(model, dataloader, criterion, device):
+def validate(model, dataloader, device):
     model.eval()
     val_loss = 0
     with torch.no_grad():
@@ -198,56 +111,71 @@ def validate(model, dataloader, criterion, device):
             prices = prices.to(device)
             
             outputs = model(pixel_values_list)
-            loss = criterion(outputs.squeeze(), prices)
+            loss = LOSS_FUNCT(outputs.squeeze(), prices)
             val_loss += loss.item()
     return val_loss / len(dataloader)
 
 # Main script
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"Using device: {device}")
+print(f"Batch size: {BATCH_SIZE}, aggregation multiplier: {BATCHES_TO_AGGREGATE}")
+print("-" * 20)
+print(f"Simulated batch size: {BATCH_SIZE * BATCHES_TO_AGGREGATE}")
+print("-" * 20)
+
 model.to(device)
 
-# Example data and preprocessing
-# Replace with actual image data and prices
-
-count = 100
-
-images = load_images(count)
-# shape = [count, image_count, image]
-
+count = 200
+images = load_images(count) # shape = [count, image_count, image]
+print("Images loaded...")
 
 # prices = [np.random.randint(100, 1000) for _ in range(count)]
-prices = load_prices(count)
+prices = load_prices(count) # shape = [count]
+print("Prices loaded...")
 
-# scaler = MinMaxScaler()
-# prices = scaler.fit_transform(np.array(prices).reshape(-1, 1)).flatten()
-prices = np.array(prices)
+scaler = MinMaxScaler()
+prices = scaler.fit_transform(np.array(prices).reshape(-1, 1)).flatten()
+
+
+hist, bin_edges = np.histogram(prices, bins=20)
+bin_counts = hist
+
+weights = 1.0 / bin_counts
+normalized_weights = weights / weights.sum()
+price_weights = np.zeros_like(prices)
+for i in range(len(bin_edges) - 1):
+    price_weights[(prices >= bin_edges[i]) & (prices < bin_edges[i+1])] = normalized_weights[i]
+price_weights = torch.tensor(price_weights, dtype=torch.float32, device=device)
+
+# price distribution plotted
+fig, ax = plt.subplots(2, 1, figsize=(10, 10))
+ax[0].hist(prices, bins=20)
+ax[1].hist(price_weights.cpu().numpy(), bins=20)
+plt.show()
 
 
 feature_extractor = ViTImageProcessor.from_pretrained("google/vit-base-patch16-224")
-
 train_images, val_images, train_prices, val_prices = train_test_split(images, prices, test_size=0.2)
-
 train_dataset = ImageDataset(train_images, train_prices, feature_extractor)
 val_dataset = ImageDataset(val_images, val_prices, feature_extractor)
 
-# function to override the default behavior of using torch.stack, because we are using different image counts
+# function to override the default behavior of using torch.stack when making dataset, 
+# because we are using different shapes for each sample
 def custom_collate_fn(batch):
     pixel_values_list, prices = zip(*batch)
     return list(pixel_values_list), torch.tensor(prices, dtype=torch.float32)
 
-train_loader = DataLoader(train_dataset, batch_size=4, shuffle=True, collate_fn=custom_collate_fn)
-val_loader = DataLoader(val_dataset, batch_size=4, collate_fn=custom_collate_fn)
+train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, collate_fn=custom_collate_fn)
+val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, collate_fn=custom_collate_fn)
 
 
-criterion = nn.MSELoss()
-optimizer = Adam(model.parameters(), lr=1e-4)
+optimizer = Adam(model.parameters(), lr=LEARNING_RATE)
 
 # Training loop
-epochs = 10
+epochs = EPOCHS
 for epoch in range(epochs):
-    train_loss = train(model, train_loader, criterion, optimizer, device, epoch)
-    val_loss = validate(model, val_loader, criterion, device)
+    train_loss = train(model, train_loader, optimizer, device, epoch)
+    val_loss = validate(model, val_loader, device)
     print(f"Epoch {epoch+1}/{epochs}, Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}")
 
 # Save the model
