@@ -181,12 +181,16 @@ prices = scaler.fit_transform(np.array(prices).reshape(-1, 1)).flatten()
 
 weights, weight_bins = compute_bin_weights(prices, num_bins=20)
 
-fig, ax = plt.subplots(2, 1, figsize=(10, 5))
-ax[0].hist(prices, bins=20)
-ax[1].plot(weight_bins)
-plt.show()
+# bins = np.linspace(min(prices), max(prices), 21)
+# fig, ax = plt.subplots(2, 1, figsize=(10, 5))
+# ax[0].hist(prices, bins=bins)
+# ax[1].bar(bins[:-1], weight_bins, align='edge', width=np.diff(bins))
+# ax[1].set_xlabel('Price')
+# ax[1].set_ylabel('Normalized Inverse Frequency Weights')
+# plt.show()
 
-LOSS_FUNCT = WeightedMSELoss(weights)
+
+LOSS_FUNCT = WeightedMSELoss(weights, device=device)
 
 
 feature_extractor = ViTImageProcessor.from_pretrained("google/vit-base-patch16-224")

@@ -24,17 +24,17 @@ def compute_bin_weights(targets, num_bins=20):
     bin_weights = 1.0 / bin_counts  # inverse frequency
     bin_weights = bin_weights / bin_weights.sum() # normalize
     
-    bin_to_weight = dict(zip(unique_bins, bin_weights))
-    sample_weights = torch.tensor([bin_to_weight[bin_idx] for bin_idx in bin_indices], dtype=torch.float32)
-    
-    return sample_weights, bin_weights
+    full_bin_weights = np.zeros(num_bins)
+    full_bin_weights[unique_bins] = bin_weights
+    sample_weights = torch.tensor([full_bin_weights[bin_idx] for bin_idx in bin_indices], dtype=torch.float32)
+    return sample_weights, full_bin_weights
 
 
 class WeightedMSELoss(nn.Module):
-    def __init__(self, weights):
+    def __init__(self, weights, device='cpu'):
         super(WeightedMSELoss, self).__init__()
         self.mse = nn.MSELoss(reduction='none')  # No reduction for manual weighting
-        self.weights = weights
+        self.weights = weights.to(device)
     
     def forward(self, predictions, targets):
         """
@@ -47,6 +47,7 @@ class WeightedMSELoss(nn.Module):
         Returns:
             torch.Tensor: Weighted MSE loss.
         """
+
         loss = self.mse(predictions, targets)
         # Get the corresponding weights for each target in the batch
         batch_weights = self.weights[targets.long()]  
