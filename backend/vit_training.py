@@ -25,6 +25,10 @@ from config.settings import BATCH_SIZE, ENABLE_DEV_LOGS, LEARNING_RATE, LOSS_FUN
 
 from model.google_vit_model import get_vit_model
 
+from helpers.label_smothing import apply_lds, apply_fds, adaptive_lds
+
+from helpers.weighted_loss import compute_bin_weights, WeightedMSELoss
+
 model = get_vit_model()
 
 # Define the custom dataset
@@ -39,6 +43,10 @@ class ImageDataset(Dataset):
 
     def __getitem__(self, idx):
         sample_images = self.images[idx]
+
+        sampled_count = np.random.randint(1, len(sample_images) + 1)
+        sample_images = np.random.choice(sample_images, sampled_count, replace=False)
+
         price = self.prices[idx]
         
         # Preprocess and stack images
@@ -52,7 +60,6 @@ class ImageDataset(Dataset):
         return sample_images_extracted, torch.tensor(price, dtype=torch.float32)
 
 
-# Modify the train function to include this display
 def train(model, dataloader, optimizer, device, epoch):
     model.train()
     running_loss = 0
@@ -100,7 +107,6 @@ def train(model, dataloader, optimizer, device, epoch):
     return running_loss / total_batches
 
 
-# Validation setup
 def validate(model, dataloader, device):
     model.eval()
     val_loss = 0
@@ -125,7 +131,7 @@ print("-" * 20)
 
 model.to(device)
 
-count = 200
+count = 500
 images = load_images(count) # shape = [count, image_count, image]
 print("Images loaded...")
 
@@ -133,25 +139,54 @@ print("Images loaded...")
 prices = load_prices(count) # shape = [count]
 print("Prices loaded...")
 
+
+sorted_prices = np.argsort(np.array(prices))
+sorted_prices = [i for i in sorted_prices if prices[i] > 0]
+print("Top 10 lowest prices: ", [prices[i] for i in sorted_prices[:10]])
+print("Top 10 highest prices: ", [prices[i] for i in sorted_prices[-10:]])
+
+filtered_indices = [i for i in range(len(prices)) if prices[i] <= 1_600_000]
+filtered_prices = [prices[i] for i in filtered_indices]
+filtered_images = [images[i] for i in filtered_indices]
+prices = filtered_prices
+images = filtered_images
+
+count = len(prices)
+
+
+
 scaler = MinMaxScaler()
 prices = scaler.fit_transform(np.array(prices).reshape(-1, 1)).flatten()
 
 
-hist, bin_edges = np.histogram(prices, bins=20)
-bin_counts = hist
+# while True:
+#     sigma = float(input("Enter the sigma value for LDS: "))
+#     # density_threshold = float(input("Enter the density threshold for adaptive LDS: "))
+#     # max_sigma = float(input("Enter the max sigma value for adaptive LDS: "))
+#     # min_sigma = float(input("Enter the min sigma value for adaptive LDS: "))
 
-weights = 1.0 / bin_counts
-normalized_weights = weights / weights.sum()
-price_weights = np.zeros_like(prices)
-for i in range(len(bin_edges) - 1):
-    price_weights[(prices >= bin_edges[i]) & (prices < bin_edges[i+1])] = normalized_weights[i]
-price_weights = torch.tensor(price_weights, dtype=torch.float32, device=device)
+#     fig, ax = plt.subplots(3, 1, figsize=(10, 10))
+#     fig.canvas.manager.window.wm_geometry("+10+10")
+    
+#     ax[0].hist(prices, bins=50)
+#     # ax[1].hist(apply_lds(prices, sigma=sigma), bins=50)
+#     # ax[1].hist(adaptive_lds(prices, density_threshold=density_threshold, max_sigma=max_sigma, min_sigma=min_sigma), bins=50)
+#     smoothed_prices = apply_fds(prices, prices, sigma=sigma)
+#     ax[1].hist(smoothed_prices, bins=50)
+#     ax[2].hist(apply_fds(smoothed_prices, smoothed_prices, sigma=sigma), bins=50)
 
-# price distribution plotted
-fig, ax = plt.subplots(2, 1, figsize=(10, 10))
+#     plt.show()
+
+# prices = apply_fds(prices, prices, sigma=1.05)
+
+weights, weight_bins = compute_bin_weights(prices, num_bins=20)
+
+fig, ax = plt.subplots(2, 1, figsize=(10, 5))
 ax[0].hist(prices, bins=20)
-ax[1].hist(price_weights.cpu().numpy(), bins=20)
+ax[1].plot(weight_bins)
 plt.show()
+
+LOSS_FUNCT = WeightedMSELoss(weights)
 
 
 feature_extractor = ViTImageProcessor.from_pretrained("google/vit-base-patch16-224")
@@ -180,3 +215,26 @@ for epoch in range(epochs):
 
 # Save the model
 torch.save(model.state_dict(), "models/vit_regression_model.pth")
+
+# After training completion, for visualizing predictions
+def show_predictions(val_loader, model, device):
+    model.eval()
+    with torch.no_grad():
+        for pixel_values_list, prices in val_loader:
+            outputs = model([instance.to(device) for instance in pixel_values_list])
+            for batch_idx, (batch, predicted, actual) in enumerate(zip(pixel_values_list, outputs, prices)):
+                n_images = len(batch)  # Get the number of images in the batch
+                plt.figure(figsize=(n_images * 5, 5))  # Adjust figure size based on number of images
+                for idx, img_tensor in enumerate(batch):
+                    plt.subplot(1, n_images, idx + 1)
+                    img_tensor = img_tensor.cpu().squeeze()
+                    if img_tensor.dim() == 3:  # Check if the image has three dimensions (C, H, W)
+                        img_tensor = img_tensor.permute(1, 2, 0)  # Permute to (H, W, C) for imshow
+                    plt.imshow(img_tensor.numpy())
+                    plt.axis('off')  # Turn off axis numbers and ticks
+                plt.suptitle(f"Sample {batch_idx + 1}: Predicted: ${predicted.item():.2f}, Actual: ${actual.item():.2f}", fontsize=16)
+                plt.show()
+
+
+# Call the function to show predictions after the last epoch
+show_predictions(val_loader, model, device)
