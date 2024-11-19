@@ -30,9 +30,13 @@ class ImageAggregator(nn.Module):
 
     def forward(self, embeddings):
         if self.aggregation_method == "mean":
-            return torch.mean(embeddings, dim=0);
-    
-        return torch.mean(embeddings, dim=0)  # fallback
+            return torch.mean(embeddings, dim=0)
+        elif self.aggregation_method == "sum":
+            return torch.sum(embeddings, dim=0)
+        elif self.aggregation_method == "max":
+            return torch.max(embeddings, dim=0)[0]
+        else:
+            return torch.mean(embeddings, dim=0)  # fallback to mean
 
 
 class CustomViTHead(nn.Module):
@@ -40,14 +44,18 @@ class CustomViTHead(nn.Module):
         super(CustomViTHead, self).__init__()
         self.dropout = nn.Dropout(0.3)
         self.fc1 = nn.Linear(768, 256)
-        self.fc2 = nn.Linear(256, 1)
+        self.fc2 = nn.Linear(256, 128)
+        self.fc3 = nn.Linear(128, 1)
 
     def forward(self, x):
         x = self.dropout(x)
         x = self.fc1(x)
         x = nn.functional.relu(x)
         x = self.fc2(x)
+        x = nn.functional.relu(x)
+        x = self.fc3(x)
         return x.squeeze(-1)
+        # return torch.sigmoid(x.squeeze(-1))
 
 
 # Combine base model with custom head
@@ -81,8 +89,10 @@ class ViTMultiImageRegressionModel(nn.Module):
         return output
 
 
-def get_vit_model():
-    aggregator = ImageAggregator(aggregation_method="mean")
+def get_vit_model(
+        aggregation_method="mean"
+):
+    aggregator = ImageAggregator(aggregation_method=aggregation_method)
     custom_head = CustomViTHead()
     model = ViTMultiImageRegressionModel(base_model, aggregator, custom_head)
 

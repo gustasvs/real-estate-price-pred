@@ -29,7 +29,7 @@ from helpers.label_smothing import apply_lds, apply_fds, adaptive_lds
 
 from helpers.weighted_loss import compute_bin_weights, WeightedMSELoss
 
-model = get_vit_model()
+model = get_vit_model(aggregation_method="mean")
 
 # Define the custom dataset
 class ImageDataset(Dataset):
@@ -44,7 +44,7 @@ class ImageDataset(Dataset):
     def __getitem__(self, idx):
         sample_images = self.images[idx]
 
-        sampled_count = np.random.randint(1, len(sample_images) + 1)
+        sampled_count = np.random.randint(2, len(sample_images) + 1)
         sample_images = np.random.choice(sample_images, sampled_count, replace=False)
 
         price = self.prices[idx]
@@ -81,7 +81,7 @@ def train(model, dataloader, optimizer, device, epoch):
         
 
         outputs = model(sample)
-        loss = LOSS_FUNCT(outputs, prices) 
+        loss = LOSS_FUNCT(outputs, prices)
         loss.backward()
 
         if (batch_idx + 1) % BATCHES_TO_AGGREGATE == 0 or batch_idx == total_batches:
@@ -153,7 +153,12 @@ images = filtered_images
 
 count = len(prices)
 
+prices = np.array(prices)
 
+prices = apply_fds(prices, prices, sigma=2)
+
+plt.hist(prices, bins=20)
+plt.show()
 
 scaler = MinMaxScaler()
 prices = scaler.fit_transform(np.array(prices).reshape(-1, 1)).flatten()

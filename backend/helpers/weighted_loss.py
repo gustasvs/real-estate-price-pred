@@ -16,13 +16,23 @@ def compute_bin_weights(targets, num_bins=20):
         torch.Tensor: Weights corresponding to each target
         np.array: Weights corresponding to each bin
     """
-    bins = np.linspace(min(targets), max(targets), num_bins + 1)
+    epsilon = 1e-9  # using epsilon because np.digitize is one side inclusive
+    bins = np.linspace(min(targets) - epsilon, max(targets) + epsilon, num_bins + 1)
     
     bin_indices = np.digitize(targets, bins, right=True) - 1
+
+    print("bin_indices", bin_indices)
+
     
     unique_bins, bin_counts = np.unique(bin_indices, return_counts=True)
     bin_weights = 1.0 / bin_counts  # inverse frequency
-    bin_weights = bin_weights / bin_weights.sum() # normalize
+    # bin_weights = bin_weights / np.sum(bin_weights)  # normalize
+
+    # scale weights so that the max weight is 1
+    bin_weights = bin_weights / np.max(bin_weights)
+
+    print("bin weights: ", bin_weights)
+
     
     full_bin_weights = np.zeros(num_bins)
     full_bin_weights[unique_bins] = bin_weights
@@ -49,7 +59,9 @@ class WeightedMSELoss(nn.Module):
         """
 
         loss = self.mse(predictions, targets)
-        # Get the corresponding weights for each target in the batch
-        batch_weights = self.weights[targets.long()]  
+        # print("pred", predictions)
+        # print("targets", targets)
+        batch_weights = self.weights[targets.long()]
+        # print("batch_weights", batch_weights)
         weighted_loss = (loss * batch_weights).mean()
         return weighted_loss
