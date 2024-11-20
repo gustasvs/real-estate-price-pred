@@ -4,8 +4,6 @@ import torch
 import torch.nn as nn
 from torch.optim import Adam
 from transformers import ViTImageProcessor
-from torch.utils.data import DataLoader, Dataset
-from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
 import torchvision.transforms as T
 from sklearn.preprocessing import MinMaxScaler
@@ -25,40 +23,17 @@ from config.settings import BATCH_SIZE, ENABLE_DEV_LOGS, LEARNING_RATE, LOSS_FUN
 
 from model.google_vit_model import get_vit_model
 
-from helpers.label_smothing import apply_lds, apply_fds, adaptive_lds
+
 
 from helpers.weighted_loss import compute_bin_weights, WeightedMSELoss
 
-model = get_vit_model(aggregation_method="mean")
+from helpers.data_loader import get_data_loaders
+
+from helpers.processed_data import processed_data
+
+model, feature_extractor = get_vit_model(aggregation_method="mean")
 
 # Define the custom dataset
-class ImageDataset(Dataset):
-    def __init__(self, images, prices, feature_extractor):
-        self.images = images 
-        self.prices = prices
-        self.feature_extractor = feature_extractor
-
-    def __len__(self):
-        return len(self.images)
-
-    def __getitem__(self, idx):
-        sample_images = self.images[idx]
-
-        sampled_count = np.random.randint(2, len(sample_images) + 1)
-        sample_images = np.random.choice(sample_images, sampled_count, replace=False)
-
-        price = self.prices[idx]
-        
-        # Preprocess and stack images
-        sample_images_extracted = torch.stack([
-            self.feature_extractor(images=img, return_tensors="pt")['pixel_values'].squeeze(0)
-            for img in sample_images
-        ])
-
-        if ENABLE_DEV_LOGS: print("current sample shape: ", sample_images_extracted.shape)
-
-        return sample_images_extracted, torch.tensor(price, dtype=torch.float32)
-
 
 def train(model, dataloader, optimizer, device, epoch):
     model.train()
@@ -78,7 +53,6 @@ def train(model, dataloader, optimizer, device, epoch):
 
         if ENABLE_DEV_LOGS: print("prices shape (should be batch size): ", prices.shape)
 
-        
 
         outputs = model(sample)
         loss = LOSS_FUNCT(outputs, prices)
@@ -92,12 +66,12 @@ def train(model, dataloader, optimizer, device, epoch):
         running_loss += loss.item()
         
         #  logs
-        if batch_idx % 10 == 0 or batch_idx == total_batches:
+        if (batch_idx + 1) % BATCHES_TO_AGGREGATE == 0 or batch_idx == total_batches:
             elapsed_time = time.time() - start_time
-            avg_loss = running_loss / batch_idx
+
             print(
                 f"Epoch [{epoch+1}] - Batch [{batch_idx}/{total_batches}]: "
-                f"Batch Loss = {loss.item():.4f}, Avg Loss = {avg_loss:.4f}, "
+                f"Batch Loss = {loss.item():.4f}, Loss = {running_loss:.4f}, "
                 f"Elapsed Time = {elapsed_time:.2f}s"
             )
             # print last output and real outputs
@@ -132,85 +106,15 @@ print("-" * 20)
 model.to(device)
 
 count = 500
-images = load_images(count) # shape = [count, image_count, image]
-print("Images loaded...")
 
-# prices = [np.random.randint(100, 1000) for _ in range(count)]
-prices = load_prices(count) # shape = [count]
-print("Prices loaded...")
+images, prices = processed_data(count)
 
+bins, bin_weights = compute_bin_weights(prices, num_bins=10)
 
-sorted_prices = np.argsort(np.array(prices))
-sorted_prices = [i for i in sorted_prices if prices[i] > 0]
-print("Top 10 lowest prices: ", [prices[i] for i in sorted_prices[:10]])
-print("Top 10 highest prices: ", [prices[i] for i in sorted_prices[-10:]])
-
-filtered_indices = [i for i in range(len(prices)) if prices[i] <= 1_600_000]
-filtered_prices = [prices[i] for i in filtered_indices]
-filtered_images = [images[i] for i in filtered_indices]
-prices = filtered_prices
-images = filtered_images
-
-count = len(prices)
-
-prices = np.array(prices)
-
-prices = apply_fds(prices, prices, sigma=2)
-
-plt.hist(prices, bins=20)
-plt.show()
-
-scaler = MinMaxScaler()
-prices = scaler.fit_transform(np.array(prices).reshape(-1, 1)).flatten()
+LOSS_FUNCT = WeightedMSELoss(bins, bin_weights, device=device)
 
 
-# while True:
-#     sigma = float(input("Enter the sigma value for LDS: "))
-#     # density_threshold = float(input("Enter the density threshold for adaptive LDS: "))
-#     # max_sigma = float(input("Enter the max sigma value for adaptive LDS: "))
-#     # min_sigma = float(input("Enter the min sigma value for adaptive LDS: "))
-
-#     fig, ax = plt.subplots(3, 1, figsize=(10, 10))
-#     fig.canvas.manager.window.wm_geometry("+10+10")
-    
-#     ax[0].hist(prices, bins=50)
-#     # ax[1].hist(apply_lds(prices, sigma=sigma), bins=50)
-#     # ax[1].hist(adaptive_lds(prices, density_threshold=density_threshold, max_sigma=max_sigma, min_sigma=min_sigma), bins=50)
-#     smoothed_prices = apply_fds(prices, prices, sigma=sigma)
-#     ax[1].hist(smoothed_prices, bins=50)
-#     ax[2].hist(apply_fds(smoothed_prices, smoothed_prices, sigma=sigma), bins=50)
-
-#     plt.show()
-
-# prices = apply_fds(prices, prices, sigma=1.05)
-
-weights, weight_bins = compute_bin_weights(prices, num_bins=20)
-
-# bins = np.linspace(min(prices), max(prices), 21)
-# fig, ax = plt.subplots(2, 1, figsize=(10, 5))
-# ax[0].hist(prices, bins=bins)
-# ax[1].bar(bins[:-1], weight_bins, align='edge', width=np.diff(bins))
-# ax[1].set_xlabel('Price')
-# ax[1].set_ylabel('Normalized Inverse Frequency Weights')
-# plt.show()
-
-
-LOSS_FUNCT = WeightedMSELoss(weights, device=device)
-
-
-feature_extractor = ViTImageProcessor.from_pretrained("google/vit-base-patch16-224")
-train_images, val_images, train_prices, val_prices = train_test_split(images, prices, test_size=0.2)
-train_dataset = ImageDataset(train_images, train_prices, feature_extractor)
-val_dataset = ImageDataset(val_images, val_prices, feature_extractor)
-
-# function to override the default behavior of using torch.stack when making dataset, 
-# because we are using different shapes for each sample
-def custom_collate_fn(batch):
-    pixel_values_list, prices = zip(*batch)
-    return list(pixel_values_list), torch.tensor(prices, dtype=torch.float32)
-
-train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, collate_fn=custom_collate_fn)
-val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, collate_fn=custom_collate_fn)
+train_loader, val_loader = get_data_loaders(images, prices, feature_extractor)
 
 
 optimizer = Adam(model.parameters(), lr=LEARNING_RATE)
@@ -243,7 +147,6 @@ def show_predictions(val_loader, model, device):
                     plt.axis('off')  # Turn off axis numbers and ticks
                 plt.suptitle(f"Sample {batch_idx + 1}: Predicted: ${predicted.item():.2f}, Actual: ${actual.item():.2f}", fontsize=16)
                 plt.show()
-
 
 # Call the function to show predictions after the last epoch
 show_predictions(val_loader, model, device)

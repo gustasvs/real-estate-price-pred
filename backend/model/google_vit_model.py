@@ -96,5 +96,7 @@ def get_vit_model(
     custom_head = CustomViTHead()
     model = ViTMultiImageRegressionModel(base_model, aggregator, custom_head)
 
-    return model
+    feature_extractor = ViTImageProcessor.from_pretrained("google/vit-base-patch16-224")
+
+    return model, feature_extractor
 
