@@ -19,6 +19,8 @@ def compute_bin_weights(targets, num_bins=20):
     epsilon = 1e-9  # using epsilon because np.digitize is one side inclusive
     bins = np.linspace(min(targets) - epsilon, max(targets) + epsilon, num_bins + 1)
     
+    print("bins", bins)
+
     bin_indices = np.digitize(targets, bins, right=True) - 1
 
     print("bin_indices", bin_indices)
@@ -36,15 +38,17 @@ def compute_bin_weights(targets, num_bins=20):
     
     full_bin_weights = np.zeros(num_bins)
     full_bin_weights[unique_bins] = bin_weights
-    sample_weights = torch.tensor([full_bin_weights[bin_idx] for bin_idx in bin_indices], dtype=torch.float32)
-    return sample_weights, full_bin_weights
+    
+    return bins, full_bin_weights
 
 
 class WeightedMSELoss(nn.Module):
-    def __init__(self, weights, device='cpu'):
+    def __init__(self, bins, bin_weights, device='cpu'):
         super(WeightedMSELoss, self).__init__()
         self.mse = nn.MSELoss(reduction='none')  # No reduction for manual weighting
-        self.weights = weights.to(device)
+        self.bins = torch.tensor(bins, device=device)  # Ensure bins are a torch tensor on the correct device
+        self.bin_weights = torch.tensor(bin_weights, device=device)  # Ensure bin weights are a torch tensor on the correct device
+        self.device = device
     
     def forward(self, predictions, targets):
         """
@@ -58,10 +62,16 @@ class WeightedMSELoss(nn.Module):
             torch.Tensor: Weighted MSE loss.
         """
 
-        loss = self.mse(predictions, targets)
+        loss = self.mse(predictions, targets) * 10
+        # print("loss", loss)
         # print("pred", predictions)
         # print("targets", targets)
-        batch_weights = self.weights[targets.long()]
+
+        bin_indices = torch.bucketize(targets, self.bins, right=True) - 1  
+        batch_weights = self.bin_weights[bin_indices]
         # print("batch_weights", batch_weights)
+
         weighted_loss = (loss * batch_weights).mean()
+        # print("weighted_loss", weighted_loss)
+        # exit(0)
         return weighted_loss
