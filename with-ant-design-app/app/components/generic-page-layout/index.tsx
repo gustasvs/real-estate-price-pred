@@ -29,8 +29,7 @@ const { Header, Content, Footer } = Layout;
 const GenericLayout: React.FC<{
   children?: React.ReactNode;
   homePage?: boolean;
-  sidebarItems?: any;
-}> = ({ children, homePage, sidebarItems }) => {
+}> = ({ children, homePage }) => {
   
   const {
     token: { colorBgContainer, borderRadiusLG },

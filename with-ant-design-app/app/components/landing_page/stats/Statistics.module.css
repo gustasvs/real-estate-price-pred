@@ -1,7 +1,7 @@
 
 
 .statistics {
-  background-color: var(--background-gray);
+  background-color: var(--background-dark-secondary);
   /* background-color: var(--background-light-secondary); */
   height: 500px;
 }
@@ -95,7 +95,7 @@
   background-color: var(--background-light-secondary);
 
   /* box-shadow: var(--secondary-color-transparent) 0px 16px 32px; */
-  --outer-shadow: rgba(200, 200, 195, 0.912) 0px 20px 32px;
+  --outer-shadow: var(--background-dark-main) 0px 20px 32px;
   box-shadow: var(--outer-shadow);
   aspect-ratio: 1 / 1;
   justify-content: center;
@@ -128,7 +128,7 @@
   width: 80px;
   /* filter: invert(1) invert(20%) sepia(17%) saturate(183%) hue-rotate(156deg) brightness(95%) contrast(92%);  */
   /* filter: invert(.1) sepia(17%) saturate(183%) hue-rotate(156deg) brightness(95%) contrast(92%); */
-  color: var(--background-dark-secondary);
+  color: var(--background-darkest);
 }
 
 /* New particle container for the particles */

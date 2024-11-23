@@ -21,18 +21,21 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import { getGroupsForSidebar } from "../../../../actions/group";
-import { NextPageContext } from "next";
-import NavLink from "../../NavLink/NavLink";
 import {
-  useParams,
   usePathname,
   useSearchParams,
 } from "next/navigation";
-import { Divider } from "antd";
 import { FaGears, FaPersonFalling } from "react-icons/fa6";
 
 const RewindUiSidebar = () => {
-  const [collapsed, setCollapsed] = useState(true);
+  const [collapsed, setCollapsed] = useState(
+    (typeof window !== "undefined" &&
+    localStorage.getItem("sidebarCollapsed") === "true") || false);
+
+  const toggleCollapsed = () => {
+    setCollapsed(!collapsed);
+    localStorage.setItem("sidebarCollapsed", (!collapsed).toString());
+  }
 
   const pathname = usePathname();
   const params = useSearchParams();
@@ -61,13 +64,14 @@ const RewindUiSidebar = () => {
           : ``
       }
       `}
-        onClick={() => setCollapsed(!collapsed)}
+        onClick={() => toggleCollapsed()}
       >
         <LeftSquareFilled />
       </div>
       <Sidebar
         width="320px"
         collapsed={collapsed}
+        collapsedWidth="3.7rem"
         rootStyles={{
           [`.${menuClasses.subMenuRoot}`]: {
             borderRadius: "10px",
@@ -76,13 +80,15 @@ const RewindUiSidebar = () => {
             color: "var(--background-light-main)",
             backgroundColor: "var(--background-dark-main)",
             paddingLeft: ".5rem",
+            fontSize: ".8rem",
           },
           [`.${menuClasses.button}`]: {
             borderRadius: "10px",
             color: "var(--background-light-main)",
             backgroundColor: "var(--background-dark-main)",
             height: "4em",
-            padding: "1em",
+            minWidth: "16em",
+            padding: ".5em 1em",
             a: {
               textWrap: "wrap",
             },
@@ -92,6 +98,14 @@ const RewindUiSidebar = () => {
                 "var(--background-dark-secondary) !important",
               color: "var(--background-light-secondary)",
             },
+          },
+          [`.${menuClasses.button}.${menuClasses.active}.${menuClasses.open}`]: {
+            backgroundColor: "var(--background-gray)",
+            color: "var(--background-dark-main)",
+            "&:hover": {
+              backgroundColor: "var(--background-gray)",
+              color: "var(--background-dark-main)",
+            }
           },
           [`.${menuClasses.icon}`]: {
             svg: {
@@ -124,71 +138,71 @@ const RewindUiSidebar = () => {
           },
           [`.${menuClasses.menuItemRoot}`]: {
             borderRadius: "10px",
+            // padding: ".5em 0",
           },
-
+          [`.${menuClasses.subMenuContent}.${menuClasses.open}`]: {
+            "&:before": {
+              visibility: "visible",
+            },
+          },
           [`.${menuClasses.subMenuContent}`]: {
-            marginLeft: "1rem",
-            marginTop: "1rem",
-            marginBottom: "1rem",
+            // "&:before": {
+            //   content: '""',
+            //   position: "absolute",
+            //   width: "2px",
+            //   backgroundColor: "var(--background-light-main)",
+            //   height: "60%",
+            //   visibility: "hidden",
+            //   left: "2rem",
+            // },
             borderBottomRightRadius: "10px",
-            borderLeft:
-              "1px solid var(--background-light-main)",
+            marginLeft: "2rem",
+            
             backgroundColor: "var(--background-dark-main)",
             [`.${menuClasses.menuItemRoot}`]: {
-              marginLeft: "1rem",
               width: "calc(100% - 2rem)",
+              // "&:before": {
+              //   content: '""',
+              //   position: "absolute",
+              //   border: "2px solid var(--background-light-main)",
+              //   borderTop: "none",
+              //   borderRight: "none",
+              //   width: "1rem",
+              //   height: "1rem",
+              //   top: "50%",
+              //   transform: "translateY(-75%)",
+              //   borderBottomLeftRadius: "10px",
+              // },
+              "&:before": {
+                // simple dot
+                content: '""',
+                position: "absolute",
+                width: "5px",
+                height: "5px",
+                borderRadius: "50%",
+                backgroundColor: "var(--background-light-main)",
+                opacity: 0.7,
+                top: "50%",
+                // left: "rem",
+                transform: "translateY(-50%)",
+              }
             },
           },
 
           [`.${menuClasses.SubMenuExpandIcon}`]: {
-            paddingBottom: "10px",
+            paddingBottom: "3px",
+          },
+          [`.${menuClasses.subMenuContent} .${menuClasses.button}`]: {
+            marginLeft: "1rem",
           },
 
-          [`.${menuClasses.active}`]: {
-            backgroundColor: "var(--background-gray)",
-            color: "var(--background-dark-main)",
-            "&:hover": {
-              backgroundColor: "var(--background-gray)",
-              color: "var(--background-dark-main)",
-            },
-
-            [`.${menuClasses.button}`]: {
+            [`.${menuClasses.subMenuContent} .${menuClasses.button}.${menuClasses.active}`]: {
               backgroundColor: "var(--background-gray)",
               color: "var(--background-dark-main)",
               "&:hover": {
                 backgroundColor:
                   "var(--background-light-secondary) !important",
                 color: "var(--background-dark-main)",
-              },
-            },
-            [`.${menuClasses.subMenuContent}`]: {
-              [`.${menuClasses.menuItemRoot}`]: {
-                backgroundColor: "var(--background-gray)",
-                [`.${menuClasses.button}`]: {
-                  borderRadius: "10px",
-                },
-                [`.${menuClasses.active}`]: {
-                  backgroundColor:
-                    "var(--background-light-secondary)",
-                  color: "var(--background-dark-main)",
-                  "&:hover": {
-                    backgroundColor:
-                      "var(--background-light-main) !important",
-                    color: "var(--background-dark-main)",
-                  },
-                },
-              },
-            },
-          },
-          [`.${menuClasses.menuItemRoot} .${menuClasses.subMenuRoot} .${menuClasses.active}`]:
-            {
-              [`.${menuClasses.button}`]: {
-                "&:hover": {
-                  [`.${menuClasses.icon}`]: {
-                    backgroundColor:
-                      "var(--background-light-secondary) !important",
-                  },
-                },
               },
             },
         }}
@@ -215,7 +229,7 @@ const RewindUiSidebar = () => {
 
           <SubMenu
             icon={<HddOutlined />}
-            active={pathname.includes("/groups")}
+            active={pathname === "/groups"}
             label={"Manas Grupas"}
           >
             {groups?.map((group: any) => (

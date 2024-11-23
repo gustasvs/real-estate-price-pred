@@ -32,29 +32,50 @@ import { PageHeader } from "@ant-design/pro-components";
 import { useState } from "react";
 import { ResidenceObjectType } from "../../groups/[group_id]/page";
 
+
+import {
+  getObjects as getObjectsApi,
+  createObject as createObjectApi,
+  deleteObject as deleteObjectApi,
+  updateObject as updateObjectApi,
+} from "../../../actions/groupObjects";
+import { revalidatePath } from "next/cache";
+
 const MasonryTable = ({
   columnCount,
-  onCardFavorite = () => {},
   objects,
-  createObject = () => {},
-  deleteObject = () => {},
-  updateObject = () => {},
   loading = false,
   showNavigateToGroup = false,
+  revalidateDataFunction = () => {}
 }: {
   columnCount: number;
-  onCardFavorite?: (id: string) => void;
   objects: any[];
-  createObject: () => void;
-  deleteObject: (id: string) => void;
-  updateObject: (
-    id: string,
-    objectData: ResidenceObjectType
-  ) => void;
   loading?: boolean;
   showNavigateToGroup?: boolean;
+  revalidateDataFunction?: () => void;
 }): JSX.Element => {
   const router = useRouter();
+
+  const deleteObject = async (id: string) => {
+    const result = await deleteObjectApi(id);
+    // await fetchObjects();
+  };
+
+
+  const onCardFavorite = async (id: string) => {
+    const object = objects.find(
+      (object) => object.id === id
+    );
+    if (!object) {
+      return;
+    }
+    const updatedObject = await updateObjectApi(id, {
+      favourite: !object.favourite,
+    });
+
+    revalidateDataFunction();
+    // await fetchObjects();
+  };
 
   const [openedDescriptions, setOpenedDescriptions] =
     useState<{ [key: number]: boolean }>({});
@@ -67,7 +88,9 @@ const MasonryTable = ({
   };
 
   const handleAddButtonClick = () => {
-    createObject();
+    if (group_id  === "favourites") {
+      router.push(`/groups/${objects[0].groupId}/new`);
+    }
   };
 
   const animateAndSort = () => {

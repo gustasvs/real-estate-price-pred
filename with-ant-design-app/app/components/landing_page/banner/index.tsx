@@ -6,6 +6,8 @@ import styles from "./Banner.module.css"; // Ensure you create a CSS module for 
 
 import { Parallax } from "rc-scroll-anim";
 import { useRouter } from "next/navigation";
+import { FaArrowRight, FaHouseChimney, FaHouseChimneyUser, FaHouseLaptop } from "react-icons/fa6";
+import { BiArrowFromLeft, BiArrowToLeft, BiBuildingHouse, BiSolidRightArrow } from "react-icons/bi";
 
 const Banner = () => {
 
@@ -126,9 +128,12 @@ const Banner = () => {
         <div
           className={styles.content}
         >
+          <div className={styles["left-container"]}>
           <div className={styles.title}>Inovācija cenu noteikšanā</div>
           <div style={{
-            width: "60%",
+            display: "flex",
+            width: "80%",
+            marginLeft: "20%",
             paddingTop: "10px",
             paddingBottom: "10px",
           }}>
@@ -141,25 +146,45 @@ const Banner = () => {
           />
           </div>
           <div className={styles.subtitle}>
-            Izstrādājiet un pielāgojiet cenu modeļus, lai atspoguļotu jūsu uzņēmuma un klientu vajadzības
+            Saglabā savus iecienītākos nekustamos īpašumus <br></br> 
+            un iegūsti to īsto cenu izmantojot modernus <br></br> 
+            mašīnmācīšanās algoritmus
             </div>
-          <Button className={styles["get-started-button"]} type="primary" size="large"
-            onClick={() => {
-              router.push("/groups");
+          </div>
+          <div
+            style={{
+              display: "flex",
+              height: "100%",
+              marginLeft: "2em",
             }}
           >
-            Pievieno savu pirmo objektu
-            <div className={styles["loader"]}></div>
-          </Button>
-
-          {/* <div>
-            <Button type="primary" size="large">
-              Learn More
-            </Button>
-            <Button size="large" style={{ marginLeft: 20 }}>
-              Contact Us
-            </Button>
-          </div> */}
+          <Divider 
+            type="vertical" 
+            style={{
+              display: "flex",
+              color: "white",
+              borderColor: "white",
+              height: "100%",
+              padding: "1em"
+            }}
+          />
+          </div>
+          <div className={styles["right-container"]}>
+            <div className={styles["right-container-items"]}>
+            <BiBuildingHouse className={styles["get-started-icon"]} />
+            <div className={styles["get-started-button"]}
+              onClick={() => {
+                router.push("/groups");
+              }}
+            >
+              <span className={styles["get-started-text"]}>
+                Sāc darbu un pievieno savu pirmo objektu
+              </span>
+              <FaArrowRight className={styles["get-started-next-arrow"]}/>
+              {/* <div className={styles["loader"]}></div> */}
+            </div>
+            </div>
+          </div>
         </div>
       </div>
     // </Parallax>

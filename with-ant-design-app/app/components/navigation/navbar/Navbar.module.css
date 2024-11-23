@@ -10,7 +10,7 @@
     z-index: 50;
     background: transparent;
     /* Add a background if necessary */
-    border-bottom: 1px solid var(--background-gray);
+    /* border-bottom: 1px solid var(--background-gray); */
 }
 
 .navbar-with-background {

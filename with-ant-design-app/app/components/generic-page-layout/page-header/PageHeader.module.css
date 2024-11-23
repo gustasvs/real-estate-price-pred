@@ -19,6 +19,7 @@
     transform: scale(1);
     color: var(--background-light-main);
     transition: all 0.88s cubic-bezier(0.23, 1, 0.32, 1) !important;
+    cursor: pointer;
 }
 
 .breadcrumbItem::after {

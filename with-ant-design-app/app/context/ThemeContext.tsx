@@ -1,9 +1,15 @@
 // context/ThemeContext.tsx
-'use client';
+"use client";
 
-import { createContext, useContext, ReactNode, useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
-import { updateUserTheme } from '../../actions/user';
+import {
+  createContext,
+  useContext,
+  ReactNode,
+  useState,
+  useEffect,
+} from "react";
+import { useSession } from "next-auth/react";
+import { updateUserTheme } from "../../actions/user";
 
 interface ThemeContextType {
   theme: string;
@@ -16,36 +22,47 @@ interface ThemeContextType {
   toggleSidebarPreferedOpen: () => void;
 }
 
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+const ThemeContext = createContext<
+  ThemeContextType | undefined
+>(undefined);
 
 interface ThemeProviderProps {
   children: ReactNode;
 }
 
-export function ThemeProvider({ children }: ThemeProviderProps) {
+export function ThemeProvider({
+  children,
+}: ThemeProviderProps) {
   const { data: session } = useSession();
 
   // Initialize local theme state based on session data or default to 'light'
-  const [theme, setTheme] = useState(session?.user?.theme || 'light');
+  const [theme, setTheme] = useState(
+    session?.user?.theme ||
+    (typeof window !== "undefined" && localStorage.getItem("theme")) || // Add check for window
+    "light"
+  );
 
   useEffect(() => {
-    // Sync local theme state with session data if it changes
-    if (session?.user?.theme && session.user.theme !== theme) {
+    if (
+      session?.user?.theme &&
+      session.user.theme !== theme
+    ) {
       setTheme(session.user.theme);
     }
   }, [session?.user?.theme]);
 
   useEffect(() => {
-    // Update <html> class based on theme
-    if (theme === 'light') {
-      document.documentElement.classList.add('light-theme');
+    if (theme === "light") {
+      document.documentElement.classList.add("light-theme");
     } else {
-      document.documentElement.classList.remove('light-theme');
+      document.documentElement.classList.remove(
+        "light-theme"
+      );
     }
+    localStorage.setItem("theme", theme);
   }, [theme]);
 
   const toggleTheme = async (newTheme: string) => {
-
     console.log("called theme swithc to", newTheme);
     setTheme(newTheme);
 
@@ -69,7 +86,16 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   };
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme, fontSize, setFontSize, sidebarPreferedOpen, toggleSidebarPreferedOpen }}>
+    <ThemeContext.Provider
+      value={{
+        theme,
+        toggleTheme,
+        fontSize,
+        setFontSize,
+        sidebarPreferedOpen,
+        toggleSidebarPreferedOpen,
+      }}
+    >
       {children}
     </ThemeContext.Provider>
   );
@@ -78,7 +104,9 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
 export function useThemeContext() {
   const context = useContext(ThemeContext);
   if (context === undefined) {
-    throw new Error('useTheme must be used within a ThemeProvider');
+    throw new Error(
+      "useTheme must be used within a ThemeProvider"
+    );
   }
   return context;
 }

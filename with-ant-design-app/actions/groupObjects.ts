@@ -3,11 +3,11 @@
 import { useSession } from "next-auth/react";
 import { db } from "../db";
 import { auth } from "../auth";
-import redisClient from "../redis/redisClient";
+// import redisClient from "../redis/redisClient";
 
-async function addObjectToStream(objectId: string) {
-  await redisClient.xAdd('objectStream', '*', { objectId });
-}
+// async function addObjectToStream(objectId: string) {
+//   await redisClient.xAdd('objectStream', '*', { objectId });
+// }
 
 
 export const getObject = async (objectId: string) => {
@@ -134,12 +134,12 @@ export const createObject = async (
     });
 
     try {
-      await manageObjectState(newObject.id, 'queued');
+      // await manageObjectState(newObject.id, 'queued');
 
-      await redisClient.publish('objectCreationQueue', JSON.stringify({
-        objectId: newObject.id,
-        userId: user.id
-      }));
+      // await redisClient.publish('objectCreationQueue', JSON.stringify({
+      //   objectId: newObject.id,
+      //   userId: user.id
+      // }));
   
     } catch (error) {
       console.error("Error queuing object rerendering:", error);

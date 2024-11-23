@@ -6,7 +6,6 @@ import MasonryTable from "../../../masonry-table";
 
 const MyFavouritedObjects = () => {
 
-
     interface FavouriteObject {
         id: string;
         name: string;
@@ -49,10 +48,6 @@ const MyFavouritedObjects = () => {
       <MasonryTable
         columnCount={3}
         objects={myFavouriteObjects}
-        onCardFavorite={() => {}}
-        createObject={() => {}}
-        deleteObject={() => {}}
-        updateObject={() => {}}
         loading={false}
         showNavigateToGroup={true}
       />

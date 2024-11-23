@@ -56,10 +56,7 @@ const Navbar = ({
 
   const router = useRouter();
 
-  const [currentTheme, setCurrentTheme] = useState("light");
-
   const { theme, toggleTheme } = useThemeContext();
-
 
 
   const [signUpModalOpen, setSignUpModalOpen] =

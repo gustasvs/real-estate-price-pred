@@ -4,6 +4,7 @@
   font-size: 19px;
 
   --foreground-rgb: #dddddd;
+  --background-darkest: #101010;
   --background-dark-main: #222426;
   --background-dark-main-hover: #323738;
   /* --background-dark-secondary: #35393b; */
