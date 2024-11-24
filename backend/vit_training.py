@@ -1,12 +1,7 @@
 import numpy as np
 
 import torch
-import torch.nn as nn
 from torch.optim import Adam
-from transformers import ViTImageProcessor
-from sklearn.metrics import mean_squared_error
-import torchvision.transforms as T
-from sklearn.preprocessing import MinMaxScaler
 
 import matplotlib.pyplot as plt
 
@@ -15,15 +10,9 @@ import time
 import transformers
 transformers.logging.set_verbosity_error()
 
-
-from load_images import load_images
-from load_prices import load_prices
-
 from config.settings import BATCH_SIZE, ENABLE_DEV_LOGS, LEARNING_RATE, LOSS_FUNCT, EPOCHS, BATCHES_TO_AGGREGATE
 
 from model.google_vit_model import get_vit_model
-
-
 
 from helpers.weighted_loss import compute_bin_weights, WeightedMSELoss
 
@@ -35,13 +24,27 @@ model, feature_extractor = get_vit_model(aggregation_method="mean")
 
 # Define the custom dataset
 
+def r2_score(outputs, prices):
+    # Calculate the total sum of squares
+    total_variance = torch.sum((prices - prices.mean())**2)
+    
+    # Calculate the residual sum of squares
+    residual_variance = torch.sum((prices - outputs)**2)
+    
+    # Compute R2 score
+    r2 = 1 - (residual_variance / total_variance)
+    
+    return r2.item()
+
 def train(model, dataloader, optimizer, device, epoch):
     model.train()
     running_loss = 0
     start_time = time.time()
     total_batches = len(dataloader)
 
-    optimizer.zero_grad()
+    aggregated_outputs = []
+    aggregated_prices = []
+    # optimizer.zero_grad()
 
     for batch_idx, (sample, prices) in enumerate(dataloader, 1):
 
@@ -55,30 +58,51 @@ def train(model, dataloader, optimizer, device, epoch):
 
 
         outputs = model(sample)
+
+        # print("outputs: ", outputs)
+        # print("prices: ", prices)
+
         loss = LOSS_FUNCT(outputs, prices)
         loss.backward()
 
+        aggregated_outputs.append(outputs.to("cpu"))
+        aggregated_prices.append(prices.to("cpu"))
+        
+
         if (batch_idx + 1) % BATCHES_TO_AGGREGATE == 0 or batch_idx == total_batches:
+
             optimizer.step()
             optimizer.zero_grad()
 
-        # update running loss
-        running_loss += loss.item()
-        
-        #  logs
-        if (batch_idx + 1) % BATCHES_TO_AGGREGATE == 0 or batch_idx == total_batches:
-            elapsed_time = time.time() - start_time
+            # print("aggregated_outputs: ", aggregated_outputs)
+            # print("aggregated_prices: ", aggregated_prices)
 
+            aggregated_outputs = torch.cat(aggregated_outputs)
+            aggregated_prices = torch.cat(aggregated_prices)
+
+            aggregated_accuracy = r2_score(aggregated_outputs, aggregated_prices)
+            # print("aggregated_outputs: ", aggregated_outputs)
+            # print("aggregated_prices: ", aggregated_prices)
+            print("aggregated_accuracy: ", aggregated_accuracy)
+            # print("*" * 20)
+
+            aggregated_outputs = []
+            aggregated_prices = []
+
+        
+            elapsed_time = time.time() - start_time
             print(
-                f"Epoch [{epoch+1}] - Batch [{batch_idx}/{total_batches}]: "
-                f"Batch Loss = {loss.item():.4f}, Loss = {running_loss:.4f}, "
+                f"Epoch [{epoch+1}/{EPOCHS}] - Batch [{batch_idx}/{total_batches}]: "
                 f"Elapsed Time = {elapsed_time:.2f}s"
             )
             # print last output and real outputs
             print("Last output: ", outputs[-1].item())
             print("Real output: ", prices[-1].item())
 
-    return running_loss / total_batches
+    if total_batches > 0:
+        return running_loss / total_batches
+    else:
+        return 0
 
 
 def validate(model, dataloader, device):
@@ -105,11 +129,17 @@ print("-" * 20)
 
 model.to(device)
 
-count = 500
+count = 535
 
 images, prices = processed_data(count)
 
 bins, bin_weights = compute_bin_weights(prices, num_bins=10)
+
+plt.plot(bin_weights)
+plt.xlabel("Price Bins")
+plt.ylabel("Weight")
+plt.title("Price Bins vs Weights")
+plt.show()
 
 LOSS_FUNCT = WeightedMSELoss(bins, bin_weights, device=device)
 

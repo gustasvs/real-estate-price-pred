@@ -37,7 +37,7 @@ class ImageDataset(Dataset):
 def get_data_loaders(images, prices, feature_extractor):
     
     
-    train_images, val_images, train_prices, val_prices = train_test_split(images, prices, test_size=0.2)
+    train_images, val_images, train_prices, val_prices = train_test_split(images, prices, test_size=0.1)
     train_dataset = ImageDataset(train_images, train_prices, feature_extractor)
     val_dataset = ImageDataset(val_images, val_prices, feature_extractor)
 

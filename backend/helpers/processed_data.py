@@ -35,7 +35,7 @@ def processed_data(count):
 
     prices = np.array(prices)
 
-    prices = apply_fds(prices, prices, sigma=2)
+    prices = apply_fds(prices, prices, sigma=1.5)
 
     # while True:
     #     sigma = float(input("Enter the sigma value for LDS: "))

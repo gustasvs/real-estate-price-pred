@@ -23,6 +23,9 @@ from config.settings import BATCH_SIZE, ENABLE_DEV_LOGS
 
 base_model = ViTModel.from_pretrained("google/vit-base-patch16-224")
 
+# for param in base_model.parameters():
+#     param.requires_grad = False
+
 class ImageAggregator(nn.Module):
     def __init__(self, aggregation_method="mean"):
         super(ImageAggregator, self).__init__()
@@ -42,20 +45,20 @@ class ImageAggregator(nn.Module):
 class CustomViTHead(nn.Module):
     def __init__(self):
         super(CustomViTHead, self).__init__()
-        self.dropout = nn.Dropout(0.3)
         self.fc1 = nn.Linear(768, 256)
         self.fc2 = nn.Linear(256, 128)
         self.fc3 = nn.Linear(128, 1)
+        self.dropout = nn.Dropout(0.3)
 
     def forward(self, x):
         x = self.dropout(x)
-        x = self.fc1(x)
-        x = nn.functional.relu(x)
-        x = self.fc2(x)
-        x = nn.functional.relu(x)
+        x = nn.functional.relu(self.fc1(x))
+        x = self.dropout(x)
+        x = nn.functional.relu(self.fc2(x))
+        x = self.dropout(x)
         x = self.fc3(x)
         return x.squeeze(-1)
-        # return torch.sigmoid(x.squeeze(-1))
+
 
 
 # Combine base model with custom head
