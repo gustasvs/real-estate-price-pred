@@ -36,11 +36,13 @@ def r2_score(outputs, prices):
     
     return r2.item()
 
-def train(model, dataloader, optimizer, device, epoch):
+def train_epoch(model, dataloader, optimizer, device, epoch):
     model.train()
     running_loss = 0
     start_time = time.time()
     total_batches = len(dataloader)
+
+    accuracies = []
 
     aggregated_outputs = []
     aggregated_prices = []
@@ -81,9 +83,11 @@ def train(model, dataloader, optimizer, device, epoch):
             aggregated_prices = torch.cat(aggregated_prices)
 
             aggregated_accuracy = r2_score(aggregated_outputs, aggregated_prices)
+
+            accuracies.append(aggregated_accuracy)
             # print("aggregated_outputs: ", aggregated_outputs)
             # print("aggregated_prices: ", aggregated_prices)
-            print("aggregated_accuracy: ", aggregated_accuracy)
+            # print("aggregated_accuracy: ", aggregated_accuracy)
             # print("*" * 20)
 
             aggregated_outputs = []
@@ -94,10 +98,18 @@ def train(model, dataloader, optimizer, device, epoch):
             print(
                 f"Epoch [{epoch+1}/{EPOCHS}] - Batch [{batch_idx}/{total_batches}]: "
                 f"Elapsed Time = {elapsed_time:.2f}s"
+                f" - Loss = {loss.item():.4f}"
+                f" - R2 Score = {aggregated_accuracy:.4f}"
             )
             # print last output and real outputs
-            print("Last output: ", outputs[-1].item())
-            print("Real output: ", prices[-1].item())
+            # print("Last output: ", outputs[-1].item())
+            # print("Real output: ", prices[-1].item())
+
+    plt.plot(accuracies)
+    plt.xlabel("Batch")
+    plt.ylabel("R2 Score")
+    plt.title("R2 Score vs Batch")
+    plt.show()
 
     if total_batches > 0:
         return running_loss / total_batches
@@ -152,7 +164,7 @@ optimizer = Adam(model.parameters(), lr=LEARNING_RATE)
 # Training loop
 epochs = EPOCHS
 for epoch in range(epochs):
-    train_loss = train(model, train_loader, optimizer, device, epoch)
+    train_loss = train_epoch(model, train_loader, optimizer, device, epoch)
     val_loss = validate(model, val_loader, device)
     print(f"Epoch {epoch+1}/{epochs}, Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}")
 

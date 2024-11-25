@@ -55,7 +55,7 @@ class CustomViTHead(nn.Module):
         x = nn.functional.relu(self.fc1(x))
         x = self.dropout(x)
         x = nn.functional.relu(self.fc2(x))
-        x = self.dropout(x)
+        # x = self.dropout(x)
         x = self.fc3(x)
         return x.squeeze(-1)
 

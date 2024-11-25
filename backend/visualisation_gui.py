@@ -4,13 +4,15 @@ from PIL import Image, ImageTk
 import torch
 import numpy as np
 
-def tensor_to_pil(tensor):
-    # Convert a PyTorch tensor to a PIL image
-    tensor = tensor.cpu().squeeze()  # Ensure tensor is on CPU and remove extra dimensions
-    if tensor.dim() == 3:  # Assuming tensor is in C, H, W format
+def tensor_to_pil(tensor, mean, std):
+    # De-normalize the tensor
+    tensor = tensor * torch.tensor(std).view(-1, 1, 1) + torch.tensor(mean).view(-1, 1, 1)
+    tensor = tensor.clamp(0, 1)  # Ensure values are in [0, 1]
+    tensor = tensor.cpu().squeeze()
+    if tensor.dim() == 3:
         tensor = tensor.permute(1, 2, 0)  # Change to H, W, C
-    # Convert to numpy and then to PIL Image
     return Image.fromarray((tensor.numpy() * 255).astype(np.uint8))
+
 
 def create_images():
     # Simulate image creation (replace this with your actual tensor loading logic)
@@ -92,17 +94,23 @@ def setup_gui(root, samples, predicted_prices, actual_prices):
 def create_samples():
     return [[tensor_to_pil(torch.rand(3, 200, 200)) for _ in range(4)] for _ in range(4)]
 
-samples = create_samples()
-# Main program
-root = tk.Tk()
-root.title("Tensor Image Gallery")
 
-# style
-root.configure(bg='darkgray'
-               , padx=10, pady=10, relief=tk.RAISED, borderwidth=2)
+def visualise_results(samples, predicted_prices, actual_prices):
+            # Main program
+    root = tk.Tk()
+    root.title("Tensor Image Gallery")
 
-predicted_prices = [150.00, 250.00, 350.00, 450.00]
-actual_prices = [140.00, 260.00, 330.00, 420.00]
-samples = create_samples()
-setup_gui(root, samples, predicted_prices, actual_prices)
-root.mainloop()
+    # style
+    root.configure(bg='darkgray'
+                , padx=10, pady=10, relief=tk.RAISED, borderwidth=2)
+
+    setup_gui(root, samples, predicted_prices, actual_prices)
+    root.mainloop()
+
+if __name__ == "__main__":
+    predicted_prices = [150.00, 250.00, 350.00, 450.00]
+    actual_prices = [140.00, 260.00, 330.00, 420.00]
+    samples = create_samples()
+
+    visualise_results(samples, predicted_prices, actual_prices)
+    

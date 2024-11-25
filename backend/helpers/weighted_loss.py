@@ -62,7 +62,7 @@ class WeightedMSELoss(nn.Module):
             torch.Tensor: Weighted MSE loss.
         """
 
-        loss = self.mse(predictions, targets) * 10
+        loss = self.mse(predictions, targets) * 100
         # print("loss", loss)
         # print("pred", predictions)
         # print("targets", targets)
