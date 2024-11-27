@@ -5,14 +5,13 @@ from torch.optim import Adam
 
 import matplotlib.pyplot as plt
 
-import time
-
 import transformers
 transformers.logging.set_verbosity_error()
 
-from config.settings import BATCH_SIZE, ENABLE_DEV_LOGS, LEARNING_RATE, LOSS_FUNCT, EPOCHS, BATCHES_TO_AGGREGATE
+from config.settings import BATCH_SIZE, ENABLE_DEV_LOGS, LEARNING_RATE, LOSS_FUNCT, EPOCHS, BATCHES_TO_AGGREGATE, WEIGHTED_BIN_COUNT, AGGREGATION_METHOD
 
 from model.google_vit_model import get_vit_model
+from model.r2_score import r2_score
 
 from helpers.weighted_loss import compute_bin_weights, WeightedMSELoss
 
@@ -20,26 +19,23 @@ from helpers.data_loader import get_data_loaders
 
 from helpers.processed_data import processed_data
 
-model, feature_extractor = get_vit_model(aggregation_method="mean")
+from tqdm import tqdm
 
-# Define the custom dataset
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print(f"Using device: {device}")
+print(f"Batch size: {BATCH_SIZE}, aggregation multiplier: {BATCHES_TO_AGGREGATE}")
+print("-" * 20)
+print(f"Simulated batch size: {BATCH_SIZE * BATCHES_TO_AGGREGATE}")
+print("-" * 20)
 
-def r2_score(outputs, prices):
-    # Calculate the total sum of squares
-    total_variance = torch.sum((prices - prices.mean())**2)
-    
-    # Calculate the residual sum of squares
-    residual_variance = torch.sum((prices - outputs)**2)
-    
-    # Compute R2 score
-    r2 = 1 - (residual_variance / total_variance)
-    
-    return r2.item()
+# model, feature_extractor = get_vit_model(aggregation_method=AGGREGATION_METHOD)
+# model.load_state_dict(torch.load("models/vit_regression_model.pth")) # load weights
+# model.to(device)
+
 
 def train_epoch(model, dataloader, optimizer, device, epoch):
     model.train()
-    running_loss = 0
-    start_time = time.time()
+    epoch_loss = 0
     total_batches = len(dataloader)
 
     accuracies = []
@@ -48,7 +44,9 @@ def train_epoch(model, dataloader, optimizer, device, epoch):
     aggregated_prices = []
     # optimizer.zero_grad()
 
-    for batch_idx, (sample, prices) in enumerate(dataloader, 1):
+    dataloader = tqdm(dataloader, desc=f"Epoch {epoch+1}/{EPOCHS}")
+
+    for mini_batch_idx, (sample, prices) in enumerate(dataloader, 1):
 
         sample = [instance.to(device) for instance in sample]
 
@@ -61,17 +59,16 @@ def train_epoch(model, dataloader, optimizer, device, epoch):
 
         outputs = model(sample)
 
-        # print("outputs: ", outputs)
-        # print("prices: ", prices)
-
         loss = LOSS_FUNCT(outputs, prices)
         loss.backward()
+
+        epoch_loss += loss.item()
 
         aggregated_outputs.append(outputs.to("cpu"))
         aggregated_prices.append(prices.to("cpu"))
         
 
-        if (batch_idx + 1) % BATCHES_TO_AGGREGATE == 0 or batch_idx == total_batches:
+        if (mini_batch_idx + 1) % BATCHES_TO_AGGREGATE == 0 or mini_batch_idx == total_batches:
 
             optimizer.step()
             optimizer.zero_grad()
@@ -93,29 +90,22 @@ def train_epoch(model, dataloader, optimizer, device, epoch):
             aggregated_outputs = []
             aggregated_prices = []
 
-        
-            elapsed_time = time.time() - start_time
-            print(
-                f"Epoch [{epoch+1}/{EPOCHS}] - Batch [{batch_idx}/{total_batches}]: "
-                f"Elapsed Time = {elapsed_time:.2f}s"
-                f" - Loss = {loss.item():.4f}"
-                f" - R2 Score = {aggregated_accuracy:.4f}"
-            )
-            # print last output and real outputs
-            # print("Last output: ", outputs[-1].item())
-            # print("Real output: ", prices[-1].item())
+            dataloader.set_postfix({
+                "Avg Loss": epoch_loss / mini_batch_idx,
+                "Batch Loss": loss.item(),
+                "R2 Score": aggregated_accuracy
+            })
 
-    plt.plot(accuracies)
-    plt.xlabel("Batch")
-    plt.ylabel("R2 Score")
-    plt.title("R2 Score vs Batch")
-    plt.show()
+    # plt.plot(accuracies)
+    # plt.xlabel("Batch") 
+    # plt.ylabel("R2 Score")
+    # plt.title("R2 Score vs Batch")
+    # plt.show()
 
     if total_batches > 0:
-        return running_loss / total_batches
+        return epoch_loss / total_batches
     else:
         return 0
-
 
 def validate(model, dataloader, device):
     model.eval()
@@ -131,47 +121,86 @@ def validate(model, dataloader, device):
             val_loss += loss.item()
     return val_loss / len(dataloader)
 
-# Main script
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-print(f"Using device: {device}")
-print(f"Batch size: {BATCH_SIZE}, aggregation multiplier: {BATCHES_TO_AGGREGATE}")
-print("-" * 20)
-print(f"Simulated batch size: {BATCH_SIZE * BATCHES_TO_AGGREGATE}")
-print("-" * 20)
 
-model.to(device)
-
-count = 535
+# count = 535
+count = 300
 
 images, prices = processed_data(count)
+bins, bin_weights = compute_bin_weights(prices, num_bins=WEIGHTED_BIN_COUNT)
 
-bins, bin_weights = compute_bin_weights(prices, num_bins=10)
+# plt.plot(bin_weights)
+# plt.xlabel("Price Bins")
+# plt.ylabel("Weight")
+# plt.title("Price Bins vs Weights")
+# plt.show()
 
-plt.plot(bin_weights)
-plt.xlabel("Price Bins")
-plt.ylabel("Weight")
-plt.title("Price Bins vs Weights")
+def train_loop(epochs, model, train_loader, val_loader, optimizer, device):
+    best_val_loss = float('inf')
+    for epoch in range(epochs):
+        train_loss = train_epoch(model, train_loader, optimizer, device, epoch)
+        val_loss = validate(model, val_loader, device)
+        best_val_loss = min(best_val_loss, val_loss)
+        print(f"Epoch {epoch+1}/{epochs}, Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}")
+
+    return best_val_loss
+
+results = []
+
+models = {
+    "google/vit-base-patch16-224": {"embedding_size": 768, "head_only": False},
+    # "google/vit-base-patch16-224-in21k": {"embedding_size": 768, "head_only": False},
+    # "facebook/dinov2-small": {"embedding_size": 384, "head_only": False},
+    # "google/vit-base-patch16-224 head-only": {"embedding_size": 768, "head_only": True},
+    # "google/vit-base-patch16-224-in21k head-only": {"embedding_size": 768, "head_only": True},
+    # "facebook/dinov2-large head-only": {"embedding_size": 1024, "head_only": True},
+    # "facebook/dinov2-small head-only": {"embedding_size": 384, "head_only": True}
+}
+
+# aggregation_methods = ["mean", "sum", "attention"]
+aggregation_methods = ["mean"]
+
+results = [[0 for _ in range(len(aggregation_methods))] for _ in range(len(models))]
+
+model, feature_extractor = None, None
+
+for i, aggregation_method in enumerate(aggregation_methods):
+    for j, (model_name, model_info) in enumerate(models.items()):
+
+        # results[j][i] = np.random.rand()
+        # continue
+
+        train_only_head = model_info['head_only']
+        actual_model_name = model_name.replace(" head-only", "") if train_only_head else model_name
+        embedding_size = model_info['embedding_size']
+
+        print(f"Training model: {actual_model_name}, aggregation method: {aggregation_method}, train_only_head: {train_only_head}")
+
+        model, feature_extractor = get_vit_model(aggregation_method=aggregation_method, model_name=actual_model_name, train_only_head=train_only_head, embedding_size=embedding_size)
+        model.to(device)
+        
+        train_loader, val_loader = get_data_loaders(images, prices, feature_extractor)
+
+        LOSS_FUNCT = WeightedMSELoss(bins, bin_weights, device=device)
+        optimizer = Adam(model.parameters(), lr=LEARNING_RATE)
+
+        val_loss = train_loop(EPOCHS, model, train_loader, val_loader, optimizer, device)
+        results[j][i] = val_loss
+
+
+plt.figure(figsize=(13, 9))
+heatmap = plt.imshow(results, cmap='magma', interpolation='nearest')
+plt.xticks(range(len(aggregation_methods)), aggregation_methods, rotation=45, ha="right")
+plt.yticks(range(len(models)), [name for name in models])
+plt.colorbar(heatmap)
+plt.title("Training Loss by Model and Aggregation Method")
+plt.xlabel("Aggregation Method")
+plt.ylabel("Model")
 plt.show()
 
-LOSS_FUNCT = WeightedMSELoss(bins, bin_weights, device=device)
 
-
-train_loader, val_loader = get_data_loaders(images, prices, feature_extractor)
-
-
-optimizer = Adam(model.parameters(), lr=LEARNING_RATE)
-
-# Training loop
-epochs = EPOCHS
-for epoch in range(epochs):
-    train_loss = train_epoch(model, train_loader, optimizer, device, epoch)
-    val_loss = validate(model, val_loader, device)
-    print(f"Epoch {epoch+1}/{epochs}, Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}")
-
-# Save the model
 torch.save(model.state_dict(), "models/vit_regression_model.pth")
 
-# After training completion, for visualizing predictions
+
 def show_predictions(val_loader, model, device):
     model.eval()
     with torch.no_grad():

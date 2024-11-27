@@ -7,12 +7,14 @@ from helpers.data_loader import get_data_loaders
 
 from helpers.processed_data import processed_data
 
+from config.settings import AGGREGATION_METHOD
+
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 images, prices = processed_data(535)
 
-model, feature_extractor = get_vit_model(aggregation_method="mean")
+model, feature_extractor = get_vit_model(aggregation_method=AGGREGATION_METHOD)
 
 model.load_state_dict(torch.load("models/vit_regression_model.pth"))
 
