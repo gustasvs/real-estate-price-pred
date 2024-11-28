@@ -7,6 +7,8 @@ from load_prices import load_prices
 
 from helpers.label_smothing import apply_lds, apply_fds, adaptive_lds
 
+from config.settings import DEMO_MODE
+
 def processed_data(count):
     """
     returns inputs and targets scaled, normalized 
@@ -19,6 +21,10 @@ def processed_data(count):
     prices = load_prices(count) # shape = [count]
     print("Prices loaded...")
 
+    if DEMO_MODE:
+        plt.hist(prices, bins=20)
+        plt.title("Price distribution before removing outliers")
+        plt.show()
 
     sorted_prices = np.argsort(np.array(prices))
     sorted_prices = [i for i in sorted_prices if prices[i] > 0]
@@ -33,30 +39,37 @@ def processed_data(count):
 
     count = len(prices)
 
+    if DEMO_MODE:
+        plt.hist(prices, bins=20)
+        plt.title("Price distribution after removing outliers")
+        plt.show()
+
     prices = np.array(prices)
 
     prices = apply_fds(prices, prices, sigma=1.4)
 
-    # while True:
-    #     sigma = float(input("Enter the sigma value for LDS: "))
-    #     # density_threshold = float(input("Enter the density threshold for adaptive LDS: "))
-    #     # max_sigma = float(input("Enter the max sigma value for adaptive LDS: "))
-    #     # min_sigma = float(input("Enter the min sigma value for adaptive LDS: "))
+    if DEMO_MODE:
+        while True:
+            sigma = float(input("Enter the sigma value for LDS (0 to stop): "))
+            if sigma == 0: break
 
-    #     fig, ax = plt.subplots(3, 1, figsize=(10, 10))
-    #     fig.canvas.manager.window.wm_geometry("+10+10")
-        
-    #     ax[0].hist(prices, bins=50)
-    #     # ax[1].hist(apply_lds(prices, sigma=sigma), bins=50)
-    #     # ax[1].hist(adaptive_lds(prices, density_threshold=density_threshold, max_sigma=max_sigma, min_sigma=min_sigma), bins=50)
-    #     smoothed_prices = apply_fds(prices, prices, sigma=sigma)
-    #     ax[1].hist(smoothed_prices, bins=50)
-    #     ax[2].hist(apply_fds(smoothed_prices, smoothed_prices, sigma=sigma), bins=50)
+            # density_threshold = float(input("Enter the density threshold for adaptive LDS: "))
+            # max_sigma = float(input("Enter the max sigma value for adaptive LDS: "))
+            # min_sigma = float(input("Enter the min sigma value for adaptive LDS: "))
 
-    #     plt.show()
-
-    # plt.hist(prices, bins=10)
-    # plt.show()
+            fig, ax = plt.subplots(3, 1, figsize=(10, 10))
+            fig.canvas.manager.window.wm_geometry("+10+10")
+            
+            ax[0].hist(prices, bins=30)
+            ax[0].set_title("Original Prices")
+            # ax[1].hist(apply_lds(prices, sigma=sigma), bins=50)
+            # ax[1].hist(adaptive_lds(prices, density_threshold=density_threshold, max_sigma=max_sigma, min_sigma=min_sigma), bins=50)
+            smoothed_prices = apply_fds(prices, prices, sigma=sigma)
+            ax[1].hist(smoothed_prices, bins=30)
+            ax[1].set_title("Prices after LDS")
+            ax[2].hist(apply_fds(smoothed_prices, smoothed_prices, sigma=sigma), bins=30)
+            ax[2].set_title("Prices after LDS applied twice")
+            plt.show()
 
     scaler = MinMaxScaler()
     prices = scaler.fit_transform(np.array(prices).reshape(-1, 1)).flatten()
