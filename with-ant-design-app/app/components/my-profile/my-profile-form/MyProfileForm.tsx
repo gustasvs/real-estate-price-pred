@@ -30,6 +30,7 @@ import { styled, TextField } from "@mui/material";
 import AvatarEditor from 'react-avatar-editor'
 import Dropzone from 'react-dropzone'
 import { profile } from "console";
+import { saveImageOnCloud } from "../../../../actions/cloud_storage_helpers";
 
 
 
@@ -91,38 +92,43 @@ const MyProfileForm = () => {
 
   const [form] = Form.useForm();
 
-  const [fileList, setFileList] = useState([]);
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleUpdateProfile = async (values: any) => {
     console.log("Received values of form: ", values);
 
-    const picturePromises = values?.pictures?.map(async (file: any) => {
-      const compressedFile = await imageCompression(file.originFileObj, {
-        maxSizeMB: 0.05,
-        maxWidthOrHeight: 400,
-      });
+    console.log("uploadedFile", uploadedFile);
 
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(compressedFile); // Convert compressed image to base64
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = (error) => reject(error);
-      });
-    });
-    const pictures = picturePromises ? await Promise.all(picturePromises) : [];
+    // return;
+    let uploadedImageUrl = null;
+    if (uploadedFile) {
+      try {
+        const formData = new FormData();
+        formData.append("file", uploadedFile);
+        formData.append("upload_preset", "your_upload_preset");
 
-    const picture = pictures.find(p => p) || null;
+        const cloudinaryResponseData = await saveImageOnCloud(formData);
 
-    console.log("picture", picture);
+        console.log("cloudinaryResponseData", cloudinaryResponseData);
+
+        uploadedImageUrl = cloudinaryResponseData.secure_url;
+      } catch (error) {
+        console.error('Error uploading image to Cloudinary', error);
+        message.error("Image upload failed");
+        return;
+      }
+    }
+
+    // console.log("picture", picture);
 
     const res = await updateUserProfileApi({
       name: values.name,
       email: values.email,
       password: values.password || "",
       confirmPassword: values.confirmPassword || "",
-      image: picture,
+      image: uploadedImageUrl,
       id: session?.user?.id || "",
     });
 
@@ -142,8 +148,6 @@ const MyProfileForm = () => {
     }
     return e && e.fileList;
   };
-
-  const handleChange = ({ fileList: newFileList }: { fileList: any }) => setFileList(newFileList);
 
   useEffect(() => {
     // fill form with user data
@@ -249,15 +253,20 @@ const MyProfileForm = () => {
                   if (!event.target.files) return;
                   const file = event.target.files[0];
                   if (file) {
-                    setUserPicture(URL.createObjectURL(file));
+                    // use url so user can immediately see the selected image
+                    setUserPicture(URL.createObjectURL(file)); 
+                    console.log("setting picture", file);
+                    // form.setFieldsValue({ pictures: [file] }); // this unfortunately doesn't work due to antd limitations
+                    setUploadedFile(file); // so we use a state instead
+                    
                   }
                 }}
               />
             </div>
             <AvatarEditor
               image={userPicture || ""}
-              width={200}
-              height={200}
+              width={210}
+              height={210}
               backgroundColor="transparent"
               border={editorHovered ? 50 : 0}
               // color={[255, 255, 255, 0.6]}

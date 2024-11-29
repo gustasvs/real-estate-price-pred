@@ -41,11 +41,14 @@ body {
 }
 
 :root.light-theme {
+
+  --background-darkest: #d2ceb8;
+
   --foreground-rgb: #222222; /* Darkened for contrast against lighter background */
   --background-dark-main: #dddddd; /* Lightened main background */
   --background-dark-main-hover: #eaeaea; /* Lightened hover background */
 
-  --background-dark-secondary: #a6a9ab; /* Lighter secondary background */
+  --background-dark-secondary: #969a9d; /* Lighter secondary background */
   /* Original darker secondary for contrast */
   /* --background-dark-secondary: #cacccd; */
 
