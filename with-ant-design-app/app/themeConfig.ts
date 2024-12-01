@@ -46,7 +46,10 @@ const theme: ThemeConfig = {
       colorTextHeading: "var(--background-light-secondary)",
       colorText: "var(--background-light-secondary)",
     },
-    
+    Divider: {
+      colorText: "var(--background-light-main)",
+      colorBorder: "var(--background-light-main)",
+    }
   },
   token: {
     fontSize: 16,

@@ -395,10 +395,10 @@ const MyProfileForm = () => {
               />
             </div>
             <AvatarEditor
-              image={userPicture || ""}
+              image={userPicture || "https://static.vecteezy.com/system/resources/previews/030/504/836/non_2x/avatar-account-flat-isolated-on-transparent-background-for-graphic-and-web-design-default-social-media-profile-photo-symbol-profile-and-people-silhouette-user-icon-vector.jpg"}
               width={210}
               height={210}
-              backgroundColor="transparent"
+              // backgroundColor="grey"
               border={editorHovered ? 50 : 0}
               // color={[255, 255, 255, 0.6]}
               // scale={1.2}

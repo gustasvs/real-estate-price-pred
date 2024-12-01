@@ -52,7 +52,7 @@
 }
 
 .soc-login-icon svg {
-    fill: var(--background-dark-secondary);
+    fill: var(--background-light-main);
     transition: fill 0.48s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
@@ -62,7 +62,7 @@
 }
 
 .soc-login-icon:hover svg {
-    fill: var(--background-dark-main);
+    fill: var(--text-brighter);
 }
 
 .soc-login-icon:hover {
