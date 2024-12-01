@@ -9,6 +9,7 @@ import theme from "./themeConfig";
 
 import { Roboto } from "next/font/google";
 import { ThemeProvider } from "./context/ThemeContext";
+import Navbar from "./components/navigation/navbar";
 
 const roboto = Roboto({
   weight: "400",
@@ -27,6 +28,7 @@ function RootLayout({ children }: React.PropsWithChildren) {
         <SessionProvider>
           <ConfigProvider theme={theme}>
             <ThemeProvider>
+              <Navbar homePage={false} />
               {children}
             </ThemeProvider>
           </ConfigProvider>

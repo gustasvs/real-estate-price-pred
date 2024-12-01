@@ -8,7 +8,7 @@ import { auth } from "../auth";
 // Get one group
 export const getGroup = async (groupId: string) => {
   const session = await auth();
-  console.log("session in groups", session);
+  // console.log("session in groups", session);
   const user = session?.user;
   if (!user || !user.id) {
     return { error: "Unauthorized" };
@@ -29,8 +29,8 @@ export const getGroup = async (groupId: string) => {
 
 // Get all groups
 export const getGroups = async () => {
-const session = await auth();
-  console.log("session in groups", session);
+  const session = await auth();
+  // console.log("session in groups", session);
   const user = session?.user;
   if (!user || !user.id) {
     return { error: "Unauthorized" };
@@ -51,7 +51,7 @@ const session = await auth();
 // Get minimal group info for sidebar
 export const getGroupsForSidebar = async () => {
   const session = await auth();
-  console.log("session in groups", session);
+  // console.log("session in groups", session);
   const user = session?.user;
   if (!user || !user.id) {
     return { error: "Unauthorized" };
@@ -80,7 +80,7 @@ export const createGroup = async (groupName: string) => {
 
   const session = await auth();
 
-  console.log("session in groups", session);
+  // console.log("session in groups", session);
 
   const user = session?.user;
 

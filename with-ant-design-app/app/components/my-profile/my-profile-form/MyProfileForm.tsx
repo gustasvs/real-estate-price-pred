@@ -31,6 +31,8 @@ import AvatarEditor from 'react-avatar-editor'
 import Dropzone from 'react-dropzone'
 import { profile } from "console";
 import { saveImageOnCloud } from "../../../../actions/cloud_storage_helpers";
+import { generateUploadUrl } from "../../../api/generateUploadUrl";
+import { generateDownloadUrl } from "../../../api/generateDownloadUrl";
 
 
 
@@ -41,7 +43,7 @@ export const StyledTextField = styled(TextField)({
   },
 
   '& input': {
-    color: "var(--background-light-secondary)",
+    color: "white",
   },
 
   '& label.Mui-focused': {
@@ -61,8 +63,91 @@ export const StyledTextField = styled(TextField)({
     '&.Mui-focused fieldset': {
       borderColor: '#6F7E8C',
     },
+    // Error state
+    '&.Mui-error fieldset': {
+      borderColor: 'red', // Red border for error state
+    },
+    '&.Mui-error:hover fieldset': {
+      borderColor: 'darkred', // Darker red border on hover in error state
+    },
+    '&.Mui-error.Mui-focused fieldset': {
+      borderColor: 'darkred', // Darker red border when focused in error state
+    },
+  },
+  // palceholder color
+  '& .MuiOutlinedInput-input': {
+    color: "var(--text-brighter)",
+  },
+
+  '&.Mui-error fieldset': {
+    borderColor: 'red', // This line adds the red border when there is an error
+  },
+
+});
+
+export const StyledNumberInput = styled(TextField)({
+  '& label': {
+    color: "var(--background-light-main)",
+  },
+
+  '& input': {
+    color: "var(--background-light-secondary)",
+    '-moz-appearance': 'textfield', // Removes arrows in Firefox
+  },
+
+  '& input[type=number]': {
+    '-webkit-appearance': 'none', // Removes arrows in Chrome
+    margin: 0, // Ensures consistency in alignment
+  },
+
+  '& label.Mui-focused': {
+    color: "var(--background-light-main)",
+  },
+
+  '& .MuiInput-underline:after': {
+    borderBottomColor: '#B2BAC2',
+  },
+
+  '& .MuiOutlinedInput-root': {
+    borderRadius: '1em',
+    '& fieldset': {
+      borderColor: '#E0E3E7',
+    },
+    '&:hover fieldset': {
+      borderColor: '#B2BAC2',
+    },
+    '&.Mui-focused fieldset': {
+      borderColor: '#6F7E8C',
+    },
   },
 });
+
+import Switch from '@mui/material/Switch';
+
+export const StyledSwitch = styled(Switch)(({ theme }) => ({
+  '& .MuiSwitch-switchBase': {
+    color: "var(--background-light-secondary)",
+    '&:hover': {
+      backgroundColor: 'rgba(0, 0, 0, 0.1)',
+    },
+    '&.Mui-checked': {
+      color: "var(--background-light-main)",
+      '&:hover': {
+        backgroundColor: 'rgba(0, 0, 0, 0.2)',
+      },
+    },
+  },
+  '& .MuiSwitch-track': {
+    backgroundColor: '#E0E3E7',
+    opacity: 1,
+    borderRadius: 16,
+  },
+  '& .Mui-checked + .MuiSwitch-track': {
+    backgroundColor: '#6F7E8C',
+    opacity: 1,
+  },
+}));
+
 
 
 const props: UploadProps = {
@@ -101,28 +186,54 @@ const MyProfileForm = () => {
 
     console.log("uploadedFile", uploadedFile);
 
-    // return;
     let uploadedImageUrl = null;
+
     if (uploadedFile) {
       try {
+        // Step 1: Get Pre-signed PUT URL
+        const uploadUrlResults = await generateUploadUrl(uploadedFile.name, "profile-pictures");
+
+        if (typeof uploadUrlResults !== "object" || "error" in uploadUrlResults) {
+          message.error("Failed to get upload URL");
+          return;
+        }
+
+        const { presignedUrl, objectKey } = uploadUrlResults;
+
+        if (typeof presignedUrl !== "string" || !objectKey) {
+          message.error("Failed to get upload URL");
+          return;
+        }
+
+        console.log("Pre-signed Upload URL:", presignedUrl);
+
+        // Step 2: Upload Image Using Pre-signed URL
         const formData = new FormData();
         formData.append("file", uploadedFile);
-        formData.append("upload_preset", "your_upload_preset");
 
-        const cloudinaryResponseData = await saveImageOnCloud(formData);
+        const uploadResponse = await fetch(presignedUrl, {
+          method: "PUT",
+          body: uploadedFile, // Send the raw file
+        });
 
-        console.log("cloudinaryResponseData", cloudinaryResponseData);
+        if (!uploadResponse.ok) {
+          message.error("Failed to upload image to MinIO");
+          return;
+        }
 
-        uploadedImageUrl = cloudinaryResponseData.secure_url;
+        // Save the unique object key (or MinIO file URL) for further processing
+        uploadedImageUrl = `${objectKey}`; // Optionally, prepend the MinIO URL if required
+
+        console.log("Uploaded Image URL:", uploadedImageUrl);
+
       } catch (error) {
-        console.error('Error uploading image to Cloudinary', error);
+        console.error("Error uploading image to MinIO:", error);
         message.error("Image upload failed");
         return;
       }
     }
 
-    // console.log("picture", picture);
-
+    // Step 3: Save Profile Information with Uploaded Image URL
     const res = await updateUserProfileApi({
       name: values.name,
       email: values.email,
@@ -162,15 +273,35 @@ const MyProfileForm = () => {
     }
   }, [session]);
 
+
+  const [userPicture, setUserPicture] = useState<string | File>("");
   useEffect(() => {
+    if (session?.user?.image) {
+      const fetchUserImage = async () => {
+        const sessionUserImage = session?.user?.image;
+        if (sessionUserImage) {
+          const downloadUrl = await generateDownloadUrl(sessionUserImage, "profile-pictures");
 
-    console.log("fieldValues", form.getFieldsValue());
+        console.log("Download URL:", downloadUrl);
+        if (typeof downloadUrl === "object" && "error" in downloadUrl) {
+          } else {
+            setUserPicture(downloadUrl);
+          }
+        }
+      };
 
-  }, [form]);
-
-  const [userPicture, setUserPicture] = useState<string | File>(session?.user?.image || "");
+      fetchUserImage();
+    }
+  }
+  , [session]);
 
   const [editorHovered, setEditorHovered] = useState(false);
+
+
+  console.log("status", status);
+  if (status === "loading") {
+    return <div>Loading...</div>;
+  }
 
   return (
     <Form

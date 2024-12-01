@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import {
@@ -20,6 +22,9 @@ import {
   PlusOutlined,
   UserOutlined,
 } from "@ant-design/icons";
+
+import { MdOutlineKeyboardDoubleArrowLeft } from "react-icons/md";
+
 import { getGroupsForSidebar } from "../../../../actions/group";
 import {
   usePathname,
@@ -40,7 +45,7 @@ const RewindUiSidebar = () => {
   const pathname = usePathname();
   const params = useSearchParams();
 
-  console.log("pathname", pathname, "params", params);
+  // console.log("pathname", pathname, "params", params);
 
   const [groups, setGroups] = useState<any>(null);
   useEffect(() => {
@@ -66,13 +71,18 @@ const RewindUiSidebar = () => {
       `}
         onClick={() => toggleCollapsed()}
       >
-        <LeftSquareFilled />
+        <MdOutlineKeyboardDoubleArrowLeft />
       </div>
       <Sidebar
         width="320px"
         collapsed={collapsed}
-        collapsedWidth="3.7rem"
+        collapsedWidth="3.74rem"
         rootStyles={{
+          [`.${sidebarClasses.root}.${sidebarClasses.collapsed}`]: {
+            [`.${menuClasses.button}`]: {
+              minWidth: "1px",
+            },
+          },
           [`.${menuClasses.subMenuRoot}`]: {
             borderRadius: "10px",
           },
@@ -86,9 +96,10 @@ const RewindUiSidebar = () => {
             borderRadius: "10px",
             color: "var(--background-light-main)",
             backgroundColor: "var(--background-dark-main)",
-            height: "4em",
+            height: "3.5em",
             minWidth: "16em",
             padding: ".5em 1em",
+            margin: ".5em 0",
             a: {
               textWrap: "wrap",
             },
@@ -138,7 +149,8 @@ const RewindUiSidebar = () => {
           },
           [`.${menuClasses.menuItemRoot}`]: {
             borderRadius: "10px",
-            // padding: ".5em 0",
+            // height: "3em",
+            // padding: "1em 0",
           },
           [`.${menuClasses.subMenuContent}.${menuClasses.open}`]: {
             "&:before": {
@@ -191,6 +203,8 @@ const RewindUiSidebar = () => {
 
           [`.${menuClasses.SubMenuExpandIcon}`]: {
             paddingBottom: "3px",
+            scale: "130%",
+            paddingRight: "1em",
           },
           [`.${menuClasses.subMenuContent} .${menuClasses.button}`]: {
             marginLeft: "1rem",
@@ -208,7 +222,7 @@ const RewindUiSidebar = () => {
         }}
       >
         <div
-          className={styles["left-sidebar-company-logo"]}
+          className={`${styles["left-sidebar-company-logo"]} ${collapsed ? styles["left-sidebar-company-logo-collapsed"] : ""}`}
         >
           <Logo />
           <span

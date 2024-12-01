@@ -1,5 +1,3 @@
-"use client";
-
 import React, { Suspense, useEffect, useState } from "react";
 import { Divider } from "antd";
 import { HeartOutlined, UploadOutlined, UserOutlined } from "@ant-design/icons";
@@ -12,6 +10,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Sidebar from "../components/navigation/sidebar/Sidebar";
 import MyFavouritedObjects from "../components/my-profile/my-profile-form/my-favourited-objects/MyFavouritedObjects";
 import PageHeader from "../components/generic-page-layout/page-header/PageHeader";
+import { headers } from "next/headers";
 
 
 const sidebarItems = [
@@ -35,23 +34,12 @@ const sidebarItems = [
   },
 ];
 
-const UserProfilePage = () => {
-  const router = useRouter();
-  const searchParams = useSearchParams();
+const UserProfilePage = async () => {
   
-  const initialNavItem = Number(searchParams.get("page")) || 0;
-  // const [activeNavItem, setActiveNavItem] = useState(initialNavItem);
-  const activeNavItem = initialNavItem;
-  const [prevActiveNavItem, setPrevActiveNavItem] = useState(initialNavItem);
+  const headersList = headers();
+  const query = new URL(headersList.get("referer") || "").searchParams;
+  const initialNavItem = Number(query.get("page")) || 0;
 
-
-
-  // const handleNavClick = (newActiveNavItem: number | string) => {
-  //   setPrevActiveNavItem(activeNavItem);
-  //   // router.push(`/profile?page=${newActiveNavItem}`, { shallow: true } as any);
-  //   window.history.pushState(null, "", `?page=${newActiveNavItem}`);
-  //   // setActiveNavItem(Number(newActiveNavItem));
-  // };
 
   // TODO slowLoading for sidebar items for group page
   // TODO this means that the sidebar items will be loaded only when clicked
@@ -66,10 +54,11 @@ const UserProfilePage = () => {
             path: "/profile",
           },
           {
-            label: sidebarItems.find((item) => item.id === activeNavItem)?.label || "Lietotāja informācija",
-            path: `/profile?page=${activeNavItem}`,
-          }
-          
+            label:
+              sidebarItems.find((item) => item.id === initialNavItem)?.label ||
+              "Lietotāja informācija",
+            path: `/profile?page=${initialNavItem}`,
+          },
         ]}
       />
 
@@ -77,11 +66,11 @@ const UserProfilePage = () => {
 
           {/* <Sidebar sidebarItems={sidebarItems} activeNavItem={activeNavItem} onNavClick={handleNavClick} title="Mans profils" /> */}
 
-        <div className={`${styles['main-content']} ${activeNavItem > prevActiveNavItem ? 'slide-down' : 'slide-up'}`}>
+        <div className={`${styles['main-content']}`}>
           {/* <Suspense fallback={<div style={{ height: "60vh", backgroundColor: "white",
           width: "100%", display: "flex", justifyContent: "center", alignItems: "center" }} />}> */}
           {sidebarItems &&
-            sidebarItems.find((item) => item.id === activeNavItem)?.item}
+            sidebarItems.find((item) => item.id === initialNavItem)?.item}
           {/* </Suspense> */}
         </div>
       </div>

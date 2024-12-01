@@ -43,6 +43,7 @@ body {
 :root.light-theme {
 
   --background-darkest: #d2ceb8;
+  /* --background-darkest-transparent:  */
 
   --foreground-rgb: #222222; /* Darkened for contrast against lighter background */
   --background-dark-main: #dddddd; /* Lightened main background */
@@ -66,6 +67,19 @@ body {
 
   --group-main: #dddddde4; /* Main group background lightened */
   --group-secondary: #56585ac5; /* Secondary group background darkened for contrast */
-  --group-third: #42454dad; /* Third group background darkened for distinction */
+  --group-third: #191a1dad; /* Third group background darkened for distinction */
 
+}
+
+
+/* https://stackoverflow.com/questions/76869345/how-to-change-the-color-of-the-uploaded-items-text-in-the-upload-component-in */
+.ant-upload-list-item-name,
+.ant-upload-icon > .anticon,
+.ant-btn-icon > .anticon {
+  color: var(--text-brighter);
+}
+.ant-upload-list-item svg {
+  fill: var(--text-brighter);
+  background-color: var(--background-dark-main);
+  color: var(--text-brighter);
 }

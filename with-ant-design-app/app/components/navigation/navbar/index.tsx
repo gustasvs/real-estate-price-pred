@@ -43,10 +43,8 @@ import { FaHamburger } from "react-icons/fa";
 import { useThemeContext } from "../../../context/ThemeContext";
 
 const Navbar = ({
-  toggle,
   homePage,
 }: {
-  toggle: () => void;
   homePage: boolean | undefined;
 }) => {
   const { data: session, status } = useSession() as {
@@ -63,6 +61,9 @@ const Navbar = ({
     useState(false);
   const [loginModalOpen, setLoginModalOpen] =
     useState(false);
+
+  // if session is not loaded yet, return null
+  if (status === "loading") return null
 
   return (
     <div

@@ -45,7 +45,8 @@ const theme: ThemeConfig = {
       headerBg: "var(--background-dark-main)",
       colorTextHeading: "var(--background-light-secondary)",
       colorText: "var(--background-light-secondary)",
-    }
+    },
+    
   },
   token: {
     fontSize: 16,

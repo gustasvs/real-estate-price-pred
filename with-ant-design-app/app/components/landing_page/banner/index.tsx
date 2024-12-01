@@ -154,7 +154,7 @@ const Banner = () => {
           <div
             style={{
               display: "flex",
-              height: "100%",
+              height: "70vh",
               marginLeft: "2em",
             }}
           >
@@ -165,7 +165,6 @@ const Banner = () => {
               color: "white",
               borderColor: "white",
               height: "100%",
-              padding: "1em"
             }}
           />
           </div>

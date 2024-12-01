@@ -12,27 +12,30 @@
 .left-sidebar-collapse {
     position:absolute;
     top: 0;
-    right: 0px;
+    right: 50px;
     transform: translateX(50px);
-    padding: 1em;
+    margin: 25px;
     background: transparent;
-    /* background-color: var(--background-dark-main); */
     font-size: 1.5rem;
     z-index: 100;
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 2px solid var(--background-gray);
+    border-radius: 10px;
+    height: 40px;
+    width: 40px;
+    overflow: hidden;
 }
 
 .left-sidebar-collapse svg {
-    width: 50px;
-    height: 50px;
-    fill: var(--background-dark-secondary);
-    color: var(--background-dark-secondary);
+    width: 40px;
+    height: 40px;
+    color: var(--background-gray);
     background-color: var(--background-dark-main);
     cursor: pointer;
 }
 
 .left-sidebar-collapse.left-sidebar-collapse-collapsed {
-    transform: rotate(180deg) translateX(-80px);
+    transform: rotate(180deg) translateX(-70px) translateY(-45px) scale(.7);
 }
 
 
@@ -40,11 +43,22 @@
 .left-sidebar-company-logo {
     display: flex;
     justify-content: left;
-    align-items: center;
+    
+    /* items should always be top */
+    align-items: flex-start;
+
     gap: 1em;
     padding: 20px;
     transform: translateX(-10px);
+    height: 50px;
+    transition: height 0.3s ease;
+    border-bottom: 1px solid var(--background-gray);
 }
+
+.left-sidebar-company-logo-collapsed {
+    height: 80px;
+}
+
 .left-sidebar-company-logo svg {
     width: 50px;
     height: 50px;
@@ -55,6 +69,11 @@
     font-size: 1.5rem;
     font-weight: 600;
     color: var(--text-brighter);
+    
+    /* text in center of height */
+    display: flex;
+    align-items: center;
+    height: 50px;
 }
 
 .left-sidebar-header {

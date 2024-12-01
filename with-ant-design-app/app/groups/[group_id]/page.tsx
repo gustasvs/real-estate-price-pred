@@ -1,4 +1,3 @@
-import React, { use, useEffect, useState } from "react";
 import { Modal, Table } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import GenericLayout from "../../components/generic-page-layout";
@@ -34,6 +33,12 @@ const GroupPage = async ({
   params: any;
 }) => {
 
+  console.log("params", params);
+
+  if (!params.group_id) {
+    return null;
+  }
+
   const objectsResponse = await getObjects(params.group_id);
   const objects = Array.isArray(objectsResponse) ? objectsResponse : [];
 
@@ -46,6 +51,8 @@ const GroupPage = async ({
   const group_id = Array.isArray(params.group_id)
     ? params.group_id[0]
     : params.group_id;
+
+  console.log("group_id", group_id);
 
   const revalidateData = async () => {
     "use server";
@@ -73,6 +80,7 @@ const GroupPage = async ({
           ]}
         />
         <MasonryTable
+          group_id={group_id}
           columnCount={4}
           objects={objects}
           loading={false}

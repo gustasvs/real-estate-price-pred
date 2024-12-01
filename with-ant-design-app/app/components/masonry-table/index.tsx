@@ -42,12 +42,14 @@ import {
 import { revalidatePath } from "next/cache";
 
 const MasonryTable = ({
+  group_id,
   columnCount,
   objects,
   loading = false,
   showNavigateToGroup = false,
   revalidateDataFunction = () => {}
 }: {
+  group_id: string;
   columnCount: number;
   objects: any[];
   loading?: boolean;
@@ -90,6 +92,9 @@ const MasonryTable = ({
   const handleAddButtonClick = () => {
     if (group_id  === "favourites") {
       router.push(`/groups/${objects[0].groupId}/new`);
+    }
+    else {
+      router.push(`/groups/${group_id}/new`);
     }
   };
 

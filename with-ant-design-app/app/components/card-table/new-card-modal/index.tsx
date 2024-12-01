@@ -39,7 +39,7 @@ const NewGroupModal: React.FC<NewGroupModalProps> = ({
   return (
     <Modal
       title={
-        isEditing ? "Labot grupu" : "Izveidot jaunu grupu"
+        isEditing ? "Labot grupas nosaukumu" : "Izveidot jaunu grupu"
       }
       open={open}
       onOk={handleOk}

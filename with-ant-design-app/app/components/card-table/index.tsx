@@ -1,3 +1,5 @@
+"use client";
+
 import {
   CloseOutlined,
   EditOutlined,
@@ -25,15 +27,12 @@ import { BiBuildings } from "react-icons/bi";
 
 const CardTable = ({
   columnCount,
-  onCardClick = () => {},
   groups = [],
   deleteGroup = () => {},
   createGroup = () => {},
   updateGroup = () => {},
-  loading = false,
 }: {
   columnCount: number;
-  onCardClick?: (id: number) => void;
   groups: any[];
   deleteGroup: (id: string) => void;
   createGroup: (groupName: string) => void;
@@ -41,7 +40,6 @@ const CardTable = ({
     groupId: string,
     newGroupName: string
   ) => void;
-  loading?: boolean;
 }): JSX.Element => {
   const router = useRouter();
 
@@ -107,7 +105,7 @@ const CardTable = ({
               <div
                 className={styles["card"]}
                 onClick={() => {
-                  onCardClick(group.id);
+                  router.push(`/groups/${group.id}`);
                 }}
                 ref={cardRef}
               >

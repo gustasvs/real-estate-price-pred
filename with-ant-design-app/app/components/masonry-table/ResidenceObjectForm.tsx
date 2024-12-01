@@ -10,6 +10,8 @@ import {
   message,
   UploadProps,
   InputNumber,
+  Row,
+  Col,
 } from "antd";
 import { InboxOutlined, UploadOutlined } from "@ant-design/icons";
 
@@ -21,6 +23,9 @@ import {
   getObject as getObjectApi,
   updateObject as updateObjectApi,
 } from "../../../actions/groupObjects";
+import { StyledNumberInput, StyledSwitch, StyledTextField } from "../my-profile/my-profile-form/MyProfileForm";
+import { generateUploadUrl } from "../../api/generateUploadUrl";
+import { useSession } from "next-auth/react";
 
 const { Dragger } = Upload;
 
@@ -35,7 +40,7 @@ const props: UploadProps = {
       console.log(info.file, info.fileList);
     }
     if (status === "done") {
-      message.success(`${info.file.name} file uploaded successfully.`);
+      message.success(`${info.file.name} fails augšupielādēts veiksmīgi!`);
     } else if (status === "error") {
       message.error(`${info.file.name} file upload failed.`);
     }
@@ -45,14 +50,20 @@ const props: UploadProps = {
   },
 };
 
-const ResidenceObjectForm = () => {
-  const router = useRouter();
-  const params = useParams();
 
-  const group_id = Array.isArray(params.group_id)
-    ? params.group_id[0]
-    : params.group_id;
+const ResidenceObjectForm = ({ objectId, groupId, residence }: { objectId: string, groupId: string, residence: any }) => {
+
+  const router = useRouter();
+
+  const { data: session, status, update } = useSession();
+
   const [form] = Form.useForm();
+
+  console.log("residence", residence);
+
+  form.setFieldsValue(residence);
+
+  console.log(residence?.pictures)
   interface ObjectData {
     name: string;
     id: string;
@@ -64,86 +75,83 @@ const ResidenceObjectForm = () => {
     address: string;
   }
 
-  interface ErrorData {
-    error: string;
-  }
-
-  const [initialData, setInitialData] = useState<ObjectData | ErrorData | null>(
-    null
-  );
-
-  const objectId = params.object_id as string | undefined;
-
-  useEffect(() => {
-    // Function to fetch existing object data
-    const fetchObjectData = async () => {
-      if (objectId) {
-        const data = await getObjectApi(objectId);
-        if (!data) {
-          return;
-        }
-
-        if (data && !('error' in data)) {
-        const fileList = data.pictures.map((url, index) => ({
-          uid: -index,
-          name: `Image ${index + 1}`,
-          status: 'done',
-          url: url
-        }));
-        form.setFieldsValue({ ...data, pictures: fileList });
-        setInitialData(data);
-      }
-      }
-    };
-    fetchObjectData();
-  }, [form, objectId]);
-
   const handleSubmit = async (values: any) => {
     console.log("Received values of form: ", values);
-    console.log("group_id", group_id);
 
-    const submitFunction = objectId ? updateObjectApi : createObjectApi;
+    const submitFunction = objectId !== "new" ? updateObjectApi : createObjectApi;
 
     const picturePromises = values.pictures.map(async (file: any) => {
-      if (file.status === 'new') {
-        const compressedFile = await imageCompression(file.originFileObj, {
-          maxSizeMB: 0.05,
-          maxWidthOrHeight: 400,
-        });
 
-        return new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.readAsDataURL(compressedFile); // Convert compressed image to base64
-          reader.onload = () => resolve({ base64: reader.result, status: 'new' });
-          reader.onerror = (error) => reject(error);
-        });
-      } else if (file.status === 'deleted') {
-        return Promise.resolve({ base64: file.originFileObj, status: 'deleted' });
-      } else {
-        return Promise.resolve({ base64: file.originFileObj, status: 'unchanged' });
-      }
+        console.log("FILE", file);
+      if (file.status === 'done') {
+            const compressedFile = await imageCompression(file.originFileObj, {
+                maxSizeMB: 0.05,
+                maxWidthOrHeight: 400,
+            });
+
+            try {
+                // Step 1: Get Pre-signed PUT URL
+                const uploadUrlResults = await generateUploadUrl(compressedFile.name, "object-pictures");
+
+                if (typeof uploadUrlResults !== "object" || "error" in uploadUrlResults) {
+                    throw new Error("Failed to get upload URL");
+                }
+
+                const { presignedUrl, objectKey } = uploadUrlResults;
+
+                if (typeof presignedUrl !== "string" || !objectKey) {
+                    throw new Error("Failed to get upload URL");
+                }
+
+                console.log("Pre-signed Upload URL:", presignedUrl);
+
+                // Step 2: Upload Image Using Pre-signed URL
+                const uploadResponse = await fetch(presignedUrl, {
+                    method: "PUT",
+                    body: compressedFile, // Send the raw file
+                });
+
+                if (!uploadResponse.ok) {
+                    throw new Error("Failed to upload image to MinIO");
+                }
+
+                console.log("Uploaded Image Key:", objectKey);
+
+                // Save objectKey for further processing
+                return { url: objectKey, status: 'new' };
+            } catch (error) {
+                console.error("Error uploading image to MinIO:", error);
+                message.error("Image upload failed");
+                throw error; // Propagate error to halt processing
+            }
+        } else if (file.status === 'deleted') {
+            return { url: file.originFileObj, status: 'deleted' };
+        } else {
+            return { url: file.originFileObj, status: 'unchanged' };
+        }
     });
 
-    
-    console.log("picturePromises", picturePromises);
+    try {
+        const pictures = await Promise.all(picturePromises);
+        console.log("Uploaded Pictures:", pictures);
 
-    const pictures = await Promise.all(picturePromises);
+        const res = await submitFunction(groupId as string, {
+            ...values,
+            pictures,
+        });
 
-    console.log("pictures", pictures);
+        console.log("res", res);
 
-    const res = await submitFunction(group_id as string, {
-      ...values,
-      pictures,
-    });
-
-    console.log("res", res);
-
-    if ("error" in res) {
-      message.error("Failed to create object");
-    } else {
-      router.push(`/groups/${group_id}`);
+        if ("error" in res) {
+            message.error("Failed to create object");
+        } else {
+            router.push(`/groups/${groupId}`);
+        }
+    } catch (error) {
+        console.error("Error processing images:", error);
     }
-  };
+};
+
 
   const normFile = (e: any) => {
     if (Array.isArray(e)) {
@@ -152,6 +160,13 @@ const ResidenceObjectForm = () => {
     return e && e.fileList;
   };
 
+
+  
+  if (status === 'loading') {
+    return <div>Loading...</div>;
+  }
+
+
   return (
     <Form
       form={form}
@@ -159,10 +174,14 @@ const ResidenceObjectForm = () => {
       onFinish={handleSubmit}
       className={styles["form-container"]}
     >
+      <Row gutter={[84, 64]}
+      >
+      {/* Left Side */}
+      <Col span={12}>
       {/* Name */}
       <Form.Item
         name="name"
-        label={<span className={styles["label"]}>Name</span>}
+        // label={<span className={styles["label"]}>Name</span>}
         rules={[
           {
             required: true,
@@ -171,53 +190,100 @@ const ResidenceObjectForm = () => {
         ]}
         className={styles["form-item"]}
       >
-        <Input placeholder="Enter the name" className={styles["input-field"]} />
+        {/* <Input placeholder="Enter the name" className={styles["input-field"]} /> */}
+        <StyledTextField 
+          style={{ width: "100%" }}
+          id="filled-basic-name"
+          label="Objekta nosaukums"
+          variant="outlined"
+          defaultValue={residence.name}
+          placeholder="Ievadiet objekta nosaukumu"
+        />
+      </Form.Item>
+
+      {/* Description */}
+      <Form.Item
+        name="description"
+        // label={<span className={styles["label"]}>Description</span>}
+        rules={[
+          {
+            required: true,
+            message: "Please input the description of the real estate object!",
+          },
+        ]}
+      >
+        <StyledTextField
+          style={{ width: "100%" }}
+          id="outlined-basic"
+          label="Apraksts"
+          variant="outlined"
+          defaultValue={residence.description}
+          placeholder="Ievadiet objekta aprakstu"
+          multiline
+          rows={3}
+          // error={form.getFieldError('description').length > 0}
+          // error={true}
+          error={!!form.getFieldError("name").length} // Checks if there are errors
+          helperText={form.getFieldError('description')}
+          // helperText="Aprakstam jābūt vismaz 10 simbolus garumā"
+        />
       </Form.Item>
 
       {/* Address */}
       <Form.Item
         name="address"
-        label={<span className={styles["label"]}>Address</span>}
+        // label={<span className={styles["label"]}>Address</span>}
         rules={[{ required: true, message: "Please input the address!" }]}
       >
-        <Input
-          placeholder="Enter the address"
-          className={styles["input-field"]}
+        <StyledTextField
+          style={{ width: "100%" }}
+          id="outlined-basic"
+          label="Adrese"
+          variant="outlined"
+          defaultValue={residence.address}
+          placeholder="Ievadiet objekta adresi"
         />
       </Form.Item>
 
       {/* Area */}
       <Form.Item
         name="area"
-        label={<span className={styles["label"]}>Area (in sq meters)</span>}
         rules={[{ required: true, message: "Please input the area!" }]}
       >
-        <InputNumber
-          min={0}
-          placeholder="Enter the area"
-          className={styles["input-field"]}
+        <StyledNumberInput
+          style={{ width: "100%" }}
+          id="outlined-basic"
+          label="Platība (kvadrātmetri)"
+          variant="outlined"
+          defaultValue={residence.area}
+          placeholder="Ievadiet objekta platību"
         />
       </Form.Item>
 
+        <Row gutter={16}>
+          <Col span={8}>
       {/* Bedroom Count */}
       <Form.Item
         name="bedroomCount"
-        label={<span className={styles["label"]}>Bedrooms</span>}
         rules={[
           { required: true, message: "Please input the number of bedrooms!" },
         ]}
       >
-        <InputNumber
-          min={0}
-          placeholder="Enter the number of bedrooms"
-          className={styles["input-field"]}
+        <StyledNumberInput
+          style={{ width: "100%" }}
+          id="outlined-basic"
+          label="Guļamistabu skaits"
+          variant="outlined"
+          defaultValue={residence.bedroomCount}
+          placeholder="Ievadiet guļamistabu skaitu"
         />
       </Form.Item>
+      </Col>
 
       {/* Bathroom Count */}
+      <Col span={8}>
       <Form.Item
         name="bathroomCount"
-        label={<span className={styles["label"]}>Bathrooms</span>}
         rules={[
           {
             required: true,
@@ -225,17 +291,21 @@ const ResidenceObjectForm = () => {
           },
         ]}
       >
-        <InputNumber
-          min={0}
-          placeholder="Enter the number of bathrooms"
-          className={styles["input-field"]}
+        <StyledNumberInput
+          style={{ width: "100%" }}
+          id="outlined-basic"
+          label="Vannas istabu skaits"
+          variant="outlined"
+          defaultValue={residence.bathroomCount}
+          placeholder="Ievadiet vannas istabu skaitu"
         />
       </Form.Item>
+      </Col>
 
       {/* Parking Count */}
+      <Col span={8}>
       <Form.Item
         name="parkingCount"
-        label={<span className={styles["label"]}>Parking Spaces</span>}
         rules={[
           {
             required: true,
@@ -243,54 +313,35 @@ const ResidenceObjectForm = () => {
           },
         ]}
       >
-        <InputNumber
-          min={0}
-          placeholder="Enter the number of parking spaces"
-          className={styles["input-field"]}
-        />
+        <label style={{ color: "var(--background-light-main)", fontWeight: 'bold' }}>
+        Stāvvietas pieejamas
+      </label>
+        <StyledSwitch/>
       </Form.Item>
-
+      </Col>
+      </Row>
       {/* Price */}
       <Form.Item
         name="price"
-        label={<span className={styles["label"]}>Price</span>}
         rules={[{ required: true, message: "Please input the price!" }]}
       >
-        <InputNumber
-          min={0}
-          placeholder="Enter the price"
-          className={styles["input-field"]}
+        <StyledNumberInput
+          style={{ width: "100%" }}
+          id="outlined-basic"
+          label="Cena (EUR)"
+          variant="outlined"
+          defaultValue={residence.price}
+          placeholder="Ievadiet objekta cenu"
         />
       </Form.Item>
 
-      {/* Predicted Price */}
-      <Form.Item
-        name="predictedPrice"
-        label={<span className={styles["label"]}>Predicted Price</span>}
-      >
-        <InputNumber
-          min={0}
-          placeholder="Enter the predicted price"
-          className={styles["input-field"]}
-        />
-      </Form.Item>
-
-      {/* Description */}
-      <Form.Item
-        name="description"
-        label={<span className={styles["label"]}>Description</span>}
-        rules={[{ required: true, message: "Please input the description!" }]}
-      >
-        <Input.TextArea
-          rows={4}
-          placeholder="Enter the description"
-          className={styles["input-field"]}
-        />
-      </Form.Item>
-
+      </Col>
+      {/* Right Side */}
+      <Col span={12}>
+      {/* Pictures */}
       <Form.Item
         name="pictures"
-        label={<span className={styles["label"]}>Pictures</span>}
+        // label={<span className={styles["label"]}>Pictures</span>}
         valuePropName="fileList"
         getValueFromEvent={normFile}
         //   extra="Upload pictures of the real estate object"
@@ -308,10 +359,13 @@ const ResidenceObjectForm = () => {
           </p>
         </Dragger>
       </Form.Item>
+      </Col>
+      </Row>
+      {/* Buttons */}
       <div className={styles["button-container"]}>
         <Button
           type="default"
-          onClick={() => router.push(`/groups/${group_id}`)}
+          onClick={() => router.push(`/groups/${groupId}`)}
           className={styles["cancel-button"]}
         >
           Atcelt

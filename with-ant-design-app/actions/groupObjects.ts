@@ -165,7 +165,7 @@ export const updateObject = async (
     price?: number;
     predictedPrice?: number;
     groupId?: string;
-    pictures?: { base64: string; status: string }[];
+    pictures?: { pictureUrl: string; status: string }[];
     favourite?: boolean;
   }
 ) => {
@@ -187,22 +187,27 @@ export const updateObject = async (
     if (pictures && Array.isArray(pictures)) {
       const filteredPictures = pictures
         .filter((p) => p.status !== "deleted")
-        .map((p) => p.base64);
+        .map((p) => p.pictureUrl);
       const deletedPictures = pictures
         .filter((p) => p.status === "deleted")
-        .map((p) => p.base64);
+        .map((p) => p.pictureUrl);
 
       // Compute new picture set by filtering out deleted ones and adding new ones
       const newPictures = updatedObject.pictures
         .filter((p) => !deletedPictures.includes(p))
         .concat(filteredPictures);
 
-      await db.residence.update({
+      const object = db.residence.findUnique({
         where: { id: objectId },
-        data: {
-          pictures: newPictures,
-        },
       });
+      console.log("object", object);
+
+      // await db.residence.update({
+      //   where: { id: objectId },
+      //   data: {
+      //     pictures: newPictures,
+      //   },
+      // });
     }
 
     console.log("updatedObject", updatedObject);

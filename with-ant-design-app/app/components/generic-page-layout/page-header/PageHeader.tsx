@@ -8,6 +8,8 @@ import { HomeOutlined } from '@ant-design/icons';
 
 import styles from './PageHeader.module.css';
 import { useRouter } from 'next/navigation';
+import { auth } from '../../../../auth';
+import { useSession } from 'next-auth/react';
 
 type BreadcrumbItem = {
   label: string;
@@ -21,12 +23,19 @@ interface PageHeaderProps {
 
 const PageHeader: React.FC<PageHeaderProps> = ({ title, breadcrumbItems }) => {
   const router = useRouter();
+
+
+  const { data: session, status, update } = useSession();
+
+  if (status === 'loading') {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div
       className={styles.pageHeader}
     >
-      <Breadcrumb
-        >
+      <Breadcrumb>
         <Breadcrumb.Item
           className={styles.breadcrumbItem}
           onClick={() => {

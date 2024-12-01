@@ -1,76 +1,44 @@
-"use client";
+// "use client";
 
 import React, { useEffect, useState } from "react";
 import CardTable from "../components/card-table";
 import GenericLayout from "../components/generic-page-layout";
 
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import { Divider } from "antd";
-import { createGroup  as createGroupApi, 
+import {
+  createGroup as createGroupApi,
   deleteGroup as deleteGroupApi,
   getGroups as getGroupsApi,
-  updateGroup as updateGroupApi} from "../../actions/group";
+  updateGroup as updateGroupApi,
+} from "../../actions/group";
 import { update } from "react-spring";
 import PageHeader from "../components/generic-page-layout/page-header/PageHeader";
+import { revalidatePath } from "next/cache";
 
-const GroupsPage = () => {
-
-  const router = useRouter();
-
-  const navigateToGroup = (id: number) => {
-    console.log(`Open group with id ${id}`);
-    router.push(`/groups/${id}`);
-  };
-
-  // const [groups, setGroups] = useState([
-  //   { id: 1, name: "Rīgas dzīvokļi", imageUrl: "/path/to/image1.jpg" },
-  //   { id: 2, name: "Cēsu dzīvokļi", imageUrl: "/path/to/image2.jpg" },
-  //   { id: 3, name: "Mājas pie Jūrmalas", imageUrl: "/path/to/image3.jpg" },
-  //   { id: 4, name: "Dzīvokļi S. Zvirbulim", imageUrl: "/path/to/image4.jpg" },
-  //   // { id: 5, name: "Group 5", imageUrl: "/path/to/image5.jpg" },
-  // ]);
-
+const GroupsPage = async () => {
   interface Group {
     id: string;
     name: string;
     imageUrl: any;
   }
 
-  const [groups, setGroups] = useState<Group[]>([]);
-  const [loading, setLoading] = useState(false);
-
-
-  const getGroupsImage = (id: string) => {
-    return `/path/to/image${id}.jpg`;
-  };
-
   const fetchGroups = async () => {
-    setLoading(true);
-    try {
-      const groups = await getGroupsApi();
-      if (Array.isArray(groups)) {
-        const groupsData = groups.map((group) => {
-          return { id: group.id, name: group.name, imageUrl: getGroupsImage(group.id), createdAt: group.createdAt };
-        });
-        console.log("groups", groupsData);
-        setGroups(groupsData);
-      } else {
-        console.error("Error fetching groups:", groups.error);
-      }
-  } catch (error) {
-    console.error("Error fetching groups:", error);
-  } finally {
-    setLoading(false);
-  }
+    "use server";
+    const groups = await getGroupsApi();
+    if (Array.isArray(groups)) {
+      return groups;
+    } else {
+      console.error(
+        "Failed to fetch groups:",
+        groups.error
+      );
+      return [];
+    }
   };
-
-  useEffect(() => {
-    fetchGroups();
-  }, []);
-
 
   const createGroup = async (groupName: string) => {
-
+    "use server";
     const res = await createGroupApi(groupName);
     console.log("res", res);
 
@@ -78,25 +46,39 @@ const GroupsPage = () => {
   };
 
   const deleteGroup = async (id: string) => {
+    "use server";
     const res = await deleteGroupApi(id);
     await fetchGroups();
-  }
+  };
 
-  const updateGroup = async (id: string, newGroupName: string) => {
+  const updateGroup = async (
+    id: string,
+    newGroupName: string
+  ) => {
+    "use server";
     const res = await updateGroupApi(id, newGroupName);
-    await fetchGroups();
-  }
+    revalidatePath("/groups");
+  };
 
+  const groups = await fetchGroups();
 
   return (
     <GenericLayout>
-
-      <PageHeader title="Manas grupas" breadcrumbItems={[{ label: "Manas grupas", path: "/groups" }]} />
+      <PageHeader
+        title="Manas grupas"
+        breadcrumbItems={[
+          { label: "Manas grupas", path: "/groups" },
+        ]}
+      />
 
       <Divider />
-        <CardTable columnCount={3} onCardClick={(id: number) => navigateToGroup(id)} groups={groups} deleteGroup={deleteGroup} 
-        createGroup={createGroup} updateGroup={updateGroup} loading={loading}
-        />
+      <CardTable
+        columnCount={3}
+        groups={groups}
+        deleteGroup={deleteGroup}
+        createGroup={createGroup}
+        updateGroup={updateGroup}
+      />
       {/* </div> */}
     </GenericLayout>
   );
