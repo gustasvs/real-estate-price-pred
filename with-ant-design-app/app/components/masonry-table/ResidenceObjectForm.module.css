@@ -92,3 +92,39 @@
     align-items: center;
     border: none;
 }
+
+
+.parking-icon {
+    margin-right: 1.5em;
+    display: flex;
+    
+    width: 60px;
+    height: 60px;
+
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background: url("/parking/parking_2_colorised_borders.gif");
+    filter: grayscale(50%);
+    animation: none; /* Stops animation unless specified */
+}
+
+.parking-icon:hover {
+    animation: gif-animation 1s steps(1) infinite; /* Animates only on hover */
+    filter: grayscale(0%);
+}
+
+.parking-available {
+    background: url("/parking/parking_2_colorised_borders.gif");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.parking-unavailable {
+    background: url("/parking/no-parking.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+
+}

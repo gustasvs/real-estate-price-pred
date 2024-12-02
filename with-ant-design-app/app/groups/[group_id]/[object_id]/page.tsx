@@ -8,6 +8,7 @@ import PageHeader from "../../../components/generic-page-layout/page-header/Page
 import { useEffect, useState } from "react";
 import { getGroup } from "../../../../actions/group";
 import { getObject } from "../../../../actions/groupObjects";
+import { generateDownloadUrl } from "../../../api/generateDownloadUrl";
 
 const residenceObjectPage = async ({
   params,
@@ -25,6 +26,29 @@ const residenceObjectPage = async ({
 
   const group = await getGroup(params.group_id);
   const residence = await getObject(params.object_id);
+  
+  const getResidenceWithPreSignedPictureUrls = async (residence: any) => {
+    if (!residence || !residence.pictures) {
+      return residence;
+    }
+    console.log("residence", residence);
+    const pictureUrls = await Promise.all(
+      residence.pictures.map(async (picture: any) => {
+        const downloadUrl = await generateDownloadUrl(
+          picture,
+          "object-pictures"
+        );
+        // since the picture is stored in the format "uuid-filename.jpg"
+        const originalName = picture.split("-").pop();
+        return { picture, thumbUrl: downloadUrl, name: originalName};
+      })
+    );
+    return {
+      ...residence,
+      pictures: pictureUrls,
+    };
+  }
+  const residenceWithPreSignedPictureUrls = await getResidenceWithPreSignedPictureUrls(residence);
 
   const groupName =
     group && "name" in group ? group.name : "Mana grupa";
@@ -32,10 +56,6 @@ const residenceObjectPage = async ({
     residence && "name" in residence
       ? residence.name
       : "Mana dzīvesvieta";
-
-  console.log("residence in page", residence);
-
-  console.log("group", group);
 
   return (
     <GenericLayout>
@@ -58,7 +78,7 @@ const residenceObjectPage = async ({
       <ResidenceObjectForm
         objectId={object_id}
         groupId={group_id}
-        residence={residence}
+        residence={residenceWithPreSignedPictureUrls}
       />
     </GenericLayout>
   );

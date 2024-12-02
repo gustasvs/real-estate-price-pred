@@ -7,7 +7,8 @@ const theme: ThemeConfig = {
       colorPrimary: "#35393b",
       colorTextSecondary: "#dddddd",
       borderRadiusLG: 16,
-      fontFamily: "inherit"
+      fontFamily: "inherit",
+      colorFillAlter: "var(--background-dark-main-hover)",
       // width: 200,
     },
     Popover: {
@@ -16,7 +17,7 @@ const theme: ThemeConfig = {
       fontFamily: "inherit",
     },
     Breadcrumb: {
-      fontSize: 16,
+      // fontSize: 16,
       colorText: "var(--background-light-main)",
       colorTextSecondary: "var(--background-light-main)",
       separatorColor: "var(--background-light-main)",

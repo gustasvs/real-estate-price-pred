@@ -48,15 +48,16 @@
     align-items: flex-start;
 
     gap: 1em;
-    padding: 20px;
+    /* padding: 20px; */
     transform: translateX(-10px);
-    height: 50px;
+    height: 90px;
     transition: height 0.3s ease;
     border-bottom: 1px solid var(--background-gray);
+    margin: 20px 10px 10px 20px;
 }
 
 .left-sidebar-company-logo-collapsed {
-    height: 80px;
+    height: 110px;
 }
 
 .left-sidebar-company-logo svg {

@@ -78,11 +78,6 @@ const RewindUiSidebar = () => {
         collapsed={collapsed}
         collapsedWidth="3.74rem"
         rootStyles={{
-          [`.${sidebarClasses.root}.${sidebarClasses.collapsed}`]: {
-            [`.${menuClasses.button}`]: {
-              minWidth: "1px",
-            },
-          },
           [`.${menuClasses.subMenuRoot}`]: {
             borderRadius: "10px",
           },
@@ -97,9 +92,10 @@ const RewindUiSidebar = () => {
             color: "var(--background-light-main)",
             backgroundColor: "var(--background-dark-main)",
             height: "3.5em",
-            minWidth: "16em",
+            minWidth: collapsed ? "1em" : "16em",
             padding: ".5em 1em",
-            margin: ".5em 0",
+            // margin: ".5em 0",
+            transition: collapsed ? "min-width 0.1s 0.2s" : "min-width 0.1s",
             a: {
               textWrap: "wrap",
             },
@@ -108,6 +104,11 @@ const RewindUiSidebar = () => {
               backgroundColor:
                 "var(--background-dark-secondary) !important",
               color: "var(--background-light-secondary)",
+            },
+          },
+          [`.${sidebarClasses.root}.${sidebarClasses.collapsed}`]: {
+            [`.${menuClasses.button}`]: {
+              minWidth: "1em",
             },
           },
           [`.${menuClasses.button}.${menuClasses.active}.${menuClasses.open}`]: {
@@ -203,8 +204,8 @@ const RewindUiSidebar = () => {
 
           [`.${menuClasses.SubMenuExpandIcon}`]: {
             paddingBottom: "3px",
-            scale: "130%",
-            paddingRight: "1em",
+            scale: "110%",
+            // paddingRight: "1em",
           },
           [`.${menuClasses.subMenuContent} .${menuClasses.button}`]: {
             marginLeft: "1rem",

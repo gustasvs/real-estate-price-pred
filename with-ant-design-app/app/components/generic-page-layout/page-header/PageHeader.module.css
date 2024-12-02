@@ -5,7 +5,7 @@
 }
 
 .title {
-    font-size: 2rem;
+    font-size: 2.1rem;
     font-weight: 600;
     color: var(--text-bright);
 }
@@ -39,6 +39,17 @@
 }
 
 /* this is for the home icon in breadcrumbs */
-.breadcrumbItem:hover span {
+.breadcrumbItem:hover {
+    color: var(--text-bright);
+}
+
+.lastBreadcrumbItem {
     color: var(--text-brighter);
+    pointer-events: none; /* Disables hover and click */
+    cursor: default; /* Changes cursor to default */
+    transform: none; /* Removes hover transform */
+}
+
+.lastBreadcrumbItem:hover::after {
+    width: 0; /* Ensures no hover underline effect */
 }

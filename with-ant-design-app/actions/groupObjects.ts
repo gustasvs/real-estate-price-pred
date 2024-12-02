@@ -170,58 +170,53 @@ export const updateObject = async (
   }
 ) => {
   try {
-    // Handle non-picture data updates separately
+    // Destructure and filter out undefined/null values
     const { pictures, ...dataWithoutPictures } = objectData;
 
-
     const validData = Object.fromEntries(
-      Object.entries(dataWithoutPictures).filter(([key, value]) => value !== undefined && value !== null)
+      Object.entries(dataWithoutPictures).filter(([_, value]) => value != null)
     );
-
+    // Update non-picture fields
     const updatedObject = await db.residence.update({
       where: { id: objectId },
-      data: validData
+      data: validData,
     });
 
-    // Only proceed with picture handling if pictures are provided
+    const currentPictures = updatedObject.pictures;
+
+    console.log("Current pictures:", currentPictures);
+    console.log("Passed pictures:", pictures);
+
+    // Handle picture updates if provided
     if (pictures && Array.isArray(pictures)) {
-      const filteredPictures = pictures
-        .filter((p) => p.status !== "deleted")
-        .map((p) => p.pictureUrl);
-      const deletedPictures = pictures
-        .filter((p) => p.status === "deleted")
-        .map((p) => p.pictureUrl);
 
-      // Compute new picture set by filtering out deleted ones and adding new ones
-      const newPictures = updatedObject.pictures
-        .filter((p) => !deletedPictures.includes(p))
-        .concat(filteredPictures);
+      // pictures that are in current pictures but not in the new pictures
+      // this is just for logging / auditting purposes
+      const deletedPictures = currentPictures.filter(
+        (existingUrl) =>
+          !pictures.some((newPicture) => newPicture.pictureUrl === existingUrl)
+      );
+      console.log("Pictures to delete:", deletedPictures);
 
-      const object = db.residence.findUnique({
-        where: { id: objectId },
-      });
-      console.log("object", object);
+      // Compute new pictures array
+      const newPictures = pictures.map((picture) => picture.pictureUrl);
 
-      // await db.residence.update({
-      //   where: { id: objectId },
-      //   data: {
-      //     pictures: newPictures,
-      //   },
-      // });
+        console.log("New pictures array:", newPictures);
+
+        // Update pictures
+        await db.residence.update({
+          where: { id: objectId },
+          data: { pictures: newPictures },
+        });
     }
 
-    console.log("updatedObject", updatedObject);
-
-
-
-
-
-    return updatedObject;
+    return { success: true, updatedObject };
   } catch (error) {
     console.error("Error updating object:", error);
     return { error: "Failed to update object" };
   }
 };
+
 
 export const deleteObject = async (objectId: string) => {
   try {

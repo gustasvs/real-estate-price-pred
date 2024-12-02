@@ -37,8 +37,13 @@ const sidebarItems = [
 const UserProfilePage = async () => {
   
   const headersList = headers();
-  const query = new URL(headersList.get("referer") || "").searchParams;
-  const initialNavItem = Number(query.get("page")) || 0;
+  // if (!headersList.has("referer")) {
+  //   return <div>Unauthorized</div>;
+  // }
+
+  // const query = new URL(headersList.get("referer") || "").searchParams;
+  // const initialNavItem = Number(query.get("page")) || 0;
+  const initialNavItem = 0;
 
 
   // TODO slowLoading for sidebar items for group page

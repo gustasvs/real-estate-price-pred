@@ -15,7 +15,7 @@
 }
 
 .masonry-table-container {
-    min-height: 70vh;
+    min-height: 100vh;
     width: 100%;
 }
 
@@ -44,7 +44,7 @@
     /* Adjust to align where you need it */
     left: 0;
     /* Adjust to align where you need it */
-    width: 100%;
+    width: calc(100% - 41px);
     /* Ensures it covers the container if needed */
     z-index: 10;
     /* Ensure it is above other content */

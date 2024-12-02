@@ -38,6 +38,15 @@ import { generateDownloadUrl } from "../../../api/generateDownloadUrl";
 
 export const StyledTextField = styled(TextField)({
 
+  '& .MuiTextField-root': {
+    // margin: '1em 0',
+    width: '100%',
+  },
+
+  '& .MuiInputBase-root': {
+    backgroundColor: "var(--background-dark-main-hover)",
+  },
+
   '& label': {
     color: "var(--background-light-main)",
   },
@@ -86,17 +95,22 @@ export const StyledTextField = styled(TextField)({
 });
 
 export const StyledNumberInput = styled(TextField)({
+
+  '& .MuiInputBase-root': {
+    backgroundColor: "var(--background-dark-main-hover)",
+  },
+
   '& label': {
     color: "var(--background-light-main)",
   },
 
   '& input': {
     color: "var(--background-light-secondary)",
-    '-moz-appearance': 'textfield', // Removes arrows in Firefox
+    MozAppearance: 'textfield', // Removes arrows in Firefox
   },
 
   '& input[type=number]': {
-    '-webkit-appearance': 'none', // Removes arrows in Chrome
+    WebkitAppearance: 'none', // Removes arrows in Chrome
     margin: 0, // Ensures consistency in alignment
   },
 
@@ -123,6 +137,7 @@ export const StyledNumberInput = styled(TextField)({
 });
 
 import Switch from '@mui/material/Switch';
+import { MdWidthFull } from "react-icons/md";
 
 export const StyledSwitch = styled(Switch)(({ theme }) => ({
   '& .MuiSwitch-switchBase': {
