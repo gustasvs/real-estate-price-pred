@@ -12,26 +12,20 @@ import {
   FaShower,
 } from "react-icons/fa6";
 import { IoBedOutline } from "react-icons/io5";
-import { FaCarSide, FaRuler } from "react-icons/fa";
+import { FaCarSide } from "react-icons/fa";
 import {
-  Card,
   Row,
   Col,
-  Button,
-  Descriptions,
   Divider,
-  Grid,
 } from "antd";
-import Image from "next/image";
+
+import { IoMdArrowRoundUp } from "react-icons/io";
+
 
 import styles from "./MasonryTable.module.css";
 import { useRouter } from "next/navigation";
 
-import Layout from "react-masonry-list";
-import { PageHeader } from "@ant-design/pro-components";
 import { useState } from "react";
-import { ResidenceObjectType } from "../../groups/[group_id]/page";
-
 
 import {
   getObjects as getObjectsApi,
@@ -39,7 +33,7 @@ import {
   deleteObject as deleteObjectApi,
   updateObject as updateObjectApi,
 } from "../../../actions/groupObjects";
-import { revalidatePath } from "next/cache";
+import { useSession } from "next-auth/react";
 
 const MasonryTable = ({
   group_id,
@@ -47,7 +41,7 @@ const MasonryTable = ({
   objects,
   loading = false,
   showNavigateToGroup = false,
-  revalidateDataFunction = () => {}
+  revalidateDataFunction = () => { },
 }: {
   group_id: string;
   columnCount: number;
@@ -58,11 +52,12 @@ const MasonryTable = ({
 }): JSX.Element => {
   const router = useRouter();
 
+  const { data: session, status, update } = useSession();
+
   const deleteObject = async (id: string) => {
     const result = await deleteObjectApi(id);
     // await fetchObjects();
   };
-
 
   const onCardFavorite = async (id: string) => {
     const object = objects.find(
@@ -85,15 +80,14 @@ const MasonryTable = ({
   const toggleDescription = (id: number) => {
     setOpenedDescriptions((prev) => ({
       ...prev,
-      [id]: !prev[id], // Toggle the state for the specific id
+      [id]: !prev[id],
     }));
   };
 
   const handleAddButtonClick = () => {
-    if (group_id  === "favourites") {
+    if (group_id === "favourites") {
       router.push(`/groups/${objects[0].groupId}/new`);
-    }
-    else {
+    } else {
       router.push(`/groups/${group_id}/new`);
     }
   };
@@ -168,10 +162,20 @@ const MasonryTable = ({
 
   // TODO implement flex grow from here: https://www.jiddo.ca/collection
 
+  if (status === "loading") {
+    return (
+      <div className={styles["masonry-table-container"]}>
+        <Divider />
+        <div className={styles["loading"]}>
+          <div className={styles["loading-spinner"]} />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={styles["masonry-table-container"]}>
       <Divider />
-      {/* <div className={styles["masonry-table"]}> */}
       <Row
         gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}
         style={{ width: "90%", margin: "0 auto" }}
@@ -192,7 +196,7 @@ const MasonryTable = ({
               <Col
                 className={styles["content-wrapper"]}
                 span={Math.min(24 / itemsInRow.length, 12)}
-                key={item.id}
+                key={`item-${item.id}`}
               >
                 {item.id === null ? (
                   <div
@@ -228,14 +232,14 @@ const MasonryTable = ({
                       marginBottom: 20,
                     }}
                   >
-                    {Boolean(item.pictures &&
+                    {Boolean(
+                      item.pictures &&
                       Array.isArray(item.pictures) &&
-                      item.pictures.length) && (
+                      item.pictures.length
+                    ) && (
                         <div
                           className={
-                            styles[
-                              "content-image-container"
-                            ]
+                            styles["content-image-container"]
                           }
                         >
                           <div
@@ -245,17 +249,23 @@ const MasonryTable = ({
                           >
                             <img
                               src={
-                                item.pictures[0]?.startsWith(
-                                  "data:image"
-                                )
+                                item.pictures &&
+                                  Array.isArray(
+                                    item.pictures
+                                  ) &&
+                                  item.pictures.length > 0 &&
+                                  typeof item.pictures[0] ===
+                                  "object" &&
+                                  "downloadUrl" in
+                                  item.pictures[0]
                                   ? item.pictures[0]
-                                  : `data:image/png;base64,${item.pictures[0]}`
+                                    .downloadUrl
+                                  : ""
                               }
                               alt="content"
                               style={{
-                                height: "100%", // Ensure image matches the container's height
-                                // width: "auto",
-                                display: "block", // Remove any inline image spacing issues
+                                height: "100%",
+                                display: "block",
                               }}
                             />
                           </div>
@@ -270,17 +280,20 @@ const MasonryTable = ({
                                 .slice(1, 3)
                                 .map(
                                   (
-                                    picture: string,
+                                    picture: any,
                                     index: number
                                   ) => {
                                     return (
                                       <img
+                                        key={index}
                                         src={
-                                          picture?.startsWith(
-                                            "data:image"
-                                          )
-                                            ? picture
-                                            : `data:image/png;base64,${picture}`
+                                          picture &&
+                                            typeof picture ===
+                                            "object" &&
+                                            "downloadUrl" in
+                                            picture
+                                            ? picture.downloadUrl
+                                            : ""
                                         }
                                         alt="content"
                                       />
@@ -298,17 +311,15 @@ const MasonryTable = ({
                       }
                     >
                       <span
-                        className={`${
-                          styles["content-title-name"]
-                        } ${
-                          item.pictures &&
-                          Array.isArray(item.pictures) &&
-                          item.pictures.length
+                        className={`${styles["content-title-name"]
+                          } ${item.pictures &&
+                            Array.isArray(item.pictures) &&
+                            item.pictures.length
                             ? ""
                             : styles[
-                                "content-title-name-without-images"
-                              ]
-                        }`}
+                            "content-title-name-without-images"
+                            ]
+                          }`}
                       >
                         {item.name}
                       </span>
@@ -319,7 +330,7 @@ const MasonryTable = ({
                     <div
                       className={
                         styles[
-                          "content-description-wrapper"
+                        "content-description-wrapper"
                         ]
                       }
                     >
@@ -332,73 +343,118 @@ const MasonryTable = ({
                         <div
                           className={
                             styles[
-                              "content-description-header"
+                            "content-description-header"
                             ]
                           }
                         >
                           <div
                             className={
                               styles[
-                                "content-description-header-top"
+                              "content-description-header-left"
                               ]
                             }
                           >
-                            <span
-                              className={
-                                styles[
-                                  "content-description-header-name"
-                                ]
-                              }
-                            >
-                              {item.name}
-                            </span>
-                            <span
-                              className={
-                                styles[
-                                  "content-description-header-price"
-                                ]
-                              }
-                            >
-                              {item.price ??
-                                "Nav norādīta cena"}
-                            </span>
+                            <div className={styles["content-description-header-left-item"]}>
+                              <span
+                                className={
+                                  styles[
+                                  "content-description-header-left-item-title"
+                                  ]
+                                }
+                              >
+                                Adrese:
+                              </span>
+                              <span
+                                className={
+                                  styles[
+                                  "content-description-header-left-item-value"
+                                  ]
+                                }
+                                title={item.address ?? "Rīga, Jaunā iela 1 - 22"}
+                              >
+                                {item.address ??
+                                  "Rīga, Jaunā iela 1 - 22"}
+                              </span>
+                            </div>
                           </div>
                           <div
                             className={
                               styles[
-                                "content-description-header-bottom"
+                              "content-description-header-right"
                               ]
                             }
                           >
-                            <span
+                            <div
+                              className={
+                                styles["price-container"]
+                              }
+                            >
+                              <span
+                                className={
+                                  styles["price-label"]
+                                }
+                              >
+                                Tirgus cena:
+                              </span>
+                              <span
+                                className={
+                                  styles["price-value"]
+                                }
+                              >
+                                {item.price ?? "1000"} €
+                              </span>
+                            </div>
+                            <div
                               className={
                                 styles[
-                                  "content-description-header-date"
+                                "predicted-price-container"
                                 ]
                               }
                             >
-                              Pievienots{" "}
-                              {new Date(
-                                item.createdAt
-                              ).toLocaleDateString()}
-                            </span>
-                            <span
-                              className={
-                                styles[
-                                  "content-description-header-price-prediction"
-                                ]
-                              }
-                            >
-                              {item.pricePrediction ??
-                                "Nav norādīta cenu prognoze"}
-                            </span>
+                              <span
+                                className={
+                                  styles["price-label"]
+                                }
+                              >
+                                Aprēķinātā cena:
+                              </span>
+                              <div
+                                className={
+                                  styles[
+                                  "predicted-price-value-container"
+                                  ]
+                                }
+                              >
+                                <span
+                                  className={
+                                    styles["price-value"]
+                                  }
+                                >
+                                  {item.predictedPrice ??
+                                    "Calculating..."}{" "}
+                                  €
+                                </span>
+                                {item.predictedPrice && (
+                                  <>
+                                    {item.predictedPrice > (item.price ?? 1000) ? (
+                                      <IoMdArrowRoundUp className={`${styles["price-arrow"]} ${styles["arrow-up"]}`} />
+                                    ) : item.predictedPrice === (item.price ?? 1000) ? (
+                                      // <BiEqualizer className={`${styles["price-arrow"]} ${styles["arrow-neutral"]}`} />
+                                      <></>
+                                    ) : (
+                                      <IoMdArrowRoundUp className={`${styles["price-arrow"]} ${styles["arrow-down"]}`} />
+                                    )}
+                                  </>
+                                )}
+                              </div>
+                            </div>
                           </div>
                         </div>
 
                         <div
                           className={
                             styles[
-                              "content-description-toggle"
+                            "content-description-toggle"
                             ]
                           }
                           onClick={() =>
@@ -423,7 +479,7 @@ const MasonryTable = ({
                         <div
                           className={
                             styles[
-                              "content-description-list"
+                            "content-description-list"
                             ] +
                             (openedDescriptions[item.id]
                               ? ""
@@ -433,14 +489,46 @@ const MasonryTable = ({
                           <li
                             className={
                               styles[
-                                "content-description-list-item"
+                              "content-description-list-item"
                               ]
                             }
                           >
                             <span
                               className={
                                 styles[
-                                  "content-description-list-item-title"
+                                "content-description-list-item-title"
+                                ]
+                              }
+                            >
+                              Pievienots:
+                            </span>
+                            <span
+                              className={
+                                styles[
+                                "content-description-list-item-value"
+                                ]
+                              }
+                            >
+                              {new Intl.DateTimeFormat('lv-LV', {
+                                day: 'numeric',
+                                month: 'long',
+                                year: 'numeric'
+                              }).format(new Date(item.createdAt))}
+
+                            </span>
+                          </li>
+
+                          <li
+                            className={
+                              styles[
+                              "content-description-list-item"
+                              ]
+                            }
+                          >
+                            <span
+                              className={
+                                styles[
+                                "content-description-list-item-title"
                                 ]
                               }
                             >
@@ -449,7 +537,7 @@ const MasonryTable = ({
                             <span
                               className={
                                 styles[
-                                  "content-description-list-item-value"
+                                "content-description-list-item-value"
                                 ]
                               }
                             >
@@ -459,41 +547,14 @@ const MasonryTable = ({
                           <li
                             className={
                               styles[
-                                "content-description-list-item"
+                              "content-description-list-item"
                               ]
                             }
                           >
                             <span
                               className={
                                 styles[
-                                  "content-description-list-item-title"
-                                ]
-                              }
-                            >
-                              Adrese:
-                            </span>
-                            <span
-                              className={
-                                styles[
-                                  "content-description-list-item-value"
-                                ]
-                              }
-                            >
-                              {item.address ??
-                                "Rīga, Jaunā iela 1 - 22"}
-                            </span>
-                          </li>
-                          <li
-                            className={
-                              styles[
-                                "content-description-list-item"
-                              ]
-                            }
-                          >
-                            <span
-                              className={
-                                styles[
-                                  "content-description-list-item-title"
+                                "content-description-list-item-title"
                                 ]
                               }
                             >
@@ -502,7 +563,7 @@ const MasonryTable = ({
                             <span
                               className={
                                 styles[
-                                  "content-description-list-item-value"
+                                "content-description-list-item-value"
                                 ]
                               }
                             >
@@ -515,7 +576,7 @@ const MasonryTable = ({
                         <div
                           className={
                             styles[
-                              "content-description-footer"
+                            "content-description-footer"
                             ] +
                             (openedDescriptions[item.id]
                               ? ""
@@ -525,14 +586,14 @@ const MasonryTable = ({
                           <div
                             className={
                               styles[
-                                "content-description-house-details"
+                              "content-description-house-details"
                               ]
                             }
                           >
                             <div
                               className={
                                 styles[
-                                  "content-description-bed-counts"
+                                "content-description-bed-counts"
                                 ]
                               }
                             >
@@ -545,7 +606,7 @@ const MasonryTable = ({
                             <div
                               className={
                                 styles[
-                                  "content-description-bath-counts"
+                                "content-description-bath-counts"
                                 ]
                               }
                             >
@@ -559,7 +620,7 @@ const MasonryTable = ({
                               <div
                                 className={
                                   styles[
-                                    "content-description-house-area"
+                                  "content-description-house-area"
                                   ]
                                 }
                               >
@@ -571,7 +632,7 @@ const MasonryTable = ({
                           <div
                             className={
                               styles[
-                                "content-description-actions"
+                              "content-description-actions"
                               ]
                             }
                           >
@@ -581,21 +642,18 @@ const MasonryTable = ({
                                 e.preventDefault();
                                 onCardFavorite(item.id);
                               }}
-                              className={`${
-                                styles[
-                                  "content-description-action"
+                              className={`${styles[
+                                "content-description-action"
+                              ]
+                                } ${styles[
+                                "content-description-action-favourite"
                                 ]
-                              } ${
-                                styles[
-                                  "content-description-action-favourite"
-                                ]
-                              } ${
-                                item.favourite
+                                } ${item.favourite
                                   ? styles[
-                                      "content-description-action-favourite-active"
-                                    ]
+                                  "content-description-action-favourite-active"
+                                  ]
                                   : ""
-                              }`}
+                                }`}
                             >
                               {item.favourite ? (
                                 <HeartFilled />

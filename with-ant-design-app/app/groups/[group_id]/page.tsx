@@ -1,16 +1,13 @@
-import { Modal, Table } from "antd";
-import { UserOutlined } from "@ant-design/icons";
 import GenericLayout from "../../components/generic-page-layout";
 import MasonryTable from "../../components/masonry-table";
 
 import {
   getGroup as getGroupApi,
-  getGroupsForSidebar as getGroupsForSidebarApi,
 } from "../../../actions/group";
-import Sidebar from "../../components/navigation/sidebar/Sidebar";
 import PageHeader from "../../components/generic-page-layout/page-header/PageHeader";
 import { getObjects } from "../../../actions/groupObjects";
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidatePath } from "next/cache";
+import { generateDownloadUrl } from "../../api/generateDownloadUrl";
 
 export interface ResidenceObjectType {
   id: string;
@@ -41,6 +38,29 @@ const GroupPage = async ({
 
   const objectsResponse = await getObjects(params.group_id);
   const objects = Array.isArray(objectsResponse) ? objectsResponse : [];
+
+    console.log("objects", objects);
+
+    // Add pre-signed download URLs to pictures
+    const objectsWithPresignedDownloadUrls = await Promise.all(
+      objects.map(async (obj) => {
+        if (Array.isArray(obj.pictures)) {
+          const updatedPictures = await Promise.all(
+            obj.pictures.map(async (picture) => {
+              const downloadUrl = await generateDownloadUrl(picture, 'object-pictures');
+              return {
+                fileName: picture,
+                downloadUrl: typeof downloadUrl === 'object' && 'error' in downloadUrl ? null : downloadUrl,
+              };
+            })
+          );
+          return { ...obj, pictures: updatedPictures };
+        }
+        return obj;
+      })
+    );
+
+    
 
   const groupResponse = await getGroupApi(params.group_id);
   const group = groupResponse ? groupResponse : null;
@@ -82,7 +102,7 @@ const GroupPage = async ({
         <MasonryTable
           group_id={group_id}
           columnCount={4}
-          objects={objects}
+          objects={objectsWithPresignedDownloadUrls}
           loading={false}
           revalidateDataFunction={revalidateData}
         />

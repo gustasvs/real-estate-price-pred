@@ -246,7 +246,7 @@ const ResidenceObjectForm = ({
               id="filled-basic-name"
               label="Objekta nosaukums"
               variant="outlined"
-              defaultValue={residence.name}
+              defaultValue={residence?.name}
               placeholder="Ievadiet objekta nosaukumu"
             />
           </Form.Item>
@@ -268,7 +268,7 @@ const ResidenceObjectForm = ({
               id="outlined-basic"
               label="Apraksts"
               variant="outlined"
-              defaultValue={residence.description}
+              defaultValue={residence?.description}
               placeholder="Ievadiet objekta aprakstu"
               multiline
               rows={3}
@@ -296,7 +296,7 @@ const ResidenceObjectForm = ({
               id="outlined-basic"
               label="Adrese"
               variant="outlined"
-              defaultValue={residence.address}
+              defaultValue={residence?.address}
               placeholder="Ievadiet objekta adresi"
             />
           </Form.Item>
@@ -316,7 +316,7 @@ const ResidenceObjectForm = ({
               id="outlined-basic"
               label="Platība (kvadrātmetri)"
               variant="outlined"
-              defaultValue={residence.area}
+              defaultValue={residence?.area}
               placeholder="Ievadiet objekta platību"
             />
           </Form.Item>
@@ -339,7 +339,7 @@ const ResidenceObjectForm = ({
                   id="outlined-basic"
                   label="Guļamistabu skaits"
                   variant="outlined"
-                  defaultValue={residence.bedroomCount}
+                  defaultValue={residence?.bedroomCount}
                   placeholder="Ievadiet guļamistabu skaitu"
                 />
               </Form.Item>
@@ -362,7 +362,7 @@ const ResidenceObjectForm = ({
                   id="outlined-basic"
                   label="Vannas istabu skaits"
                   variant="outlined"
-                  defaultValue={residence.bathroomCount}
+                  defaultValue={residence?.bathroomCount}
                   placeholder="Ievadiet vannas istabu skaitu"
                 />
               </Form.Item>
@@ -432,9 +432,9 @@ const ResidenceObjectForm = ({
             <StyledNumberInput
               style={{ width: "100%" }}
               id="outlined-basic"
-              label="Cena (EUR)"
+              label="Tirgus cena (EUR)"
               variant="outlined"
-              defaultValue={residence.price}
+              defaultValue={residence?.price}
               placeholder="Ievadiet objekta cenu"
             />
           </Form.Item>
