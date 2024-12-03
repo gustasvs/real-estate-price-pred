@@ -32,6 +32,8 @@ print("-" * 20)
 # model.load_state_dict(torch.load("models/vit_regression_model.pth")) # load weights
 # model.to(device)
 
+losses_for_plot = []
+accuracies_for_plot = []
 
 def train_epoch(model, dataloader, optimizer, device, epoch):
     model.train()
@@ -64,6 +66,8 @@ def train_epoch(model, dataloader, optimizer, device, epoch):
 
         epoch_loss += loss.item()
 
+        losses_for_plot.append(loss.item())
+
         aggregated_outputs.append(outputs.to("cpu"))
         aggregated_prices.append(prices.to("cpu"))
         
@@ -81,6 +85,8 @@ def train_epoch(model, dataloader, optimizer, device, epoch):
 
             aggregated_accuracy = r2_score(aggregated_outputs, aggregated_prices)
 
+            accuracies_for_plot.append(aggregated_accuracy)
+
             accuracies.append(aggregated_accuracy)
             # print("aggregated_outputs: ", aggregated_outputs)
             # print("aggregated_prices: ", aggregated_prices)
@@ -95,12 +101,6 @@ def train_epoch(model, dataloader, optimizer, device, epoch):
                 "Batch Loss": loss.item(),
                 "R2 Score": aggregated_accuracy
             })
-
-    # plt.plot(accuracies)
-    # plt.xlabel("Batch") 
-    # plt.ylabel("R2 Score")
-    # plt.title("R2 Score vs Batch")
-    # plt.show()
 
     if total_batches > 0:
         return epoch_loss / total_batches
@@ -122,17 +122,11 @@ def validate(model, dataloader, device):
     return val_loss / len(dataloader)
 
 
-# count = 535
-count = 300
+count = 535
+# count = 300
 
 images, prices = processed_data(count)
 bins, bin_weights = compute_bin_weights(prices, num_bins=WEIGHTED_BIN_COUNT)
-
-# plt.plot(bin_weights)
-# plt.xlabel("Price Bins")
-# plt.ylabel("Weight")
-# plt.title("Price Bins vs Weights")
-# plt.show()
 
 def train_loop(epochs, model, train_loader, val_loader, optimizer, device):
     best_val_loss = float('inf')
@@ -144,7 +138,6 @@ def train_loop(epochs, model, train_loader, val_loader, optimizer, device):
 
     return best_val_loss
 
-results = []
 
 models = {
     "google/vit-base-patch16-224": {"embedding_size": 768, "head_only": False},
@@ -186,8 +179,21 @@ for i, aggregation_method in enumerate(aggregation_methods):
         val_loss = train_loop(EPOCHS, model, train_loader, val_loader, optimizer, device)
         results[j][i] = val_loss
 
+fig, ax = plt.subplots(2, 1, figsize=(15, 5))
+# ax[0].plot(losses_for_plot)
+# smooth out using ma 20
+ax[0].plot(np.convolve(losses_for_plot, np.ones(20) / 20, mode='valid'))
 
-plt.figure(figsize=(13, 9))
+ax[0].set_title("Training Loss")
+ax[0].set_xlabel("Epochs")
+ax[0].set_ylabel("Loss")
+ax[1].plot(accuracies_for_plot)
+ax[1].set_title("R2 Score")
+ax[1].set_xlabel("Epochs")
+ax[1].set_ylabel("R2 Score")
+plt.show()
+
+plt.figure(figsize=(14, 10))
 heatmap = plt.imshow(results, cmap='magma', interpolation='nearest')
 plt.xticks(range(len(aggregation_methods)), aggregation_methods, rotation=45, ha="right")
 plt.yticks(range(len(models)), [name for name in models])

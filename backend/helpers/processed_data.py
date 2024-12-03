@@ -60,15 +60,17 @@ def processed_data(count):
             fig, ax = plt.subplots(3, 1, figsize=(10, 10))
             fig.canvas.manager.window.wm_geometry("+10+10")
             
-            ax[0].hist(prices, bins=30)
+            ax[0].hist(prices, bins=20)
             ax[0].set_title("Original Prices")
             # ax[1].hist(apply_lds(prices, sigma=sigma), bins=50)
             # ax[1].hist(adaptive_lds(prices, density_threshold=density_threshold, max_sigma=max_sigma, min_sigma=min_sigma), bins=50)
             smoothed_prices = apply_fds(prices, prices, sigma=sigma)
-            ax[1].hist(smoothed_prices, bins=30)
-            ax[1].set_title("Prices after LDS")
-            ax[2].hist(apply_fds(smoothed_prices, smoothed_prices, sigma=sigma), bins=30)
-            ax[2].set_title("Prices after LDS applied twice")
+            ax[1].hist(smoothed_prices, bins=20)
+            ax[1].set_title("Prices after fds (Applying Feature Distribution Smoothing (FDS) by aligning features to smoothed labels)")
+            ax[2].hist(apply_lds(prices, sigma=sigma), bins=20)
+            ax[2].set_title("Plain Lds (Applying Label Distribution Smoothing (LDS) on the results array)")
+
+            fig.subplots_adjust(hspace=0.5)
             plt.show()
 
     scaler = MinMaxScaler()

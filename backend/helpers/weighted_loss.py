@@ -4,6 +4,52 @@ from torch import nn
 
 from collections import Counter
 
+import matplotlib.pyplot as plt
+
+from config.settings import DEMO_MODE
+
+def plot_loss_demonstration(self):
+    plt.figure(figsize=(18, 6))
+
+    # First plot: MSE Loss by difference from 0 to 1
+    differences = np.linspace(0, 1, 100)
+    mse_losses = differences ** 2
+    plt.subplot(1, 3, 1)
+    plt.plot(differences, mse_losses, 'o-', label='MSE Loss')
+    plt.title('MSE Loss by Difference')
+    plt.xlabel('Difference (Predictions - Targets)')
+    plt.ylabel('Loss')
+
+    # Second plot: Bin weights
+    weights = self.bin_weights.detach().cpu().numpy()
+    plt.subplot(1, 3, 2)
+    plt.bar(range(len(weights)), weights)
+    plt.title('Weight Bins Distribution')
+    plt.xlabel('Bin Index')
+    plt.ylabel('Weight')
+    plt.annotate('Least weight has the highest count of values', (np.argmin(weights), min(weights)), 
+                 textcoords="offset points", xytext=(0,90), ha='center', fontsize=12, color='g', backgroundcolor='w')
+    # a line at the least weight
+    plt.axvline(x=np.argmin(weights), color='r', linestyle='--')
+
+    # Third plot: Example final losses for difference = 0.3
+    difference_example = 0.3
+    example_losses = difference_example ** 2 * weights
+    example_targets = [0.1, 0.9]  # Assuming these map to certain bins
+    example_bin_indices = [int(example_targets[0] * len(weights)), int(example_targets[1] * len(weights))]
+    final_losses = example_losses[example_bin_indices]
+
+    plt.subplot(1, 3, 3)
+    plt.bar(['Target: 0.1', 'Target: 0.9'], final_losses)
+    plt.title('Example Final Losses for Difference = 0.3')
+    plt.xlabel('Target Values')
+    plt.ylabel('Final Weighted Loss')
+
+    plt.tight_layout()
+    plt.show()
+
+
+
 def compute_bin_weights(targets, num_bins=20):
     """
     Compute weights for each target based on the inverse frequency of the target
@@ -49,6 +95,9 @@ class WeightedMSELoss(nn.Module):
         self.bins = torch.tensor(bins, device=device)  # Ensure bins are a torch tensor on the correct device
         self.bin_weights = torch.tensor(bin_weights, device=device)  # Ensure bin weights are a torch tensor on the correct device
         self.device = device
+
+        if DEMO_MODE:
+            plot_loss_demonstration(self)
     
     def forward(self, predictions, targets):
         """
