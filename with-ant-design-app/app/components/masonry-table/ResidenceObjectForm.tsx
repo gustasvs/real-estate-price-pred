@@ -184,7 +184,10 @@ const ResidenceObjectForm = ({
       const pictures = await Promise.all(picturePromises);
       console.log("Uploaded Pictures:", pictures);
 
-      const res = await submitFunction(objectId as string, {
+      // create needs groupId, update needs objectId
+      const idToUse = objectId === "new" ? groupId : objectId;
+
+      const res = await submitFunction(idToUse as string, {
         ...values,
         pictures,
       });
@@ -391,7 +394,14 @@ const ResidenceObjectForm = ({
                     // background: "var(--background-dark-main-hover)",
                     cursor: "pointer",
                   }}
-                  // onClick={}
+                  onClick={() => {
+                    form.setFieldsValue({
+                      parkingCount: Boolean(!form.getFieldValue(
+                        "parkingCount"
+                      )),
+                    });
+                  }
+                  }
                 >
                   <label
                     style={{
@@ -477,7 +487,7 @@ const ResidenceObjectForm = ({
           onClick={() => router.push(`/groups/${groupId}`)}
           className={styles["cancel-button"]}
         >
-          Atcelt
+          {objectId !== "new" ? "Atcelt izmaiņas un atgriezties uz grupu" : "Atcelt izveidi un atgriezties uz grupu"}
         </Button>
 
         <Button

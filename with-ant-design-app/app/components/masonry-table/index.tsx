@@ -6,6 +6,7 @@ import {
   HeartOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
+import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import {
   FaChevronDown,
   FaChevronUp,
@@ -34,6 +35,7 @@ import {
   updateObject as updateObjectApi,
 } from "../../../actions/groupObjects";
 import { useSession } from "next-auth/react";
+import { IconButton, Tooltip } from "@mui/material";
 
 const MasonryTable = ({
   group_id,
@@ -173,6 +175,14 @@ const MasonryTable = ({
     );
   }
 
+  const getPlural = (count: number, singular: string, plural: string) => {
+    // count ends in 1, but not 11
+    if (count % 10 === 1 && count % 100 !== 11) {
+      return singular;
+    }
+    return plural;
+  }
+
   return (
     <div className={styles["masonry-table-container"]}>
       <Divider />
@@ -189,8 +199,8 @@ const MasonryTable = ({
         {rowItemsWithAddItem.map((itemsInRow, rowIndex) => (
           <Row
             key={`row-${rowIndex}`}
-            style={{ width: "100%" }}
-            gutter={[42, 32]}
+            style={{ width: "100%", marginBottom: "2rem" }}
+            gutter={[42, 62]}
           >
             {itemsInRow.map((item, itemIndex) => (
               <Col
@@ -228,9 +238,6 @@ const MasonryTable = ({
                     id={`item-${item.id}`}
                     className={styles["content"]}
                     key={item.id}
-                    style={{
-                      marginBottom: 20,
-                    }}
                   >
                     {Boolean(
                       item.pictures &&
@@ -370,10 +377,10 @@ const MasonryTable = ({
                                   "content-description-header-left-item-value"
                                   ]
                                 }
-                                title={item.address ?? "Rīga, Jaunā iela 1 - 22"}
+                                title={item.address ?? "N/A"}
                               >
                                 {item.address ??
-                                  "Rīga, Jaunā iela 1 - 22"}
+                                  "N/A"}
                               </span>
                             </div>
                           </div>
@@ -401,7 +408,7 @@ const MasonryTable = ({
                                   styles["price-value"]
                                 }
                               >
-                                {item.price ?? "1000"} €
+                                {item.price ?? "N/A"} €
                               </span>
                             </div>
                             <div
@@ -430,15 +437,36 @@ const MasonryTable = ({
                                     styles["price-value"]
                                   }
                                 >
-                                  {item.predictedPrice ??
-                                    "Calculating..."}{" "}
-                                  €
+                                  {item.predictedPrice > 0 ? (
+                                    <>{item.predictedPrice} €</>
+                                  ) : (
+                                    <>
+                                    
+                                    <Tooltip title={
+                                      "Cena šim objektam vēl tiek aprēķināta. Lūdzu, uzgaidiet."
+                                    }>
+                                      <IconButton>
+                                        <QuestionMarkIcon style={{
+                                          padding: "0",
+                                          height: "1.1rem",
+                                        }}/>
+                                      </IconButton>
+                                    </Tooltip>
+                                      {/* <Loader style={{
+                                        height: "1.1rem",
+                                        display: "flex", 
+                                        // outline: "1px solid red",
+                                        width: "4rem",
+                                      }} /> */}
+                                    </>
+                                    )
+                                    }
                                 </span>
-                                {item.predictedPrice && (
+                                {Boolean(item.predictedPrice) && (
                                   <>
-                                    {item.predictedPrice > (item.price ?? 1000) ? (
+                                    {item.predictedPrice > (item.price ?? 0) ? (
                                       <IoMdArrowRoundUp className={`${styles["price-arrow"]} ${styles["arrow-up"]}`} />
-                                    ) : item.predictedPrice === (item.price ?? 1000) ? (
+                                    ) : item.predictedPrice === (item.price ?? 0) ? (
                                       // <BiEqualizer className={`${styles["price-arrow"]} ${styles["arrow-neutral"]}`} />
                                       <></>
                                     ) : (
@@ -567,7 +595,7 @@ const MasonryTable = ({
                                 ]
                               }
                             >
-                              {`${item.area ?? 100} m²`}
+                              {`${item.area ?? "-"} m²`}
                             </span>
                           </li>
                         </div>
@@ -599,8 +627,7 @@ const MasonryTable = ({
                             >
                               <IoBedOutline />
                               <span>
-                                {item.bedroomCount ??
-                                  "3 Gultas"}
+                                {`${item.bedroomCount ?? "-"} ${getPlural(item.bedroomCount, "Gulta", "Gultas")}`}
                               </span>
                             </div>
                             <div
@@ -612,11 +639,10 @@ const MasonryTable = ({
                             >
                               <FaShower />
                               <span>
-                                {item.bathroomCount ??
-                                  "2 Dušas"}
+                                {`${item.bathroomCount ?? "-"} ${getPlural(item.bathroomCount, "Vannaistaba", "Vannaistabas")}`}
                               </span>
                             </div>
-                            {item.parkingCount && (
+                            {Boolean(item.parkingCount) && (
                               <div
                                 className={
                                   styles[

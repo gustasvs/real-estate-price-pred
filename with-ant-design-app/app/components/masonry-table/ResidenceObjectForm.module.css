@@ -14,20 +14,21 @@
 
 
 .upload-drag-icon svg {
-    font-size: 65px;
-    fill: var(--text-brighter);
+    font-size: 3.5rem;
+    fill: var(--background-light-secondary);
+    color: var(--background-light-secondary);
 }
 
 .upload-text {
     color: var(--background-light-secondary);
-    font-size: 16px;
+    font-size: .9rem;
     font-weight: 600;
     margin: 0 auto 1em auto;
 }
 
 .upload-hint {
     color: var(--background-light-secondary);
-    font-size: 14px;
+    font-size: .75rem;
     font-weight: 400;
     margin: 0 auto 1em auto;
 }
@@ -42,15 +43,13 @@
 }
 
 .cancel-button {
-    background-color: var(--background-light-secondary);
-    color: var(--background-dark-secondary);
     border-radius: 30px;
     height: 48px;
     width: 30%;
     margin: 2em auto 0 auto;
     padding: 0 24px; /* padding for text inside the button */
-    font-size: 16px;
-    font-weight: 600;
+    font-size: 1rem;
+    font-weight: 500;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -58,14 +57,12 @@
 
 
 .submit-button {
-    background-color: var(--background-dark-secondary);
-    color: var(--background-light-secondary);
     border-radius: 30px;
     height: 48px;
     width: 70%;
     margin: 2em auto 0 auto;
     padding: 0 24px; /* padding for text inside the button */
-    font-size: 16px;
+    font-size: 1rem;
     font-weight: 600;
     display: flex;
     justify-content: center;

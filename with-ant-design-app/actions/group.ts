@@ -41,7 +41,17 @@ export const getGroups = async () => {
     const groups = await db.residenceGroup.findMany({
       where: { userId: userId },
     });
-    return groups;
+
+    const groupsWithResidenceCount = await Promise.all(
+      groups.map(async (group) => {
+        const residenceCount = await db.residence.count({
+          where: { groupId: group.id },
+        });
+        return { ...group, residenceCount };
+      })
+    );
+    
+    return groupsWithResidenceCount;
   } catch (error) { 
     console.error("Error getting groups:", error);
     return { error: "Failed to get groups" };

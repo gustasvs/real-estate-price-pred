@@ -116,19 +116,19 @@ const Banner = () => {
     //   // animation={[{ y: 100, opacity: 0, playScale: [0.9, 1] }]}
     //   style={{ transform: "translateY(0px)", opacity: 1 }}
     // >
+    <div
+      ref={bannerRef}
+      className={styles.banner}
+      onMouseMove={handleMouseMove}
+      style={{
+        // background: "linear-gradient(to right, #1a1a1a, #3e236e)", // Single color gradient
+      }}
+    >
+      {cubes}
       <div
-        ref={bannerRef}
-        className={styles.banner}
-        onMouseMove={handleMouseMove}
-        style={{
-          // background: "linear-gradient(to right, #1a1a1a, #3e236e)", // Single color gradient
-        }}
+        className={styles.content}
       >
-        {cubes}
-        <div
-          className={styles.content}
-        >
-          <div className={styles["left-container"]}>
+        <div className={styles["left-container"]}>
           <div className={styles.title}>Inovācija cenu noteikšanā</div>
           <div style={{
             display: "flex",
@@ -137,29 +137,29 @@ const Banner = () => {
             paddingTop: "10px",
             paddingBottom: "10px",
           }}>
-          <Divider 
-            style={{
-              color: "white",
-              borderColor: "white",
-              margin: "10px auto",
-            }}
-          />
+            <Divider
+              style={{
+                color: "white",
+                borderColor: "white",
+                margin: "10px auto",
+              }}
+            />
           </div>
           <div className={styles.subtitle}>
-            Saglabā savus iecienītākos nekustamos īpašumus <br></br> 
-            un iegūsti to īsto cenu izmantojot modernus <br></br> 
+            Saglabā savus iecienītākos nekustamos īpašumus <br></br>
+            un iegūsti to īsto cenu izmantojot modernus <br></br>
             mašīnmācīšanās algoritmus
-            </div>
           </div>
-          <div
-            style={{
-              display: "flex",
-              height: "70vh",
-              marginLeft: "2em",
-            }}
-          >
-          <Divider 
-            type="vertical" 
+        </div>
+        <div
+          style={{
+            display: "flex",
+            height: "70vh",
+            marginLeft: "2em",
+          }}
+        >
+          <Divider
+            type="vertical"
             style={{
               display: "flex",
               color: "white",
@@ -167,25 +167,27 @@ const Banner = () => {
               height: "100%",
             }}
           />
-          </div>
-          <div className={styles["right-container"]}>
-            <div className={styles["right-container-items"]}>
+        </div>
+        <div className={styles["right-container"]}>
+          <div className={styles["right-container-items"]}>
             <BiBuildingHouse className={styles["get-started-icon"]} />
-            <div className={styles["get-started-button"]}
-              onClick={() => {
-                router.push("/groups");
-              }}
-            >
-              <span className={styles["get-started-text"]}>
-                Sāc darbu un pievieno savu pirmo objektu
-              </span>
-              <FaArrowRight className={styles["get-started-next-arrow"]}/>
-              {/* <div className={styles["loader"]}></div> */}
-            </div>
-            </div>
+            <div
+  className={styles["get-started-button"]}
+  onClick={() => {
+    router.push("/groups");
+  }}
+>
+  <span className={styles["get-started-text"]}>
+    Sāc darbu un pievieno savu pirmo objektu
+  </span>
+  <FaArrowRight className={styles["get-started-next-arrow"]} />
+  <FaArrowRight className={styles["get-started-prev-arrow"]} />
+</div>
+
           </div>
         </div>
       </div>
+    </div>
     // </Parallax>
   );
 };

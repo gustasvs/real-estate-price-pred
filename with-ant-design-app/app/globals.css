@@ -77,9 +77,10 @@ body {
 .ant-upload-icon > .anticon,
 .ant-btn-icon > .anticon {
   color: var(--text-brighter);
+  border-color: var(--background-light-main);
 }
 .ant-upload-list-item svg {
-  fill: var(--text-brighter);
+  fill: var(--background-light-secondary);
   background-color: var(--background-dark-main);
-  color: var(--text-brighter);
+  color: var(--background-light-secondary);
 }

@@ -60,7 +60,7 @@ const residenceObjectPage = async ({
   return (
     <GenericLayout>
       <PageHeader
-        title={group ? groupName : "Mana grupa"}
+        title={residenceName || "Mana dzīvesvieta"}
         breadcrumbItems={[
           { label: "Manas grupas", path: "/groups" },
           {

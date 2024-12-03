@@ -14,13 +14,13 @@
 }
 
 .navbar-with-background {
-    display: flex;
-    background: var(--background-dark-main);
+    /* display: flex; */
+    background: transparent;
+    /* background: var(--background-dark-main); */
 }
 
 .container {
     margin-left: 2em;
-    margin-right: 2em;
     padding: 0 1rem;
     height: 100%;
     width: 100%;
@@ -128,6 +128,7 @@
     background: var(--background-dark-main);
     border-radius: 2em;
     padding: 1em;
+    margin-right: 1rem;
     gap: 1em;
     outline: 1px solid var(--background-light-main);
     /* white drop shadow */

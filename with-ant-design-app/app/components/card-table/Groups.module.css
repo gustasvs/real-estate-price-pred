@@ -301,6 +301,15 @@
   color: var(--background-light-secondary);
 }
 
+.card-content-title-object-count-span {
+  color: var(--background-light-main);
+  font-size: 1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: .3em;
+}
+
 .card-content-title-text svg {
   color: var(--background-light-main);
   width: 20px;

@@ -97,7 +97,6 @@ export const createObject = async (
     bathroomCount: number;
     parkingCount: number;
     price: number;
-    predictedPrice: number;
     pictures: string[];
   }
 ) => {
@@ -114,22 +113,40 @@ export const createObject = async (
 
   const userId = user.id;
 
+  const groupExists = await db.residenceGroup.findUnique({
+    where: { id: groupId },
+  });
+  
+  if (!groupExists) {
+    return { error: "Invalid groupId" };
+  }
+
   console.log("objectData", objectData);
 
 
+    const picturesExtracted = objectData.pictures.map((picture: string | { pictureUrl: string }) => {
+      if (typeof picture === "string") {
+        return picture;
+      }
+      if (typeof picture === "object") {
+        return picture.pictureUrl;
+      }
+      return picture;
+    });
+
     const newObject = await db.residence.create({
       data: {
-        name: objectData.name,
-        address: objectData.address,
-        description: objectData.description,
-        pictures: objectData.pictures,
-        groupId: groupId,
-        area: objectData.area,
-        bedroomCount: objectData.bedroomCount,
-        bathroomCount: objectData.bathroomCount,
-        parkingCount: objectData.parkingCount,
-        price: objectData.price,
-        predictedPrice: objectData.predictedPrice,
+      name: objectData.name,
+      address: objectData.address,
+      description: objectData.description,
+      pictures: picturesExtracted,
+      groupId: groupId,
+      area: parseFloat(objectData.area.toString()),
+      bedroomCount: parseInt(objectData.bedroomCount.toString()),
+      bathroomCount: parseInt(objectData.bathroomCount.toString()),
+      parkingCount: objectData.parkingCount ? 1 : 0,
+      price: parseFloat(objectData.price.toString()),
+      predictedPrice: 0,
       },
     });
 

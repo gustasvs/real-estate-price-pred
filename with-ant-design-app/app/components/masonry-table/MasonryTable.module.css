@@ -28,7 +28,6 @@
 
 .content-wrapper {
     position: relative;
-    margin-bottom: 20px;
     transform: scale(1);
     transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
 }
@@ -41,22 +40,28 @@
 .content-description-wrapper {
     position: absolute;
     top: 100%;
-    /* Adjust to align where you need it */
     left: 0;
-    /* Adjust to align where you need it */
     width: calc(100% - 41px);
     /* Ensures it covers the container if needed */
     z-index: 10;
     /* Ensure it is above other content */
-    margin-top: -20px;
+    /* margin-top: -20px; */
     padding-left: 21px;
     padding-right: 21px;
+    /* height: 0; */
+    /* display: none; */
+    /* transition: all 0.28s cubic-bezier(0.23, 1, 0.32, 1); */
+    pointer-events: none;
+}
+
+.content-wrapper:hover .content-description-wrapper {
+    pointer-events: all;
 }
 
 .content-description {
     background-color: var(--text-brighter);
     color: var(--background-dark-secondary);
-    font-size: 20px;
+    font-size: 1rem;
     display: flex;
     flex-direction: column;
     border-bottom-left-radius: 1em;
@@ -152,7 +157,6 @@
 .content {
     height: 260px;
     break-inside: avoid;
-    margin-bottom: 20px;
     background-color: var(--background-dark-secondary);
     border-radius: 1em;
     /* overflow: hidden; */
@@ -242,7 +246,7 @@
 }
 
 .content-wrapper:hover .content-image {
-    transform: translateY(-70px);
+    transform: translateY(-50px);
     border-radius: 1em;
 }
 
@@ -273,7 +277,7 @@
 }
 
 .content-wrapper:hover .content-images-other {
-    transform: translateY(-70px) translateX(0);
+    transform: translateY(-50px) translateX(0);
 }
 
 .content-wrapper:hover .content-images-other img:nth-of-type(1) {
@@ -294,7 +298,6 @@
     height: 100%;
     /* justify-content: center; */
     align-items: center;
-    padding: 10px;
     z-index: 35;
 
     overflow: visible;
@@ -323,7 +326,7 @@
 
 .content-wrapper:hover .content-title-name {
     width: 90%;
-    transform: translateY(80px);
+    transform: translateY(100px);
     /* margin-left: 40%; */
     padding-left: 0;
     margin-left: 0;
@@ -344,7 +347,7 @@
 .content-description-header-left {
     display: flex;
     align-items: center;
-    width: 55%;
+    max-width: 55%;
 }
 
 .content-description-header-left-item {
@@ -402,6 +405,11 @@
 .price-value {
     font-size: 1.1rem;
     font-weight: 600;
+    height: 1.8rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
 }
 
 .predicted-price-value-container {
@@ -466,7 +474,7 @@
 .content-description-list {
     list-style-type: none;
     padding: 0;
-    margin: 1.5em 0;
+    margin-top: 1em;
 }
 
 .content-description-list-closed {

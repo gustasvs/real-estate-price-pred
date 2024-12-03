@@ -161,7 +161,9 @@ const CardTable = ({
                           ]
                         }
                       >
-                        {group.objectCount ?? 2}{" "}
+                        <span className={styles["card-content-title-object-count-span"]}>
+                          {group.residenceCount ?? 0}
+                        </span>
                         <BiBuildings />
                       </span>
                     </div>

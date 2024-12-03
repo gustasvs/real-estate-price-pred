@@ -104,6 +104,7 @@ const Navbar = ({
           ) : (
             <div className={styles["profile-container"]}>
               <Dropdown
+                placement="bottomCenter"
                 // open={true}
                 dropdownRender={(menu) => (
                   <div

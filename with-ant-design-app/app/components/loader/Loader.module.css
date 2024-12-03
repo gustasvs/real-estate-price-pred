@@ -1,0 +1,7 @@
+.loader {
+    background: url("/loader/loader-cut.gif");
+    background-size: auto;
+    background-repeat: no-repeat;
+    background-position: center;
+    filter: grayscale(90%);
+}

@@ -25,10 +25,11 @@ const theme: ThemeConfig = {
       linkHoverColor: "var(--text-brighter)"
     },
     Button: {
-      defaultBg: "var(--background-dark-secondary)",
-      defaultColor: "var(--background-light-secondary)",
+      defaultBg: "transparent", // default button background
+      defaultColor: "var(--background-light-main)",
       defaultHoverColor: "var(--text-bright)",
-      defaultHoverBg: "var(--background-dark-main)",
+      defaultHoverBg: "var(--background-dark-secondary)", // default button background on hover
+      defaultBorderColor: "var(--background-light-main)", // default button border color
 
       defaultActiveBg: "var(--background-dark-main)",
       defaultActiveColor: "var(--text-brighter)",

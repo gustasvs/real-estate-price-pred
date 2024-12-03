@@ -67,8 +67,6 @@
   border-radius: 30px;
   outline: 1px solid var(--background-light-main);
   width: 80%;
-  /* padding for text inside the button */
-  /* font-size: 16px; */
   font-weight: 600;
   line-height: 1.3;
   font-size: 1.2rem;
@@ -76,23 +74,54 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
+  overflow: hidden;
+  transition: all .4s cubic-bezier(.68,-0.35,.27,1.55);
 }
 
 .get-started-text {
   color: var(--background-light-secondary);
-  padding: 1em;
+  /* padding: 1em; */
+  padding: 1em 0;
   width: 70%;
+  transition: all .4s cubic-bezier(.68,-0.35,.27,1.55);
 }
+
 .get-started-next-arrow {
   color: var(--background-light-secondary);
   font-size: 2rem;
+  position: absolute;
+  right: 5%;
+  transition: all .4s cubic-bezier(.68,-0.35,.27,1.55);
 }
 
-
+.get-started-prev-arrow {
+  color: var(--background-light-secondary);
+  font-size: 2rem;
+  position: absolute;
+  left: -10%; /* Initially off-screen */
+  opacity: 0;
+  transition: all .4s cubic-bezier(.68,-0.35,.27,1.55);
+}
 .get-started-button:hover {
-  background-color: var(--background-dark-secondary);
+  background-color: var(--background-dark-main-hover);
   color: var(--background-light-secondary);
 }
+
+.get-started-button:hover .get-started-text {
+  transform: translateX(1rem);
+}
+
+.get-started-button:hover .get-started-next-arrow {
+  transform: translateX(50%);
+  opacity: 0;
+}
+
+.get-started-button:hover .get-started-prev-arrow {
+  transform: translateX(130%);
+  opacity: 1;
+}
+
 
 .loader {
   background: url("/loader/loader.gif");
