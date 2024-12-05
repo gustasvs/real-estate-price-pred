@@ -1,36 +1,31 @@
 "use client";
 
 import {
-  CloseOutlined,
   EditOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
 import {
-  Card,
   Row,
   Col,
-  Popover,
-  Popconfirm,
-  MenuProps,
-  Dropdown,
   Space,
-  Button,
 } from "antd";
-import Image from "next/image";
 
 import styles from "./Groups.module.css";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import NewGroupModal from "./new-card-modal";
-import { useRef, useState } from "react";
-import { create } from "domain";
+import { useEffect, useRef, useState } from "react";
 import { BiBuildings } from "react-icons/bi";
+import { useSession } from "next-auth/react";
+import { StyledTextField } from "../my-profile/my-profile-form/MyProfileForm";
+import { InputAdornment } from "@mui/material";
+import { Search } from "@mui/icons-material";
 
 const CardTable = ({
   columnCount,
   groups = [],
-  deleteGroup = () => {},
-  createGroup = () => {},
-  updateGroup = () => {},
+  deleteGroup = () => { },
+  createGroup = () => { },
+  updateGroup = () => { },
 }: {
   columnCount: number;
   groups: any[];
@@ -42,6 +37,11 @@ const CardTable = ({
   ) => void;
 }): JSX.Element => {
   const router = useRouter();
+
+  const searchParams = useSearchParams();
+  const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
+
+  const { status } = useSession();
 
   const [newGroupModalVisible, setNewGroupModalVisible] =
     useState(false);
@@ -58,6 +58,10 @@ const CardTable = ({
 
   const cardRef = useRef(null);
 
+  if (status === "loading") {
+    return <div></div>;
+  }
+
   return (
     <>
       <NewGroupModal
@@ -65,8 +69,10 @@ const CardTable = ({
         setOpen={setNewGroupModalVisible}
         isEditing={editGroupId !== null}
         groupName={editGroupName}
+        groupId={editGroupId ?? ""}
         setGroupName={setEditGroupName}
         addGroup={createGroup}
+        deleteGroup={deleteGroup}
         onSubmit={(groupName: string) => {
           if (editGroupId !== null) {
             updateGroup(editGroupId, groupName);
@@ -77,6 +83,39 @@ const CardTable = ({
           setNewGroupModalVisible(false);
         }}
       />
+      <StyledTextField
+        placeholder="Meklēt grupu pēc tās nosaukuma..."
+        style={{
+          width: "100%",
+          marginTop: "1rem",
+        }}
+        slotProps={{
+          input: {
+            startAdornment: (
+              <InputAdornment position="start">
+                <Search
+                  style={{
+                    color: "var(--background-light-secondary)",
+                  }}
+                />
+              </InputAdornment>
+            ),
+          },
+        }}
+        onChange={(e) => {
+          const value = e.target.value;
+          setSearchQuery(value);
+
+          const params = new URLSearchParams(searchParams);
+          if (value) {
+            params.set('groupName', value);
+          } else {
+            params.delete('groupName');
+          }
+
+          router.replace(`?${params.toString()}`, { scroll: false });
+        }}
+      />
       <div
         style={{
           display: "flex",
@@ -84,6 +123,7 @@ const CardTable = ({
         }}
         className={styles["groups-page"]}
       >
+
         <Row
           gutter={rowGutter}
           style={{
@@ -150,14 +190,14 @@ const CardTable = ({
                       <span
                         className={
                           styles[
-                            "card-content-title-text-name"
+                          "card-content-title-text-name"
                           ]
                         }
                       >{group.name}</span>
                       <span
                         className={
                           styles[
-                            "card-content-title-object-count"
+                          "card-content-title-object-count"
                           ]
                         }
                       >

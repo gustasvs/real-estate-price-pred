@@ -1,31 +1,29 @@
-// "use client";
-
-import React, { useEffect, useState } from "react";
+import React from "react";
 import CardTable from "../components/card-table";
 import GenericLayout from "../components/generic-page-layout";
 
-// import { useRouter } from "next/navigation";
-import { Divider } from "antd";
 import {
   createGroup as createGroupApi,
   deleteGroup as deleteGroupApi,
   getGroups as getGroupsApi,
   updateGroup as updateGroupApi,
 } from "../../actions/group";
-import { update } from "react-spring";
 import PageHeader from "../components/generic-page-layout/page-header/PageHeader";
 import { revalidatePath } from "next/cache";
 
-const GroupsPage = async () => {
-  interface Group {
-    id: string;
-    name: string;
-    imageUrl: any;
-  }
+const GroupsPage = async ({
+  searchParams,
+}: {
+  searchParams: any;
+}) => {
+
+  console.log("params", searchParams);
 
   const fetchGroups = async () => {
     "use server";
-    const groups = await getGroupsApi();
+    const groups = await getGroupsApi(
+      searchParams
+    );
     if (Array.isArray(groups)) {
       return groups;
     } else {
@@ -41,14 +39,13 @@ const GroupsPage = async () => {
     "use server";
     const res = await createGroupApi(groupName);
     console.log("res", res);
-
-    await fetchGroups();
+    revalidatePath("/groups");
   };
 
   const deleteGroup = async (id: string) => {
     "use server";
     const res = await deleteGroupApi(id);
-    await fetchGroups();
+    revalidatePath("/groups");
   };
 
   const updateGroup = async (
@@ -71,7 +68,6 @@ const GroupsPage = async () => {
         ]}
       />
 
-      <Divider />
       <CardTable
         columnCount={3}
         groups={groups}
@@ -79,7 +75,7 @@ const GroupsPage = async () => {
         createGroup={createGroup}
         updateGroup={updateGroup}
       />
-      {/* </div> */}
+
     </GenericLayout>
   );
 };

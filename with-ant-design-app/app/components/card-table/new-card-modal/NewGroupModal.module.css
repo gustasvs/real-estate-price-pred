@@ -8,6 +8,7 @@
     justify-content: space-between;
     margin-top: 20px;
 }
+
 .closeIcon {
     fill: var(--background-light-secondary);
     color: var(--background-light-secondary);
@@ -31,7 +32,9 @@
     box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
 }
 
-.submitButton, .cancelButton {
+.submitButton,
+.cancelButton,
+.deleteButton {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -44,7 +47,7 @@
 }
 
 .submitButton {
-    transition: all .2s cubic-bezier(.68,-0.35,.27,1);
+    transition: all .2s cubic-bezier(.68, -0.35, .27, 1);
 }
 
 .submitButton:hover {
@@ -52,13 +55,18 @@
 }
 
 .cancelButton {
-    width: 50%;
-    transition: all .2s cubic-bezier(.78,-0.35,.27,1);
+    width: fit-content;
+    transition: all .2s cubic-bezier(.78, -0.35, .27, 1);
 }
 
 .cancelButton:hover {
     transform: scale(1.04);
     outline: none;
+}
+
+.deleteButton {
+    width: fit-content;
+    background-color: transparent !important;
 }
 
 /* Additional Styling for Other Elements as Needed */

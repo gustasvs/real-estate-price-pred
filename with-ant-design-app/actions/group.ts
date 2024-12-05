@@ -28,7 +28,7 @@ export const getGroup = async (groupId: string) => {
 };
 
 // Get all groups
-export const getGroups = async () => {
+export const getGroups = async (filter: any) => {
   const session = await auth();
   // console.log("session in groups", session);
   const user = session?.user;
@@ -37,9 +37,14 @@ export const getGroups = async () => {
   }
   const userId = user.id;
 
+  const filterGroupName = filter?.groupName || "";
+
   try {
     const groups = await db.residenceGroup.findMany({
-      where: { userId: userId },
+      where: { 
+        userId: userId,
+        name: { contains: filterGroupName, mode: "insensitive" },
+      },
     });
 
     const groupsWithResidenceCount = await Promise.all(

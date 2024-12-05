@@ -31,6 +31,8 @@ const theme: ThemeConfig = {
       defaultHoverBg: "var(--background-dark-secondary)", // default button background on hover
       defaultBorderColor: "var(--background-light-main)", // default button border color
 
+      dangerColor: "var(--background-light-main)", // danger button text color
+
       defaultActiveBg: "var(--background-dark-main)",
       defaultActiveColor: "var(--text-brighter)",
 
@@ -51,6 +53,12 @@ const theme: ThemeConfig = {
     Divider: {
       colorText: "var(--background-light-main)",
       colorBorder: "var(--background-light-main)",
+    },
+    Popconfirm: {
+      colorText: "var(--background-light-secondary)",
+      colorTextHeading: "var(--background-light-secondary)",
+      colorTextDescription: "var(--background-light-secondary)",
+      colorBgElevated: "var(--background-dark-secondary)",
     }
   },
   token: {
