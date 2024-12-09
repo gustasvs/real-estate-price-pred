@@ -18,13 +18,14 @@ import {
   Row,
   Col,
   Divider,
+  Button,
 } from "antd";
 
 import { IoMdArrowRoundUp } from "react-icons/io";
 
 
 import styles from "./MasonryTable.module.css";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { useState } from "react";
 
@@ -36,6 +37,7 @@ import {
 } from "../../../actions/groupObjects";
 import { useSession } from "next-auth/react";
 import { IconButton, Tooltip } from "@mui/material";
+import SearchInput from "../search-input/SearchInput";
 
 const MasonryTable = ({
   group_id,
@@ -53,6 +55,8 @@ const MasonryTable = ({
   revalidateDataFunction?: () => void;
 }): JSX.Element => {
   const router = useRouter();
+
+  const searchParams = useSearchParams();
 
   const { data: session, status, update } = useSession();
 
@@ -185,9 +189,48 @@ const MasonryTable = ({
 
   return (
     <div className={styles["masonry-table-container"]}>
-      <Divider />
-      <Row
-        gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}
+      {/* <Divider style={{
+        borderColor: "var(--background-light-secondary)",
+      }}/> */}
+      <div className={styles["masonry-table-header"]}>
+      <SearchInput 
+      style={{
+        marginTop: "0",
+        width: "100%",
+      }}
+      placeholder="Meklēt objektu pēc tā nosaukuma..." onChange={(e: any) => {
+        const value = e.target.value;
+
+        const params = new URLSearchParams(searchParams);
+        if (value) {
+          params.set('residenceName', value);
+        } else {
+          params.delete('residenceName');
+        }
+
+        router.replace(`?${params.toString()}`, { scroll: false });
+      }
+      } />
+      <Button 
+      className={styles["sort-button"]}
+        onClick={animateAndSort}
+      > 
+        Kārtot pēc datuma
+      </Button>
+      <Button 
+      className={styles["sort-button"]}
+        onClick={animateAndSort}
+      > 
+        Kārtot pēc cenas
+      </Button>
+      <Button 
+      className={styles["sort-button"]}
+        onClick={animateAndSort}
+      > 
+        Kārtot pēc izdevīguma
+      </Button>
+      </div>
+      <div
         style={{ width: "90%", margin: "0 auto" }}
       >
         {loading && (
@@ -197,17 +240,25 @@ const MasonryTable = ({
         )}
 
         {rowItemsWithAddItem.map((itemsInRow, rowIndex) => (
-          <Row
-            key={`row-${rowIndex}`}
-            style={{ width: "100%", marginBottom: "2rem" }}
-            gutter={[42, 62]}
-          >
+          <div
+          key={`row-${rowIndex}`}
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "3rem",
+            justifyContent: "space-between",
+            marginBottom: "3rem",
+            width: "100%",
+          }}
+        >
             {itemsInRow.map((item, itemIndex) => (
-              <Col
-                className={styles["content-wrapper"]}
-                span={Math.min(24 / itemsInRow.length, 12)}
-                key={`item-${item.id}`}
-              >
+              <div
+              className={styles["content-wrapper"]}
+              style={{
+                flex: "40%",
+              }}
+              key={`item-${item.id}`}
+            >
                 {item.id === null ? (
                   <div
                     onClick={handleAddButtonClick}
@@ -718,11 +769,11 @@ const MasonryTable = ({
                     </div>
                   </div>
                 )}
-              </Col>
+              </div>
             ))}
-          </Row>
+          </div>
         ))}
-      </Row>
+      </div>
 
       {/* <div
           className={`${styles["content"]} ${styles["content-add"]}`}

@@ -205,6 +205,7 @@ const RewindUiSidebar = () => {
           [`.${menuClasses.SubMenuExpandIcon}`]: {
             paddingBottom: "3px",
             scale: "110%",
+            color: "var(--background-light-main)",
             // paddingRight: "1em",
           },
           [`.${menuClasses.subMenuContent} .${menuClasses.button}`]: {

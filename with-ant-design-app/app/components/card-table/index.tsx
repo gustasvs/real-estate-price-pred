@@ -8,17 +8,20 @@ import {
   Row,
   Col,
   Space,
+  Pagination,
 } from "antd";
 
 import styles from "./Groups.module.css";
 import { useRouter, useSearchParams } from "next/navigation";
 import NewGroupModal from "./new-card-modal";
 import { useEffect, useRef, useState } from "react";
-import { BiBuildings } from "react-icons/bi";
+import { BiBuildings, BiLeftArrow } from "react-icons/bi";
 import { useSession } from "next-auth/react";
 import { StyledTextField } from "../my-profile/my-profile-form/MyProfileForm";
 import { InputAdornment } from "@mui/material";
 import { Search } from "@mui/icons-material";
+import { FaArrowLeft } from "react-icons/fa6";
+import SearchInput from "../search-input/SearchInput";
 
 const CardTable = ({
   columnCount,
@@ -39,7 +42,7 @@ const CardTable = ({
   const router = useRouter();
 
   const searchParams = useSearchParams();
-  const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
+  // const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
 
   const { status } = useSession();
 
@@ -83,28 +86,12 @@ const CardTable = ({
           setNewGroupModalVisible(false);
         }}
       />
-      <StyledTextField
-        placeholder="Meklēt grupu pēc tās nosaukuma..."
-        style={{
-          width: "100%",
-          marginTop: "1rem",
-        }}
-        slotProps={{
-          input: {
-            startAdornment: (
-              <InputAdornment position="start">
-                <Search
-                  style={{
-                    color: "var(--background-light-secondary)",
-                  }}
-                />
-              </InputAdornment>
-            ),
-          },
-        }}
-        onChange={(e) => {
+      <SearchInput 
+        placeholder="Meklēt grupu pēc tās nosaukuma..." 
+        
+        onChange={(e: any) => {
           const value = e.target.value;
-          setSearchQuery(value);
+          // setSearchQuery(value);
 
           const params = new URLSearchParams(searchParams);
           if (value) {
@@ -114,7 +101,7 @@ const CardTable = ({
           }
 
           router.replace(`?${params.toString()}`, { scroll: false });
-        }}
+        }} 
       />
       <div
         style={{
@@ -133,6 +120,38 @@ const CardTable = ({
             // justifyContent: "space-between",
           }}
         >
+          <Col
+            span={colSpan}
+            style={{
+              display: "flex",
+              justifyContent: "space-evenly",
+            }}
+          >
+            <div
+              className={`${styles["card"]} ${styles["card-add"]}`}
+              onClick={handleAddButtonClick}
+            >
+              <div className={styles["content"]}>
+                <div
+                  className={styles["card-content-image"]}
+                >
+                  <PlusOutlined
+                    width={200}
+                    height={200}
+                  />
+                </div>
+                <span
+                        className={
+                          styles[
+                          "card-content-title-text-name"
+                          ]
+                        }
+                      >
+                  {"Pievienot jaunu grupu"}
+                </span>
+              </div>
+            </div>
+          </Col>
           {groups.map((group, index) => (
             <Col
               span={colSpan}
@@ -218,41 +237,45 @@ const CardTable = ({
               </div>
             </Col>
           ))}
-          <Col
-            span={colSpan}
-            style={{
-              display: "flex",
-              justifyContent: "space-evenly",
-            }}
-          >
-            <div
-              className={`${styles["card"]} ${styles["card-add"]}`}
-              onClick={handleAddButtonClick}
-            >
-              <div className={styles["content"]}>
-                <div
-                  className={styles["card-content-image"]}
-                >
-                  <PlusOutlined
-                    style={
-                      {
-                        //   display: "flex",
-                        // marginTop: "30px",
-                        // marginBottom: "40px",
-                      }
-                    }
-                    width={200}
-                    height={200}
-                  />
-                </div>
-                <h4 style={{ color: "#ffffff" }}>
-                  {"Pievienot jaunu grupu"}
-                </h4>
-              </div>
-            </div>
-          </Col>
         </Row>
       </div>
+
+      <Pagination
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            padding: "1rem",
+            // backgroundColor: "var(--background-dark-main-hover)",
+            borderRadius: "1rem",
+            margin: "1rem 0",
+            color: "var(--background-light-secondary)",
+            outline: "1px solid var(--background-light-main)",
+          }}
+          total={85}
+          showSizeChanger
+          selectPrefixCls="ant-select"
+          // showQuickJumper
+          showTotal={(total) => `Kopā ${total} ieraksti`}
+          
+          // itemRender={(current, type, originalElement) => {
+          //   if (type === "prev") {
+          //     return <FaArrowLeft style={{
+          //       fontSize: "1.5rem",
+          //       color: "var(--background-light-secondary)",
+          //     }} />;
+          //   }
+          //   if (type === "next") {
+          //     return <FaArrowLeft style={{
+          //       fontSize: "1.5rem",
+          //       color: "var(--background-light-secondary)",
+          //       transform: "rotate(180deg)",
+          //     }} />;
+          //   }
+          //   return originalElement;
+          // }
+          // }
+        />
+
     </>
   );
 };

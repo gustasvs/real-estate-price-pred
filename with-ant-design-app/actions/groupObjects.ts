@@ -22,10 +22,32 @@ export const getObject = async (objectId: string) => {
   }
 };
 
-export const getObjects = async (groupId: string) => {
+export const getObjects = async (groupId: string, filter: any) => {
+  
+  const session = await auth();
+  if (!session) {
+    return { error: "User not authenticated" };
+  }
+
+  const user = session?.user;
+
+  if (!user || !user.id) {
+    return { error: "Unauthorized" };
+  }
+
+  const userId = user.id;
+
   try {
+
+    const residenceName = filter?.residenceName || "";
+
     const objects = await db.residence.findMany({
-      where: { groupId: groupId },
+      where: { 
+        groupId: groupId, 
+        // residenceGroup: { userId: userId },
+        ... (residenceName ? { name: { contains: residenceName, mode: "insensitive" } } : {}),
+      },
+
     });
     return objects;
   } catch (error) {

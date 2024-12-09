@@ -26,8 +26,10 @@ export interface ResidenceObjectType {
 
 const GroupPage = async ({
   params,
+  searchParams,
 }: {
   params: any;
+  searchParams: any;
 }) => {
 
   console.log("params", params);
@@ -36,7 +38,7 @@ const GroupPage = async ({
     return null;
   }
 
-  const objectsResponse = await getObjects(params.group_id);
+  const objectsResponse = await getObjects(params.group_id, searchParams);
   const objects = Array.isArray(objectsResponse) ? objectsResponse : [];
 
     console.log("objects", objects);
@@ -61,7 +63,6 @@ const GroupPage = async ({
     );
 
     
-
   const groupResponse = await getGroupApi(params.group_id);
   const group = groupResponse ? groupResponse : null;
 
@@ -86,7 +87,6 @@ const GroupPage = async ({
         style={{
           display: "flex",
           flexDirection: "column",
-          gap: "2em",
         }}
       >
          <PageHeader

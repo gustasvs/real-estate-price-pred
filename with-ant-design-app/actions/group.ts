@@ -121,7 +121,41 @@ export const createGroup = async (groupName: string) => {
 
 // Update an existing group
 export const updateGroup = async (groupId: string, newGroupName: string) => {
+
+  const session = await auth();
+  
+  const user = session?.user;
+
+  if (!user || !user.id) {
+    return { error: "Unauthorized" };
+  }
+
+  // confirm that the user owns the group
   try {
+    const group = await db.residenceGroup.findUnique({
+      where: { id: groupId },
+    });
+    if (!group) {
+      return { error: "Group not found or does not exist" };
+    }
+    if (group.userId !== user.id) {
+      return { error: "Unauthorized" };
+    }
+  } catch (error) {
+    console.error("Error updating group:", error);
+    return { error: "Failed to update group" };
+  }
+
+  try {
+
+    if (!newGroupName) {
+      return { error: "Group name is required" };
+    }
+    // char count > 50 is not allowed
+    if (newGroupName.length > 50) {
+      return { error: "Group name must be 50 characters or less" };
+    }
+
     const updatedGroup = await db.residenceGroup.update({
       where: { id: groupId },
       data: { name: newGroupName },

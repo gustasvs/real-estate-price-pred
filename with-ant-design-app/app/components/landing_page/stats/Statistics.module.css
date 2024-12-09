@@ -2,6 +2,7 @@
 
 .statistics {
   background-color: var(--background-dark-secondary);
+  background-color: #736e60c6;
   /* background-color: var(--background-light-secondary); */
   height: 500px;
 }

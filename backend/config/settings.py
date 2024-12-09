@@ -1,8 +1,8 @@
 import torch.nn as nn
 
 ENABLE_DEV_LOGS = False
-# DEMO_MODE = True
-DEMO_MODE = False
+DEMO_MODE = True
+# DEMO_MODE = False
 
 BATCH_SIZE = 1
 BATCHES_TO_AGGREGATE = 32

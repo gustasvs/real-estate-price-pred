@@ -103,6 +103,11 @@
   justify-content: center;
   align-items: center;
 }
+.card-content-image svg {
+  width: 160px;
+  height: 160px;
+  color: var(--background-light-secondary);
+}
 
 .content .para {
   z-index: 1;
@@ -282,11 +287,11 @@
   flex-direction: row;
   justify-content: space-between;
   color: var(--text-brighter);
-  display: flex;
+  gap: 1em;
 }
 
 .card-content-title-text-name {
-  width: 100%;
+  width: 93%;
   font-size: clamp(1rem, 22px, 1.6rem);
 }
 

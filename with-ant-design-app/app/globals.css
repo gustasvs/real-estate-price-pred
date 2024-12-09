@@ -84,3 +84,16 @@ body {
   background-color: var(--background-dark-main);
   color: var(--background-light-secondary);
 }
+.ant-pagination-total-text {
+  margin-right: auto;
+  display: flex;
+  margin-inline-end: auto !important;
+}
+.ant-pagination-item-ellipsis,
+.ant-pagination-item-link .anticon svg {
+  /* fill: var(--text-brighter); */
+  color: var(--text-brighter) !important;
+}
+.ant-pagination-item-link:hover {
+  background-color: var(--background-dark-secondary) !important;
+}

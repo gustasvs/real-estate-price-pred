@@ -59,7 +59,30 @@ const theme: ThemeConfig = {
       colorTextHeading: "var(--background-light-secondary)",
       colorTextDescription: "var(--background-light-secondary)",
       colorBgElevated: "var(--background-dark-secondary)",
+    },
+    Pagination: {
+      colorBgContainer: "var(--background-dark-main-hover)",
+      itemActiveBg: "var(--text-bright)",
+      controlItemBgActiveHover: "var(--text-brighter)",
+      // itemActiveBgDisabled: "rgba(0, 0, 0, 0.15)",
+      // itemActiveColorDisabled: "rgba(255, 255, 255, 0.25)",
+      itemBg: "var(--background-light-main)",
+      controlItemBgHover: "var(--text-bright)",
+      itemInputBg: "var(--background-light-main)",
+      itemLinkBg: "var(--background-light-main)",
+      colorIcon: "var(--background-light-secondary)",
+      colorIconHover: "var(--text-bright)",
+      colorBgTextHover: "var(--text-bright)",
+      colorText: "var(--background-darkest)",
+    },
+    Select: {
+      colorText: "var(--background-light-secondary)",
+      colorTextPlaceholder: "var(--background-light-secondary)",
+      colorTextDisabled: "var(--background-light-secondary)",
+      colorBorder: "var(--background-light-main)",
+      colorBgBase: "var(--background-dark-main-hover)",
     }
+    
   },
   token: {
     fontSize: 16,

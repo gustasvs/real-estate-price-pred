@@ -22,7 +22,7 @@ import {
 const PageFooter = () => {
   return (
     <div className={styles["footer-container"]}>
-      <Divider style={{ borderColor: "white" }}>
+      <Divider style={{ borderColor: "var(--background-light-secondary)" }}>
         <div className={styles["footer-social"]}>
           {/* <FacebookOutlined
               className={styles["footer-social-icon"]}

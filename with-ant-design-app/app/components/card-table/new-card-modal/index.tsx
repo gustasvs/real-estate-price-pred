@@ -101,26 +101,21 @@ const NewGroupModal: React.FC<NewGroupModalProps> = ({
       }
       className={styles.modal}
     >
-      {/* <Input
-        placeholder="Enter group name"
-        value={groupName}
-        onChange={(e) => setGroupName(e.target.value)}
-        className={styles.input}
-        maxLength={50}
-      /> */}
       <div
         style={{
           marginTop: "2em",
         }}
       >
         <StyledTextField
+
           id="outlined-basic"
           label="Grupas nosaukums"
           variant="outlined"
           value={groupName}
           onChange={(e) => setGroupName(e.target.value)}
           className={styles.input}
-        // maxLength={50}
+          slotProps={{ htmlInput: { maxLength: 50 } }}
+          helperText={`${groupName.length}/50`}
         />
       </div>
     </Modal>

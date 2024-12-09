@@ -92,6 +92,12 @@ export const StyledTextField = styled(TextField)({
     borderColor: 'red', // This line adds the red border when there is an error
   },
 
+  // helper text color
+  '& .MuiFormHelperText-root': {
+    textAlign: 'right',
+    color: "var(--background-light-main)",
+  },
+
 });
 
 export const StyledNumberInput = styled(TextField)({
@@ -138,6 +144,7 @@ export const StyledNumberInput = styled(TextField)({
 
 import Switch from '@mui/material/Switch';
 import { MdWidthFull } from "react-icons/md";
+import { text } from "stream/consumers";
 
 export const StyledSwitch = styled(Switch)(({ theme }) => ({
   '& .MuiSwitch-switchBase': {
