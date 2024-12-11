@@ -266,49 +266,36 @@ const RewindUiSidebar = () => {
             </MenuItem>
           </SubMenu>
 
-          <SubMenu
+          {/* <SubMenu
             label="Mans profils"
             icon={<UserOutlined />}
             active={pathname === "/profile"}
-          >
+          > */}
             <MenuItem
-              icon={<FaPersonFalling />}
-              active={
-                pathname === "/profile" &&
-                (params.get("page") === "0" ||
-                  !params.get("page"))
-              }
-              href="/profile?page=0"
+              icon={<UserOutlined />}
+              active={pathname === "/profile"}
+              href="/profile"
             >
-              {/* <NavLink href="/profile?page=0"> */}
-              Lietotāja informācija
-              {/* </NavLink>   */}
+              Mans profils
             </MenuItem>
             <MenuItem
               icon={<HeartOutlined />}
-              active={
-                pathname === "/profile" &&
-                params.get("page") === "1"
-              }
-              href="/profile?page=1"
+              active={pathname === "/profile/favourites"}
+              href="/profile/favourites"
             >
-              {/* <NavLink href="/profile?page=1"> */}
               Atzīmetas dzīvesvietas
-              {/* </NavLink> */}
             </MenuItem>
-            <MenuItem
+            {/* <MenuItem
               active={
                 pathname === "/profile" &&
                 params.get("page") === "2"
               }
               icon={<FaGears />}
-              href="/profile?page=2"
+              href="/profile/favourites"
             >
-              {/* <NavLink href="/profile?page=2"> */}
               Iestatījumi
-              {/* </NavLink> */}
-            </MenuItem>
-          </SubMenu>
+            </MenuItem> */}
+          {/* </SubMenu> */}
         </Menu>
       </Sidebar>
     </div>

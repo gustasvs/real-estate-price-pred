@@ -76,7 +76,7 @@ const MasonryTable = ({
       favourite: !object.favourite,
     });
 
-    revalidateDataFunction();
+    // revalidateDataFunction();
     // await fetchObjects();
   };
 
@@ -774,18 +774,6 @@ const MasonryTable = ({
           </div>
         ))}
       </div>
-
-      {/* <div
-          className={`${styles["content"]} ${styles["content-add"]}`}
-          onClick={handleAddButtonClick}
-        >
-          <div className={styles["content-add-image"]}>
-            <PlusOutlined style={{ fontSize: "48px", color: "#fff" }} />
-          </div>
-          <span className={styles["content-add-title"]}>
-            Pievienot jaunu objektu
-          </span>
-        </div> */}
     </div>
   );
 };

@@ -10,6 +10,7 @@ import imageCompression from "browser-image-compression";
 import {
   Button,
   Col,
+  Divider,
   Form,
   Input,
   message,
@@ -25,7 +26,7 @@ import { EditOutlined, QuestionCircleOutlined, UploadOutlined } from "@ant-desig
 import { MDCTextField } from "@material/textfield";
 
 import InputLabel from "../../input-fields/InputFields";
-import { styled, TextField } from "@mui/material";
+import { Slider, styled, TextField } from "@mui/material";
 
 import AvatarEditor from 'react-avatar-editor'
 import Dropzone from 'react-dropzone'
@@ -201,6 +202,10 @@ const MyProfileForm = () => {
 
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 
+  const [userPicture, setUserPicture] = useState<string | File>("");
+
+  const [imageScale, setImageScale] = useState(1);
+
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleUpdateProfile = async (values: any) => {
@@ -286,6 +291,7 @@ const MyProfileForm = () => {
     // fill form with user data
     if (session) {
       console.log("filling form with user data");
+      console.log("session", session?.user);
       form.setFieldsValue({
         name: session.user?.name,
         email: session.user?.email,
@@ -296,7 +302,6 @@ const MyProfileForm = () => {
   }, [session]);
 
 
-  const [userPicture, setUserPicture] = useState<string | File>("");
   useEffect(() => {
     if (session?.user?.image) {
       const fetchUserImage = async () => {
@@ -337,30 +342,75 @@ const MyProfileForm = () => {
       form={form}
       layout="horizontal"
       onFinish={handleUpdateProfile}
-      className={styles["form-container"]}
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "1rem",
+        height: "100%",
+        width: "100%",
+        paddingBottom: "1rem",
+      }}
+      
     >
+      <div style={{
+        display: "flex",
+        flexDirection: "row",
+        gap: "1rem",
+        justifyContent: "center",
+        height: "100%",
+      }}>
       <div className={styles["form-container"]}>
         <div className={styles["profile-summary-container"]}>
           <Form.Item
             name="pictures"
-            //   label={<span className={styles["label"]}>Pictures</span>}
             valuePropName="fileList"
             getValueFromEvent={normFile}
           >
             <div
               className={styles["profile-image-container"]}
-              // onMouseEnter={() => setEditorHovered(true)}
-              // onMouseLeave={() => setEditorHovered(false)}
-              // onBlur={(e) => {
-              //   if (!e.currentTarget.contains(e.relatedTarget as Node)
-              //     && e.relatedTarget !== document.getElementById('avatarUpload')  
-              // ) {
-              //     setEditorHovered(false);
-              //   }
-              // }}
             >
               {editorHovered && (
                   <div className={styles["profile-image-edit-buttons"]} >
+                    <Slider
+                      value={imageScale}
+                      onChange={(event, value) => {
+                        if (typeof value !== "number") return;
+                        setImageScale(value);
+                        console.log("value", value)
+                      }}
+                      min={1}
+                      max={2}
+                      step={0.01}
+                      style={{ width: "100%" }}
+                      sx={(t) => ({
+                        color: 'var(--background-dark-main)',
+                        height: 4,
+                        '& .MuiSlider-thumb': {
+                          width: 8,
+                          height: 8,
+                          color: 'var(--text-bright)',
+                          transition: '0.3s cubic-bezier(.47,1.64,.41,.8)',
+                          '&::before': {
+                            boxShadow: '0 2px 12px 0 var(--background-light-secondary)',
+                          },
+                          '&:hover, &.Mui-focusVisible': {
+                            boxShadow: `0px 0px 0px 8px ${'rgb(var(--background-light-secondary) / 16%)'}`,
+                          },
+                          '&.Mui-active': {
+                            width: 20,
+                            height: 20,
+                          },
+                        },
+                        '& .MuiSlider-rail': {
+                          opacity: 0.28,
+                        },
+                        '& .MuiSlider-track': {
+                          // height: 4,
+                          color: 'var(--background-light-main)',
+                        },
+                      })}
+                    />
+                    <div className={styles["profile-image-edit-buttons-buttons"]}>
                     <Button 
                       onClick={() => {
                         setEditorHovered(false)
@@ -379,7 +429,7 @@ const MyProfileForm = () => {
                       placement="top"
                       content={(
                         <span className={styles["profile-image-edit-buttons-info-text"]}>
-                          Šī poga tikai apstiprina jaunās bildes izmēru. Saglabāt var nospiežot "Saglabāt izmaiņas" pogu.
+                          Šī poga tikai apstiprina jaunās bildes novietojumu. Saglabāt var nospiežot "Saglabāt izmaiņas" pogu.
                         </span>
                       )} 
 
@@ -388,6 +438,7 @@ const MyProfileForm = () => {
                     <QuestionCircleOutlined />
                     </div>
                     </Popover>
+                    </div>
                   </div> 
                 )}
               <div className={`${styles["profile-image-edit"]} ${styles[`${editorHovered ? "hidden" : ""}`]}`}>
@@ -420,10 +471,8 @@ const MyProfileForm = () => {
               image={userPicture || "https://static.vecteezy.com/system/resources/previews/030/504/836/non_2x/avatar-account-flat-isolated-on-transparent-background-for-graphic-and-web-design-default-social-media-profile-photo-symbol-profile-and-people-silhouette-user-icon-vector.jpg"}
               width={210}
               height={210}
-              // backgroundColor="grey"
-              border={editorHovered ? 50 : 0}
-              // color={[255, 255, 255, 0.6]}
-              // scale={1.2}
+              scale={imageScale}
+              border={editorHovered ? 70 : 0}
               rotate={0}
               borderRadius={0}
               className={`${styles["profile-image"]} ${editorHovered ? styles["profile-image-hovered"] : ""}`}
@@ -443,8 +492,16 @@ const MyProfileForm = () => {
         </div>
 
         <div className={styles["text-field-container"]}>
-          <Row gutter={8} justify="center">
-            <Col span={8}>
+          <div style={{
+            display: "flex",
+            flexWrap: "wrap",
+          }}>
+            <div
+              style={{
+                display: "flex",
+                flex: "50%",
+              }}
+            >
               <Form.Item
                 name="name"
               >
@@ -456,8 +513,13 @@ const MyProfileForm = () => {
                   placeholder={session?.user?.name || "Lietotāja vārds"}
                 />
               </Form.Item>
-            </Col>
-            <Col span={8}>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                flex: "50%",
+              }}
+            >
               <Form.Item
                 name="email"
                 rules={[{ required: true, message: "Please input the email!" }]}
@@ -470,12 +532,19 @@ const MyProfileForm = () => {
                   defaultValue={session?.user?.email}
                 />
               </Form.Item>
-            </Col>
-          </Row>
+            </div>
+          </div>
 
-          <Row gutter={12} justify="center">
-            {/* Second row: Password and Confirm Password */}
-            <Col span={8}>
+          <div style={{
+            display: "flex",
+            flexWrap: "wrap",
+          }}>
+            <div
+              style={{
+                display: "flex",
+                flex: "50%",
+              }}
+            >
               <Form.Item
                 name="password"
               >
@@ -489,8 +558,13 @@ const MyProfileForm = () => {
                   }
                 />
               </Form.Item>
-            </Col>
-            <Col span={8}>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                flex: "50%",
+              }}
+            >
               {showConfirmPassword && (
                 <Form.Item
                   name="confirmPassword"
@@ -516,15 +590,68 @@ const MyProfileForm = () => {
                   />
                 </Form.Item>
               )}
-            </Col>
-          </Row>
+            </div>
+          </div>
         </div>
+      </div>
 
-        <Button
+      <Divider type="vertical" style={{ borderColor: "var(--background-light-main)", height: "100%" }} />
+          
+      <div
+        style={{
+          width: "30%",
+          paddingLeft: "2rem",
+        }}
+      >
+        <div className={styles["section-title"]}>Personalizācija</div>
+        <Form.Item
+          name="font-size"
+        >
+          <StyledTextField
+            id="outlined-basic"
+            label="Fonta izmērs"
+            variant="outlined"
+            // type="password"
+            onChange={(e) =>
+              setShowConfirmPassword(e.target.value.length > 0)
+            }
+            style={{ width: "100%" }}
+          />
+        </Form.Item>
+        <Form.Item
+          name="font-size"
+        >
+          <StyledTextField
+            id="outlined-basic"
+            label="Fonta izmērs"
+            variant="outlined"
+            // type="password"
+            onChange={(e) =>
+              setShowConfirmPassword(e.target.value.length > 0)
+            }
+            style={{ width: "100%" }}
+          />
+        </Form.Item>
+      </div>
+
+      </div>
+
+      <div
+        className={styles["main-button-container"]}
+      >
+
+      <Button
+        style={{ marginTop: "1.5rem" }}
+        className={`${styles["revert-button"]} ${styles["main-button"]}`}
+      >
+        Atcelt izmaiņas
+      </Button>
+
+      <Button
           type="primary"
           htmlType="submit"
           style={{ marginTop: "1.5rem" }}
-          className={styles["submit-button"]}
+          className={`${styles["submit-button"]} ${styles["main-button"]}`}
         >
           Saglabāt izmaiņas
         </Button>

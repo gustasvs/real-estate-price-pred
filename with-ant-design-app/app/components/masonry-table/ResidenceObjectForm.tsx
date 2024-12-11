@@ -51,6 +51,8 @@ const ResidenceObjectForm = ({
 
   const [form] = Form.useForm();
 
+  const [parkingAvailable, setParkingAvailable] = useState(residence?.parkingCount || false);
+
   const props: UploadProps = {
     name: "file",
     multiple: true,
