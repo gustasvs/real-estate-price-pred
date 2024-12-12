@@ -3,6 +3,10 @@
 import { useSession } from "next-auth/react";
 import { db } from "../db";
 import { auth } from "../auth";
+
+import amqp from 'amqplib'
+
+
 // import redisClient from "../redis/redisClient";
 
 // async function addObjectToStream(objectId: string) {
@@ -11,6 +15,27 @@ import { auth } from "../auth";
 
 
 export const getObject = async (objectId: string) => {
+
+  const session = await auth();
+
+  if (!session) {
+    return { error: "User not authenticated" };
+  }
+
+  amqp.connect('amqp://localhost').then(async (connection) => {
+    console.log("Connected to RabbitMQ");
+    const channel = await connection.createChannel();
+    const exchange = 'objectCreationExchange';
+    const queue = 'objectCreationQueue';
+    const routingKey = 'objectCreationRoutingKey';
+
+    await channel.assertExchange(exchange, 'direct', { durable: true });
+    await channel.assertQueue(queue, { durable: true });
+    await channel.bindQueue(queue, exchange, routingKey);
+
+    channel.publish(exchange, routingKey, Buffer.from(JSON.stringify({ objectId })));
+  });
+
   try {
     const object = await db.residence.findUnique({
       where: { id: objectId },

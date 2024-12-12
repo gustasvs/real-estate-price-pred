@@ -17,6 +17,7 @@
     "@mui/material": "^6.1.5",
     "@prisma/client": "^5.15.1",
     "@tsparticles/react": "^3.0.0",
+    "amqplib": "^0.10.5",
     "antd": "^5.0.0",
     "bcryptjs": "^2.4.3",
     "browser-image-compression": "^2.0.2",
@@ -46,6 +47,7 @@
     "uuid": "^11.0.3"
   },
   "devDependencies": {
+    "@types/amqplib": "^0.10.6",
     "@types/bcryptjs": "^2.4.6",
     "@types/jsonwebtoken": "^9.0.7",
     "@types/node": "^20.4.5",

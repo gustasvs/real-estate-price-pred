@@ -1,3 +1,5 @@
 pytorch
 transformers
 torchvision
+amqp
+minio
