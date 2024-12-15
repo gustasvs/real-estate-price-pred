@@ -51,7 +51,7 @@ const ResidenceObjectForm = ({
 
   const [form] = Form.useForm();
 
-  const [parkingAvailable, setParkingAvailable] = useState(residence?.parkingCount || false);
+  const [parkingAvailable, setParkingAvailable] = useState(residence?.parkingCount || 0);
 
   const props: UploadProps = {
     name: "file",
@@ -82,20 +82,23 @@ const ResidenceObjectForm = ({
     },
   };
 
-  form.setFieldsValue(residence);
-  interface ObjectData {
-    name: string;
-    id: string;
-    description: string;
-    pictures: string[];
-    groupId: string;
-    createdAt: Date;
-    updatedAt: Date;
-    address: string;
-  }
+  useEffect(() => {
+    if (residence) {
+      form.setFieldsValue(residence);
+    }
+  }, [residence]);
+  
 
   const handleSubmit = async (values: any) => {
     console.log("Received values of form: ", values);
+
+    const processedValues = {
+      ...values,
+      bathroomCount: Number(values.bathroomCount),
+      bedroomCount: Number(values.bedroomCount),
+      area: Number(values.area),
+      price: Number(values.price),
+    };
 
     const submitFunction =
       objectId !== "new"
@@ -190,7 +193,7 @@ const ResidenceObjectForm = ({
       const idToUse = objectId === "new" ? groupId : objectId;
 
       const res = await submitFunction(idToUse as string, {
-        ...values,
+        ...processedValues,
         pictures,
       });
 
@@ -357,8 +360,8 @@ const ResidenceObjectForm = ({
                 rules={[
                   {
                     required: true,
-                    message:
-                      "Please input the number of bathrooms!",
+                    message: "Please input the number of bathrooms!",
+                    transform: (value) => (value ? Number(value) : value),
                   },
                 ]}
               >
@@ -368,6 +371,7 @@ const ResidenceObjectForm = ({
                   label="Vannas istabu skaits"
                   variant="outlined"
                   defaultValue={residence?.bathroomCount}
+                  type="number"
                   placeholder="Ievadiet vannas istabu skaitu"
                 />
               </Form.Item>
@@ -397,13 +401,11 @@ const ResidenceObjectForm = ({
                     cursor: "pointer",
                   }}
                   onClick={() => {
-                    form.setFieldsValue({
-                      parkingCount: Boolean(!form.getFieldValue(
-                        "parkingCount"
-                      )),
+                    setParkingAvailable((prev: number) => {
+                      form.setFieldsValue({ parkingCount: prev ? 0 : 1 });
+                      return prev ? 0 : 1;
                     });
-                  }
-                  }
+                  }}
                 >
                   <label
                     style={{
@@ -420,7 +422,7 @@ const ResidenceObjectForm = ({
                     className={`${styles[`parking-icon`]} ${
                       styles[
                         `${
-                          form.getFieldValue("parkingCount")
+                          parkingAvailable
                             ? "parking-available"
                             : "parking-unavailable"
                         }`
@@ -461,6 +463,7 @@ const ResidenceObjectForm = ({
             getValueFromEvent={normFile}
             //   extra="Upload pictures of the real estate object"
           >
+            {/* <MemoizedDragger {...props} /> */}
             <Dragger {...props}>
               <p className={styles["upload-drag-icon"]}>
                 <InboxOutlined />
@@ -479,6 +482,7 @@ const ResidenceObjectForm = ({
                {" "}Publiskotās bildes tiek automātiski uzskatītas kā publisks īpašums. Uzmanies, lai tajās nebūtu tava personīgā informācija!
               </p>
             </Dragger>
+
           </Form.Item>
         </Col>
       </Row>
@@ -489,7 +493,7 @@ const ResidenceObjectForm = ({
           onClick={() => router.push(`/groups/${groupId}`)}
           className={styles["cancel-button"]}
         >
-          {objectId !== "new" ? "Atcelt izmaiņas un atgriezties uz grupu" : "Atcelt izveidi un atgriezties uz grupu"}
+          {objectId !== "new" ? "Atgriezties uz grupu" : "Atcelt izveidi un atgriezties uz grupu"}
         </Button>
 
         <Button
