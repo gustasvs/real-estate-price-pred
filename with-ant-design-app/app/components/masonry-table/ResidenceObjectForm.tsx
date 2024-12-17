@@ -26,13 +26,9 @@ import {
   getObject as getObjectApi,
   updateObject as updateObjectApi,
 } from "../../../actions/groupObjects";
-import {
-  StyledNumberInput,
-  StyledSwitch,
-  StyledTextField,
-} from "../my-profile/my-profile-form/MyProfileForm";
 import { generateUploadUrl } from "../../api/generateUploadUrl";
 import { useSession } from "next-auth/react";
+import { StyledNumberInput, StyledTextField } from "../styled-mui-components/styled-components";
 
 const { Dragger } = Upload;
 

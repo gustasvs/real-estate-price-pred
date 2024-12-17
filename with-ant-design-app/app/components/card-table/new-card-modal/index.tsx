@@ -3,9 +3,9 @@
 import React, { useState } from "react";
 import { Button, Input, message, Modal, Popconfirm } from "antd";
 import styles from "./NewGroupModal.module.css";
-import { StyledTextField } from "../../my-profile/my-profile-form/MyProfileForm";
 import { CloseOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import { DeleteOutlineOutlined } from "@mui/icons-material";
+import { StyledTextField } from "../../styled-mui-components/styled-components";
 
 interface NewGroupModalProps {
   open: boolean;
@@ -107,7 +107,6 @@ const NewGroupModal: React.FC<NewGroupModalProps> = ({
         }}
       >
         <StyledTextField
-
           id="outlined-basic"
           label="Grupas nosaukums"
           variant="outlined"

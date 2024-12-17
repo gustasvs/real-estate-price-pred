@@ -68,8 +68,8 @@ const theme: ThemeConfig = {
       // itemActiveColorDisabled: "rgba(255, 255, 255, 0.25)",
       itemBg: "var(--background-light-main)",
       controlItemBgHover: "var(--text-bright)",
-      itemInputBg: "var(--background-light-main)",
-      itemLinkBg: "var(--background-light-main)",
+      itemInputBg: "var(--background-dark-main-hover)",
+      // itemLinkBg: "var(--background-light-main)",
       colorIcon: "var(--background-light-secondary)",
       colorIconHover: "var(--text-bright)",
       colorBgTextHover: "var(--text-bright)",
@@ -81,6 +81,26 @@ const theme: ThemeConfig = {
       colorTextDisabled: "var(--background-light-secondary)",
       colorBorder: "var(--background-light-main)",
       colorBgBase: "var(--background-dark-main-hover)",
+      clearBg: "var(--background-dark-main-hover)",
+      selectorBg: "var(--background-dark-main-hover)",
+      optionActiveBg: "var(--background-dark-main-hover)",
+      optionPadding: "0.5rem 1rem",
+      colorBgElevated: "var(--background-dark-secondary)",
+      optionSelectedBg: "var(--background-dark-main)",
+      optionSelectedColor: "var(--text-brighter)",
+    },
+    Switch: {
+      colorPrimary: "var(--text-bright)", // active switch background
+      colorPrimaryHover: "var(--text-brighter)", // active switch background on hover
+      
+      colorTextQuaternary: "var(--background-gray)", // inactive switch background
+      colorTextTertiary: "var(--background-dark-secondary)", // inactive switch background on hover
+
+      handleBg: "var(--background-dark-main-hover)", // switch handle background
+      handleSize: 18,
+      trackHeight: 22,
+      trackPadding: 2,
+      colorPrimaryBorder: "var(--background-light-main)",
     }
     
   },

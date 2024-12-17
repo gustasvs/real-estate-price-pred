@@ -1,0 +1,102 @@
+
+.content-description-action {
+    display: flex;
+    /* gap: 0.5em; */
+    border-radius: 5px;
+    background-color: transparent;
+    color: var(--background-dark-secondary);
+    outline: 2px solid var(--background-dark-main);
+    padding: 0.5em 1em;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    height: 2em;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+.content-description-action:active {
+    transform: scale(0.95);
+}
+
+
+.content-description-action-favourite svg,
+.content-description-action-edit svg {
+    width: 20px;
+    height: 20px;
+}
+
+.content-description-action-favourite-active svg {
+    color: var(--background-favourite);
+}
+
+.content-description-action:hover .content-description-action-edit svg {
+    fill: var(--background-dark-main);
+}
+
+.content-description-action-delete {
+    background-color: var(--background-danger);
+}
+
+.content-description-action:hover {
+    background-color: var(--background-darkest);
+}
+.particles {
+    display: flex;
+    position: absolute;
+    z-index: 90;
+}
+
+.shape {
+	position: absolute;
+	width: 50px;
+	height: 50px;
+	transform: scale(0.8);
+    pointer-events: none;
+}
+.cir {
+	position: absolute;
+	border-radius: 50%;
+	z-index: 5;
+}
+.btn-contain {
+	width: 200px;
+	height: 100px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.btn {
+	position: relative;
+	
+    top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	border-radius: 4px;
+	background: #333;
+	text-align: center;
+	z-index: 10;
+	transition: 0.2s;
+	cursor: pointer;
+	color: #fff;
+	box-shadow: 0px 1px 5px 2px #BFCEEF;
+}
+.btn:active, .btn:hover, .btn:focus {
+	outline: none !important;
+	color: white;
+} 
+.btn-particles {
+	width: 100px;
+	height: 100px;
+	position: absolute;
+	border-radius: 50%;
+	color: #eee;
+	font-family: monospace;
+	z-index: 60;
+/* 	filter: url(#gooeyness); */
+}
+.btn:active {
+	transform: scale(0.9) translate(-55%, -55%);
+}

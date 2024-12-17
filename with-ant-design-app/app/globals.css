@@ -97,3 +97,11 @@ body {
 .ant-pagination-item-link:hover {
   background-color: var(--background-dark-secondary) !important;
 }
+
+.ant-form legend {
+  width: unset !important;
+}
+
+.ant-select-arrow svg {
+  color: var(--text-brighter);
+}

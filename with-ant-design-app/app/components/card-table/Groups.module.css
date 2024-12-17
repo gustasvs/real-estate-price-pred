@@ -12,6 +12,20 @@
   ); */
   border-radius: 10px;
 }
+.groups-page-empty {
+  background: transparent;
+  display: flex;
+  justify-content: center;
+}
+
+.card-table-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1em;
+  padding: 1em;
+}
 
 
 /* From Uiverse.io by gharsh11032000 */
@@ -29,7 +43,7 @@
 
 .card-add .content {
   background: var(--group-secondary);
-  border: var(--group-main) 5px solid;
+  outline: var(--group-main) 5px solid;
   padding: 36px;
 }
 
@@ -98,7 +112,7 @@
 
 .card-content-image {
   width: 280px;
-  height: 280px;
+  height: 380px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -325,4 +339,45 @@
 .created-at {
   font-size: .8rem;
   color: var(--background-light-main);
+}
+
+.card-table-footer {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1em;
+}
+
+.add-group-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
+  width: fit-content;
+  height: 100%;
+  padding: 1rem;
+  border-radius: 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--background-dark-main);
+}
+
+.add-group-button svg {
+  color: var(--background-dark-main);
+}
+
+.empty-groups {
+  /* image customised, but original credit to: */
+  /* https://dribbble.com/shots/5573953-Nothing-Found-Illustration */
+  background: url('/empty-table.svg') no-repeat center;
+  background-size: contain;
+  display: flex;
+  height: 50vh;
+  width: 50%;
+  margin: 0 auto;
+  /* height: auto */
+  filter: invert(100%) sepia(0%) saturate(7199%) hue-rotate(191deg) brightness(90%) contrast(93%);
 }

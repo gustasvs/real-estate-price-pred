@@ -30,14 +30,34 @@ const PageFooter = () => {
           {/* <InstagramOutlined
               className={styles["footer-social-icon"]}
             /> */}
-          <YoutubeOutlined
+          {/* <YoutubeOutlined
             className={styles["footer-social-icon"]}
-          />
+            onClick={() => {
+              window.open(
+                "https://www.youtube.com/c/gustasvs",
+              );
+            }
+            }
+          /> */}
           <XOutlined
             className={styles["footer-social-icon"]}
+            // onClick={() => {
+            //   "use client";
+            //   window.open(
+            //     "https://x.com/gustasvs",	
+            //   );
+            // }
+            // }
           />
           <GithubOutlined
             className={styles["footer-social-icon"]}
+            // onClick={() => {
+            //   "use client";
+            //   window.open(
+            //     "https://github.com/gustasvs",
+            //   );
+            // }
+            // }
           />
         </div>
       </Divider>

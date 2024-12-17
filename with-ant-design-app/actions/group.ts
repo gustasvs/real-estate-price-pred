@@ -39,8 +39,23 @@ export const getGroups = async (filter: any) => {
 
   const filterGroupName = filter?.groupName || "";
 
+  const page = Number.isInteger(parseInt(filter?.page)) ? parseInt(filter?.page) : 1;
+  const pageSize = Number.isInteger(parseInt(filter?.pageSize)) ? parseInt(filter?.pageSize) : 6;
+  const offset = (page - 1) * pageSize;
+
+  console.log("Filter:", filter);
+
   try {
     const groups = await db.residenceGroup.findMany({
+      where: { 
+      userId: userId,
+      name: { contains: filterGroupName, mode: "insensitive" },
+      },
+      skip: offset,
+      take: pageSize,
+    });
+
+    const total = await db.residenceGroup.count({
       where: { 
         userId: userId,
         name: { contains: filterGroupName, mode: "insensitive" },
@@ -56,10 +71,10 @@ export const getGroups = async (filter: any) => {
       })
     );
     
-    return groupsWithResidenceCount;
+    return { groups: groupsWithResidenceCount, total, error: null };
   } catch (error) { 
     console.error("Error getting groups:", error);
-    return { error: "Failed to get groups" };
+    return { groups: [], total: 0, error: "Failed to get groups" };
   }
 };
 

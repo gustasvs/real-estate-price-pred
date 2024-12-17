@@ -21,157 +21,17 @@ import {
 } from "antd";
 
 import styles from "./MyProfileForm.module.css";
-import UserIcon from "../../user-icon/UserIcon";
 import { EditOutlined, QuestionCircleOutlined, UploadOutlined } from "@ant-design/icons";
-import { MDCTextField } from "@material/textfield";
-
-import InputLabel from "../../input-fields/InputFields";
-import { Slider, styled, TextField } from "@mui/material";
+import { InputLabel, Slider } from "@mui/material";
 
 import AvatarEditor from 'react-avatar-editor'
-import Dropzone from 'react-dropzone'
-import { profile } from "console";
-import { saveImageOnCloud } from "../../../../actions/cloud_storage_helpers";
 import { generateUploadUrl } from "../../../api/generateUploadUrl";
 import { generateDownloadUrl } from "../../../api/generateDownloadUrl";
 
 
-
-export const StyledTextField = styled(TextField)({
-
-  '& .MuiTextField-root': {
-    // margin: '1em 0',
-    width: '100%',
-  },
-
-  '& .MuiInputBase-root': {
-    backgroundColor: "var(--background-dark-main-hover)",
-  },
-
-  '& label': {
-    color: "var(--background-light-main)",
-  },
-
-  '& input': {
-    color: "white",
-  },
-
-  '& label.Mui-focused': {
-    color: "var(--background-light-main)",
-  },
-  '& .MuiInput-underline:after': {
-    borderBottomColor: '#B2BAC2',
-  },
-  '& .MuiOutlinedInput-root': {
-    borderRadius: '1em',
-    '& fieldset': {
-      borderColor: '#E0E3E7',
-    },
-    '&:hover fieldset': {
-      borderColor: '#B2BAC2',
-    },
-    '&.Mui-focused fieldset': {
-      borderColor: '#6F7E8C',
-    },
-    // Error state
-    '&.Mui-error fieldset': {
-      borderColor: 'red', // Red border for error state
-    },
-    '&.Mui-error:hover fieldset': {
-      borderColor: 'darkred', // Darker red border on hover in error state
-    },
-    '&.Mui-error.Mui-focused fieldset': {
-      borderColor: 'darkred', // Darker red border when focused in error state
-    },
-  },
-  // palceholder color
-  '& .MuiOutlinedInput-input': {
-    color: "var(--text-brighter)",
-  },
-
-  '&.Mui-error fieldset': {
-    borderColor: 'red', // This line adds the red border when there is an error
-  },
-
-  // helper text color
-  '& .MuiFormHelperText-root': {
-    textAlign: 'right',
-    color: "var(--background-light-main)",
-  },
-
-});
-
-export const StyledNumberInput = styled(TextField)({
-
-  '& .MuiInputBase-root': {
-    backgroundColor: "var(--background-dark-main-hover)",
-  },
-
-  '& label': {
-    color: "var(--background-light-main)",
-  },
-
-  '& input': {
-    color: "var(--background-light-secondary)",
-    MozAppearance: 'textfield', // Removes arrows in Firefox
-  },
-
-  '& input[type=number]': {
-    WebkitAppearance: 'none', // Removes arrows in Chrome
-    margin: 0, // Ensures consistency in alignment
-  },
-
-  '& label.Mui-focused': {
-    color: "var(--background-light-main)",
-  },
-
-  '& .MuiInput-underline:after': {
-    borderBottomColor: '#B2BAC2',
-  },
-
-  '& .MuiOutlinedInput-root': {
-    borderRadius: '1em',
-    '& fieldset': {
-      borderColor: '#E0E3E7',
-    },
-    '&:hover fieldset': {
-      borderColor: '#B2BAC2',
-    },
-    '&.Mui-focused fieldset': {
-      borderColor: '#6F7E8C',
-    },
-  },
-});
-
-import Switch from '@mui/material/Switch';
-import { MdWidthFull } from "react-icons/md";
-import { text } from "stream/consumers";
-
-export const StyledSwitch = styled(Switch)(({ theme }) => ({
-  '& .MuiSwitch-switchBase': {
-    color: "var(--background-light-secondary)",
-    '&:hover': {
-      backgroundColor: 'rgba(0, 0, 0, 0.1)',
-    },
-    '&.Mui-checked': {
-      color: "var(--background-light-main)",
-      '&:hover': {
-        backgroundColor: 'rgba(0, 0, 0, 0.2)',
-      },
-    },
-  },
-  '& .MuiSwitch-track': {
-    backgroundColor: '#E0E3E7',
-    opacity: 1,
-    borderRadius: 16,
-  },
-  '& .Mui-checked + .MuiSwitch-track': {
-    backgroundColor: '#6F7E8C',
-    opacity: 1,
-  },
-}));
-
-
+import ColorThemeSwitch from "../../navigation/navbar/dark-mode-switch/ColorThemeSwitch";
+import { useThemeContext } from "../../../context/ThemeContext";
+import { StyledSlider, StyledTextField } from "../../styled-mui-components/styled-components";
 
 const props: UploadProps = {
   name: "file",
@@ -197,6 +57,8 @@ const props: UploadProps = {
 const MyProfileForm = () => {
   const { data: session, status, update } = useSession();
   const router = useRouter();
+
+  const { theme, toggleTheme, fontSize, setFontSize } = useThemeContext();
 
   const [form] = Form.useForm();
 
@@ -506,11 +368,12 @@ const MyProfileForm = () => {
                 name="name"
               >
                 <StyledTextField
-                  id="outlined-basic"
+                  id="vards"
                   label="Vārds"
-                  variant="outlined"
+                  fullWidth
+                  // variant="filled"
                   defaultValue={session?.user?.name}
-                  placeholder={session?.user?.name || "Lietotāja vārds"}
+                  // placeholder={session?.user?.name || "Lietotāja vārds"}
                 />
               </Form.Item>
             </div>
@@ -598,38 +461,36 @@ const MyProfileForm = () => {
       <Divider type="vertical" style={{ borderColor: "var(--background-light-main)", height: "100%" }} />
           
       <div
-        style={{
-          width: "30%",
-          paddingLeft: "2rem",
-        }}
+        className={styles["settings-container"]}
       >
         <div className={styles["section-title"]}>Personalizācija</div>
         <Form.Item
           name="font-size"
+          className={styles["settings-item"]}
         >
-          <StyledTextField
-            id="outlined-basic"
-            label="Fonta izmērs"
-            variant="outlined"
-            // type="password"
-            onChange={(e) =>
-              setShowConfirmPassword(e.target.value.length > 0)
-            }
-            style={{ width: "100%" }}
+          <div className={styles["settings-title"]}>Fonta izmērs:</div>
+          <StyledSlider
+            defaultValue={fontSize}
+            aria-label="font-size-slider"
+            onChange={(event, value) => {
+              if (typeof value === 'number') {
+                setFontSize(value);
+              }
+            }}
+            valueLabelDisplay="on"
+            step={1}
+            min={12}
+            max={26}
           />
         </Form.Item>
         <Form.Item
-          name="font-size"
+          name="color-theme"
+          className={styles["settings-item"]}
         >
-          <StyledTextField
-            id="outlined-basic"
-            label="Fonta izmērs"
-            variant="outlined"
-            // type="password"
-            onChange={(e) =>
-              setShowConfirmPassword(e.target.value.length > 0)
-            }
-            style={{ width: "100%" }}
+          <div className={styles["settings-title"]}>Gaišais vai tumšais režīms:</div>
+          <ColorThemeSwitch
+            currentTheme={theme}
+            setCurrentTheme={toggleTheme}
           />
         </Form.Item>
       </div>

@@ -2,8 +2,6 @@
 
 import {
   EditOutlined,
-  HeartFilled,
-  HeartOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
@@ -15,10 +13,9 @@ import {
 import { IoBedOutline } from "react-icons/io5";
 import { FaCarSide } from "react-icons/fa";
 import {
-  Row,
-  Col,
   Divider,
   Button,
+  Switch,
 } from "antd";
 
 import { IoMdArrowRoundUp } from "react-icons/io";
@@ -36,8 +33,20 @@ import {
   updateObject as updateObjectApi,
 } from "../../../actions/groupObjects";
 import { useSession } from "next-auth/react";
-import { IconButton, Tooltip } from "@mui/material";
+import { Tooltip } from "@mui/material";
 import SearchInput from "../search-input/SearchInput";
+
+import FavouriteButton from "./FavouriteButton";
+import { StyledIconButton } from "../styled-mui-components/styled-components";
+
+export const getPlural = (count: number, singular: string, plural: string) => {
+  // count ends in 1, but not 11
+  if (count % 10 === 1 && count % 100 !== 11) {
+    return singular;
+  }
+  return plural;
+}
+
 
 const MasonryTable = ({
   group_id,
@@ -60,6 +69,8 @@ const MasonryTable = ({
 
   const { data: session, status, update } = useSession();
 
+  const [localObjects, setLocalObjects] = useState(objects);
+
   const deleteObject = async (id: string) => {
     const result = await deleteObjectApi(id);
     // await fetchObjects();
@@ -72,16 +83,29 @@ const MasonryTable = ({
     if (!object) {
       return;
     }
-    const updatedObject = await updateObjectApi(id, {
-      favourite: !object.favourite,
+
+    // lets assume it will be set successfully
+    setLocalObjects((prev) => {
+      return prev.map((obj) => {
+        if (obj.id === id) {
+          return {
+            ...obj,
+            favourite: !obj.favourite,
+          };
+        }
+        return obj;
+      });
     });
 
-    // revalidateDataFunction();
-    // await fetchObjects();
+    updateObjectApi(id, {
+      favourite: !object.favourite,
+    });
   };
 
   const [openedDescriptions, setOpenedDescriptions] =
     useState<{ [key: number]: boolean }>({});
+
+  const [compactMode, setCompactMode] = useState(false);
 
   const toggleDescription = (id: number) => {
     setOpenedDescriptions((prev) => ({
@@ -92,46 +116,61 @@ const MasonryTable = ({
 
   const handleAddButtonClick = () => {
     if (group_id === "favourites") {
-      router.push(`/groups/${objects[0].groupId}/new`);
+      router.push(`/groups`);
     } else {
       router.push(`/groups/${group_id}/new`);
     }
   };
 
-  const animateAndSort = () => {
+  const fadeOut = (element: HTMLElement | null, fadeCompletely: boolean) => {
+    if (!element) {
+      return;
+    }
+
+    const randomX = 10 * (Math.random() > 0.5 ? 1 : -1);
+    const randomY = 10 * (Math.random() > 0.5 ? 1 : -1);
+
+    element.style.transition = fadeCompletely
+      ? `all 0.1s ease-out` // Fast transition when fading completely
+      : `all 0.48s cubic-bezier(0.23, 1, 0.32, 1)`;
+    element.style.opacity = fadeCompletely ? "0" : "0.5";
+    element.style.transform = `translate(${randomX}px, ${randomY}px)`;
+  };
+
+  const fadeIn = (element: HTMLElement | null) => {
+    if (!element) {
+      return;
+    }
+    element.style.transition = `all 0.48s cubic-bezier(0.23, 1, 0.32, 1)`;
+    element.style.opacity = "1"; // Fade in after delay
+    element.style.transform = "translate(0, 0)";
+  };
+
+  const animateAndSort = (event: any, fadeCompletely: boolean = false) => {
     objects.forEach((object) => {
-      const element = document.getElementById(
-        `item-${object.id}`
-      );
-      if (element) {
-        const randomX = 10 * (Math.random() > 0.5 ? 1 : -1);
-        const randomY = 10 * (Math.random() > 0.5 ? 1 : -1);
-        element.style.transition =
-          "all 0.48s cubic-bezier(0.23, 1, 0.32, 1)";
-        element.style.opacity = "0.5";
-        element.style.transform = `translate(${randomX}px, ${randomY}px)`;
-      }
+      const element = document.getElementById(`item-${object.id}`);
+      fadeOut(element, fadeCompletely);
     });
+    fadeOut(document.getElementById(`item-add`), fadeCompletely);
+
+    // Set delay before reappearing
+    const hiddenDuration = fadeCompletely ? 100 : 0; // Stay hidden for 1 second if fadeCompletely is true
 
     setTimeout(() => {
       const randomOrder = [...objects];
       randomOrder.sort(() => Math.random() - 0.5);
       // setObjects(randomOrder);
+
       setTimeout(() => {
         objects.forEach((object) => {
-          const element = document.getElementById(
-            `item-${object.id}`
-          );
-          if (element) {
-            element.style.transition =
-              "all 0.48s cubic-bezier(0.23, 1, 0.32, 1)";
-            element.style.opacity = "1"; // Fade in
-            element.style.transform = "translate(0, 0)";
-          }
+          const element = document.getElementById(`item-${object.id}`);
+          fadeIn(element);
         });
-      }, 10);
-    }, 300);
+        fadeIn(document.getElementById(`item-add`));
+      }, hiddenDuration); // Wait before reappearing
+    }, 500); // Delay for sorting
   };
+
 
   const distributeItems = (
     items: any[],
@@ -158,7 +197,8 @@ const MasonryTable = ({
   const rowPattern = [2, 3, 2];
   const addItemPlaceholder = { id: null }; // Define the placeholder
   const itemsWithPlaceholder = [
-    ...objects,
+    // ...objects,
+    ...localObjects,
     addItemPlaceholder,
   ]; // Append the placeholder
   const rowItemsWithAddItem = distributeItems(
@@ -179,56 +219,70 @@ const MasonryTable = ({
     );
   }
 
-  const getPlural = (count: number, singular: string, plural: string) => {
-    // count ends in 1, but not 11
-    if (count % 10 === 1 && count % 100 !== 11) {
-      return singular;
-    }
-    return plural;
-  }
-
   return (
     <div className={styles["masonry-table-container"]}>
-      {/* <Divider style={{
-        borderColor: "var(--background-light-secondary)",
-      }}/> */}
       <div className={styles["masonry-table-header"]}>
-      <SearchInput 
-      style={{
-        marginTop: "0",
-        width: "100%",
-      }}
-      placeholder="Meklēt objektu pēc tā nosaukuma..." onChange={(e: any) => {
-        const value = e.target.value;
+        <SearchInput
+          style={{
+            marginTop: "0",
+            width: "100%",
+          }}
+          placeholder="Meklēt objektu pēc tā nosaukuma..." onChange={(e: any) => {
+            const value = e.target.value;
 
-        const params = new URLSearchParams(searchParams);
-        if (value) {
-          params.set('residenceName', value);
-        } else {
-          params.delete('residenceName');
-        }
+            const params = new URLSearchParams(searchParams);
+            if (value) {
+              params.set('residenceName', value);
+            } else {
+              params.delete('residenceName');
+            }
 
-        router.replace(`?${params.toString()}`, { scroll: false });
-      }
-      } />
-      <Button 
-      className={styles["sort-button"]}
-        onClick={animateAndSort}
-      > 
-        Kārtot pēc datuma
-      </Button>
-      <Button 
-      className={styles["sort-button"]}
-        onClick={animateAndSort}
-      > 
-        Kārtot pēc cenas
-      </Button>
-      <Button 
-      className={styles["sort-button"]}
-        onClick={animateAndSort}
-      > 
-        Kārtot pēc izdevīguma
-      </Button>
+            router.replace(`?${params.toString()}`, { scroll: false });
+          }
+          } />
+        <Button
+          className={styles["sort-button"]}
+          onClick={animateAndSort}
+        >
+          Kārtot pēc datuma
+        </Button>
+        <Button
+          className={styles["sort-button"]}
+          onClick={animateAndSort}
+        >
+          Kārtot pēc cenas
+        </Button>
+        <div style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexDirection: "row",
+          gap: "1rem",
+          color: "var(--background-light-main)",
+          backgroundColor: "var(--background-dark-main-hover)",
+          border: "1px solid var(--background-light-secondary)",
+          borderRadius: "1em",
+          padding: "0 1rem",
+        }}>
+          <span
+            style={{
+              width: "fit-content",
+              display: "flex",
+              whiteSpace: "nowrap",
+              fontSize: ".8rem",
+              fontWeight: "600",
+            }}
+          >Kompaktais režīms:</span>
+          <Switch
+            // color="primary"
+            className={styles["sort-switch"]}
+            checked={compactMode}
+            onChange={(changed) => {
+              animateAndSort(null, true);
+              setCompactMode(changed);
+            }} />
+        </div>
+
       </div>
       <div
         style={{ width: "90%", margin: "0 auto" }}
@@ -241,26 +295,28 @@ const MasonryTable = ({
 
         {rowItemsWithAddItem.map((itemsInRow, rowIndex) => (
           <div
-          key={`row-${rowIndex}`}
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: "3rem",
-            justifyContent: "space-between",
-            marginBottom: "3rem",
-            width: "100%",
-          }}
-        >
+            key={`row-${rowIndex}`}
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: "3rem",
+              justifyContent: "space-between",
+              marginBottom: "3rem",
+              width: "100%",
+            }}
+          >
             {itemsInRow.map((item, itemIndex) => (
               <div
-              className={styles["content-wrapper"]}
-              style={{
-                flex: "40%",
-              }}
-              key={`item-${item.id}`}
-            >
+                className={`${styles["content-wrapper"]} ${!compactMode ? styles["content-wrapper-not-compact"] : ""}`}
+                style={{
+                  // flex: "40%",
+                  flex: compactMode ? "40%" : "100%",
+                }}
+                key={`item-${item.id || "add"}`}
+              >
                 {item.id === null ? (
                   <div
+                    id="item-add"
                     onClick={handleAddButtonClick}
                     className={`${styles["content"]} ${styles["content-add"]}`}
                   >
@@ -287,7 +343,7 @@ const MasonryTable = ({
                 ) : (
                   <div
                     id={`item-${item.id}`}
-                    className={styles["content"]}
+                    className={`${styles["content"]} ${!compactMode ? styles["content-not-compact"] : ""}`}
                     key={item.id}
                   >
                     {Boolean(
@@ -363,38 +419,50 @@ const MasonryTable = ({
                       )}
 
                     {/* TITLE */}
-                    <div
-                      className={
-                        styles["content-title-wrapper"]
-                      }
-                    >
+                    {compactMode ? (
+                      <div
+                        className={
+                          styles["content-title-wrapper"]
+                        }
+                      >
+                        <span
+                          className={`${styles["content-title-name"]
+                            } ${item.pictures &&
+                              Array.isArray(item.pictures) &&
+                              item.pictures.length
+                              ? ""
+                              : styles[
+                              "content-title-name-without-images"
+                              ]
+                            }`}
+                        >
+                          {item.name}
+                        </span>
+                      </div>
+                    ) : (
                       <span
                         className={`${styles["content-title-name"]
-                          } ${item.pictures &&
-                            Array.isArray(item.pictures) &&
-                            item.pictures.length
-                            ? ""
-                            : styles[
-                            "content-title-name-without-images"
-                            ]
-                          }`}
+                          } ${styles["content-title-name-not-compact"]}`}
                       >
                         {item.name}
                       </span>
-                    </div>
+                    )
+                    }
 
                     {/* DESCRIPTION */}
 
                     <div
-                      className={
-                        styles[
-                        "content-description-wrapper"
-                        ]
-                      }
+                      className={`${styles["content-description-wrapper"]} ${!compactMode
+                          ? styles["content-description-wrapper-not-compact"]
+                          : ""
+                        }`}
                     >
                       <div
                         className={
-                          styles["content-description"]
+                          `${styles["content-description"]} ${!compactMode
+                            ? styles["content-description-not-compact"]
+                            : ""
+                          }`
                         }
                       >
                         {/* Header */}
@@ -492,17 +560,17 @@ const MasonryTable = ({
                                     <>{item.predictedPrice} €</>
                                   ) : (
                                     <>
-                                    
-                                    <Tooltip title={
-                                      "Cena šim objektam vēl tiek aprēķināta. Lūdzu, uzgaidiet."
-                                    }>
-                                      <IconButton>
-                                        <QuestionMarkIcon style={{
-                                          padding: "0",
-                                          height: "1.1rem",
-                                        }}/>
-                                      </IconButton>
-                                    </Tooltip>
+
+                                      <Tooltip title={
+                                        "Cena šim objektam vēl tiek aprēķināta. Lūdzu, uzgaidiet."
+                                      }>
+                                        <StyledIconButton>
+                                          <QuestionMarkIcon style={{
+                                            padding: "0",
+                                            height: "1.1rem",
+                                          }} />
+                                        </StyledIconButton>
+                                      </Tooltip>
                                       {/* <Loader style={{
                                         height: "1.1rem",
                                         display: "flex", 
@@ -510,8 +578,8 @@ const MasonryTable = ({
                                         width: "4rem",
                                       }} /> */}
                                     </>
-                                    )
-                                    }
+                                  )
+                                  }
                                 </span>
                                 {Boolean(item.predictedPrice) && (
                                   <>
@@ -530,40 +598,35 @@ const MasonryTable = ({
                           </div>
                         </div>
 
-                        <div
-                          className={
-                            styles[
-                            "content-description-toggle"
-                            ]
-                          }
-                          onClick={() =>
-                            toggleDescription(item.id)
-                          }
-                        >
-                          <FaChevronDown
+                        {compactMode && (
+                          <div
                             className={
-                              openedDescriptions[item.id]
-                                ? styles["icon-open"]
-                                : ""
+                              styles[
+                              "content-description-toggle"
+                              ]
                             }
-                          />
-                          <span>
-                            {openedDescriptions[item.id]
-                              ? "Detalizēta informācija"
-                              : "Detalizēta informācija"}
-                          </span>
-                        </div>
+                            onClick={() =>
+                              toggleDescription(item.id)
+                            }
+                          >
+                            <FaChevronDown
+                              className={
+                                openedDescriptions[item.id]
+                                  ? styles["icon-open"]
+                                  : ""
+                              }
+                            />
+                            <span>
+                              {openedDescriptions[item.id]
+                                ? "Detalizēta informācija"
+                                : "Detalizēta informācija"}
+                            </span>
+                          </div>
+                        )}
 
                         {/* Details list */}
                         <div
-                          className={
-                            styles[
-                            "content-description-list"
-                            ] +
-                            (openedDescriptions[item.id]
-                              ? ""
-                              : ` ${styles["content-description-list-closed"]}`)
-                          }
+                          className={`${styles["content-description-list"]} ${!openedDescriptions[item.id] && compactMode && styles["content-description-list-closed"]}`}
                         >
                           <li
                             className={
@@ -653,14 +716,7 @@ const MasonryTable = ({
 
                         {/* Footer */}
                         <div
-                          className={
-                            styles[
-                            "content-description-footer"
-                            ] +
-                            (openedDescriptions[item.id]
-                              ? ""
-                              : ` ${styles["content-description-footer-closed"]}`)
-                          }
+                          className={`${styles["content-description-footer"]} ${!openedDescriptions[item.id] && compactMode && styles["content-description-footer-closed"]}`}
                         >
                           <div
                             className={
@@ -678,7 +734,7 @@ const MasonryTable = ({
                             >
                               <IoBedOutline />
                               <span>
-                                {`${item.bedroomCount ?? "-"} ${getPlural(item.bedroomCount, "Gulta", "Gultas")}`}
+                                {`${item.bedroomCount ?? "-"} ${getPlural(item.bedroomCount, "Guļamistaba", "Guļamistabas")}`}
                               </span>
                             </div>
                             <div
@@ -713,31 +769,14 @@ const MasonryTable = ({
                               ]
                             }
                           >
-                            <div
+                            <FavouriteButton
+                              favourite={item.favourite}
                               onClick={(e) => {
                                 e.stopPropagation();
                                 e.preventDefault();
                                 onCardFavorite(item.id);
                               }}
-                              className={`${styles[
-                                "content-description-action"
-                              ]
-                                } ${styles[
-                                "content-description-action-favourite"
-                                ]
-                                } ${item.favourite
-                                  ? styles[
-                                  "content-description-action-favourite-active"
-                                  ]
-                                  : ""
-                                }`}
-                            >
-                              {item.favourite ? (
-                                <HeartFilled />
-                              ) : (
-                                <HeartOutlined />
-                              )}
-                            </div>
+                            />
                             <div
                               onClick={() =>
                                 router.push(

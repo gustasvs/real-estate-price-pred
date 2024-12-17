@@ -9,19 +9,18 @@ import {
   Col,
   Space,
   Pagination,
+  Button,
 } from "antd";
 
 import styles from "./Groups.module.css";
 import { useRouter, useSearchParams } from "next/navigation";
 import NewGroupModal from "./new-card-modal";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { BiBuildings, BiLeftArrow } from "react-icons/bi";
 import { useSession } from "next-auth/react";
-import { StyledTextField } from "../my-profile/my-profile-form/MyProfileForm";
-import { InputAdornment } from "@mui/material";
-import { Search } from "@mui/icons-material";
-import { FaArrowLeft } from "react-icons/fa6";
 import SearchInput from "../search-input/SearchInput";
+import { getPlural } from "../masonry-table";
+import CustomPagination from "../pagination/CustomPagination";
 
 const CardTable = ({
   columnCount,
@@ -29,9 +28,11 @@ const CardTable = ({
   deleteGroup = () => { },
   createGroup = () => { },
   updateGroup = () => { },
+  total = 0,
 }: {
   columnCount: number;
   groups: any[];
+  total: number;
   deleteGroup: (id: string) => void;
   createGroup: (groupName: string) => void;
   updateGroup: (
@@ -86,41 +87,78 @@ const CardTable = ({
           setNewGroupModalVisible(false);
         }}
       />
-      <SearchInput 
-        placeholder="Meklēt grupu pēc tās nosaukuma..." 
-        
-        onChange={(e: any) => {
-          const value = e.target.value;
-          // setSearchQuery(value);
+      <div className={styles["card-table-header"]}>
+        <SearchInput
+          placeholder="Meklēt grupu pēc tās nosaukuma..."
 
-          const params = new URLSearchParams(searchParams);
-          if (value) {
-            params.set('groupName', value);
-          } else {
-            params.delete('groupName');
-          }
+          defaultValue={searchParams.get('groupName') || ''}
+          style={{ marginTop: 0, marginBottom: 0, width: "100%" }}
 
-          router.replace(`?${params.toString()}`, { scroll: false });
-        }} 
-      />
+          onChange={(e: any) => {
+            const value = e.target.value;
+            // setSearchQuery(value);
+
+            const params = new URLSearchParams(searchParams);
+            if (value) {
+              params.set('groupName', value);
+            } else {
+              params.delete('groupName');
+            }
+
+            router.replace(`?${params.toString()}`, { scroll: false });
+          }}
+        />
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={handleAddButtonClick}
+          className={styles["add-group-button"]}
+        >
+          Pievienot jaunu grupu
+        </Button>
+      </div>
       <div
         style={{
           display: "flex",
           justifyContent: "center",
         }}
-        className={styles["groups-page"]}
+        className={`${styles["groups-page"]} ${groups.length === 0 ? styles["groups-page-empty"] : ""}`}
       >
-
-        <Row
-          gutter={rowGutter}
-          style={{
-            width: columnCount < 4 ? "90%" : "100%",
-            marginTop: 60,
-            marginBottom: 60,
-            // justifyContent: "space-between",
-          }}
-        >
-          <Col
+        {groups.length === 0 ? (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              width: "100%",
+            }}
+          >
+            <div
+              className={styles["empty-groups"]}
+            >
+            </div>
+            <span
+              style={{
+                color: "var(--background-light-main)",
+                fontSize: "1.5rem",
+                margin: "1rem",
+              }}
+            >
+              Nav atrasta neviena grupa
+            </span>
+          </div>
+        ) :
+          (
+            <Row
+              gutter={rowGutter}
+              style={{
+                width: columnCount < 4 ? "90%" : "100%",
+                marginTop: 60,
+                marginBottom: 60,
+                // justifyContent: "space-between",
+              }}
+            >
+              {/* <Col
             span={colSpan}
             style={{
               display: "flex",
@@ -140,142 +178,130 @@ const CardTable = ({
                     height={200}
                   />
                 </div>
-                <span
-                        className={
-                          styles[
-                          "card-content-title-text-name"
-                          ]
-                        }
-                      >
-                  {"Pievienot jaunu grupu"}
-                </span>
+                <div
+                  className={
+                    styles[
+                    "card-content-title"
+                    ]
+                  }
+                >
+                  <span className={
+                    styles[
+                    "card-content-title-text-name"
+                    ]
+                  }>
+                    {"Pievienot jaunu grupu"}
+                  </span>
+                </div>
               </div>
             </div>
-          </Col>
-          {groups.map((group, index) => (
-            <Col
-              span={colSpan}
-              key={index}
-              style={{
-                display: "flex",
-                justifyContent: "space-evenly",
-              }}
-            >
-              <div
-                className={styles["card"]}
-                onClick={() => {
-                  router.push(`/groups/${group.id}`);
-                }}
-                ref={cardRef}
-              >
-                <div
-                  className={styles["edit-group-dropdown"]}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setEditGroupId(group.id);
-                    setEditGroupName(group.name);
-                    setNewGroupModalVisible(true);
+          </Col> */}
+
+              {groups.map((group, index) => (
+                <Col
+                  span={colSpan}
+                  key={index}
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-evenly",
                   }}
                 >
-                  <Space>
-                    <EditOutlined />
-                  </Space>
-                </div>
-                <div className={styles["content"]}>
-                  {/* <Image
+                  <div
+                    className={styles["card"]}
+                    onClick={() => {
+                      router.push(`/groups/${group.id}`);
+                    }}
+                    ref={cardRef}
+                  >
+                    <div
+                      className={styles["edit-group-dropdown"]}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setEditGroupId(group.id);
+                        setEditGroupName(group.name);
+                        setNewGroupModalVisible(true);
+                      }}
+                    >
+                      <Space>
+                        <EditOutlined />
+                      </Space>
+                    </div>
+                    <div className={styles["content"]}>
+                      {/* <Image
                     src={group.imageUrl}
                     alt={""}
                     width={200}
                     height={200}
                   /> */}
-                  <div
-                    style={{
-                      background: `url(${group.imageUrl})`,
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                      width: "280px",
-                      height: "380px",
-                      borderRadius: "10px",
-                    }}
-                  ></div>
-                  <div
-                    className={styles["card-content-title"]}
-                  >
-                    <div
-                      className={
-                        styles["card-content-title-text"]
-                      }
-                    >
-                      <span
-                        className={
-                          styles[
-                          "card-content-title-text-name"
-                          ]
-                        }
-                      >{group.name}</span>
-                      <span
-                        className={
-                          styles[
-                          "card-content-title-object-count"
-                          ]
-                        }
+                      <div
+                        style={{
+                          background: `url(${group.imageUrl})`,
+                          backgroundSize: "cover",
+                          backgroundPosition: "center",
+                          width: "280px",
+                          height: "380px",
+                          borderRadius: "10px",
+                        }}
+                      ></div>
+                      <div
+                        className={styles["card-content-title"]}
                       >
-                        <span className={styles["card-content-title-object-count-span"]}>
-                          {group.residenceCount ?? 0}
+                        <div
+                          className={
+                            styles["card-content-title-text"]
+                          }
+                        >
+                          <span
+                            className={
+                              styles[
+                              "card-content-title-text-name"
+                              ]
+                            }
+                          >{group.name}</span>
+                          <span
+                            className={
+                              styles[
+                              "card-content-title-object-count"
+                              ]
+                            }
+                          >
+                            <span className={styles["card-content-title-object-count-span"]}>
+                              {group.residenceCount ?? 0}
+                            </span>
+                            <BiBuildings />
+                          </span>
+                        </div>
+                        <span className={styles["created-at"]}>
+                          Pievienota:{" "}
+                          {new Date(
+                            group.createdAt
+                          ).toLocaleDateString()}
                         </span>
-                        <BiBuildings />
-                      </span>
+                      </div>
                     </div>
-                    <span className={styles["created-at"]}>
-                      Pievienota:{" "}
-                      {new Date(
-                        group.createdAt
-                      ).toLocaleDateString()}
-                    </span>
                   </div>
-                </div>
-              </div>
-            </Col>
-          ))}
-        </Row>
+                </Col>
+              ))}
+            </Row>
+          )
+        }
       </div>
+      <div className={styles["card-table-footer"]}>
 
-      <Pagination
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            padding: "1rem",
-            // backgroundColor: "var(--background-dark-main-hover)",
-            borderRadius: "1rem",
-            margin: "1rem 0",
-            color: "var(--background-light-secondary)",
-            outline: "1px solid var(--background-light-main)",
+        <CustomPagination
+          onChange={(page, pageSize) => {
+            const params = new URLSearchParams(searchParams);
+            params.set('page', page.toString());
+            params.set('pageSize', pageSize.toString());
+            router.replace(`?${params.toString()}`, { scroll: false });
           }}
-          total={85}
-          showSizeChanger
-          selectPrefixCls="ant-select"
-          // showQuickJumper
-          showTotal={(total) => `Kopā ${total} ieraksti`}
-          
-          // itemRender={(current, type, originalElement) => {
-          //   if (type === "prev") {
-          //     return <FaArrowLeft style={{
-          //       fontSize: "1.5rem",
-          //       color: "var(--background-light-secondary)",
-          //     }} />;
-          //   }
-          //   if (type === "next") {
-          //     return <FaArrowLeft style={{
-          //       fontSize: "1.5rem",
-          //       color: "var(--background-light-secondary)",
-          //       transform: "rotate(180deg)",
-          //     }} />;
-          //   }
-          //   return originalElement;
-          // }
-          // }
+          total={total}
+          showTotal={(total) => `Kopā: ${total} ${getPlural(total, "grupa", "grupas")}`}
+          pageSizeOptions={["3", "6", "9", "12"]}
+          defaultCurrent={parseInt(searchParams.get('page') || '1')}
+          defaultPageSize={parseInt(searchParams.get('pageSize') || '6')}
         />
-
+      </div>
     </>
   );
 };

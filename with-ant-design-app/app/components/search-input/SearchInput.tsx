@@ -1,8 +1,8 @@
 "use client";
 
-import { StyledTextField } from "../my-profile/my-profile-form/MyProfileForm";
 import { InputAdornment } from "@mui/material";
 import { Search } from "@mui/icons-material";
+import { StyledTextField } from "../styled-mui-components/styled-components";
 
 
 const SearchInput = (

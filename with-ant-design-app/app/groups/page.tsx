@@ -21,17 +21,18 @@ const GroupsPage = async ({
 
   const fetchGroups = async () => {
     "use server";
-    const groups = await getGroupsApi(
+    const { groups, total, error } = await getGroupsApi(
       searchParams
     );
+    console.log("groups", groups);
     if (Array.isArray(groups)) {
-      return groups;
+      return { groups, total };
     } else {
       console.error(
         "Failed to fetch groups:",
-        groups.error
+        error
       );
-      return [];
+      return { groups: [], total: 0 }
     }
   };
 
@@ -57,7 +58,7 @@ const GroupsPage = async ({
     revalidatePath("/groups");
   };
 
-  const groups = await fetchGroups();
+  const { groups, total } = await fetchGroups();
 
   return (
     <GenericLayout>
@@ -71,6 +72,7 @@ const GroupsPage = async ({
       <CardTable
         columnCount={3}
         groups={groups}
+        total={total || 0}
         deleteGroup={deleteGroup}
         createGroup={createGroup}
         updateGroup={updateGroup}

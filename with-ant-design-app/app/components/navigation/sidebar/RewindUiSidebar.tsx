@@ -62,13 +62,7 @@ const RewindUiSidebar = () => {
       }}
     >
       <div
-        className={`${styles[`left-sidebar-collapse`]}
-      ${
-        collapsed
-          ? styles[`left-sidebar-collapse-collapsed`]
-          : ``
-      }
-      `}
+        className={`${styles[`left-sidebar-collapse`]} ${Boolean(collapsed) && styles[`left-sidebar-collapse-collapsed`]}`}
         onClick={() => toggleCollapsed()}
       >
         <MdOutlineKeyboardDoubleArrowLeft />

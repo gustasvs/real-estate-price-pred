@@ -75,7 +75,7 @@ const GroupPage = async ({
 
   console.log("group_id", group_id);
 
-  const revalidateData = async () => {
+  const revalidateData = async () => { 
     "use server";
     revalidatePath(`/groups/${group_id}`);
     // revalidateTag(group_id);

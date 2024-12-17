@@ -13,7 +13,7 @@ import { updateUserTheme } from "../../actions/user";
 
 interface ThemeContextType {
   theme: string;
-  toggleTheme: () => void;
+  toggleTheme: (newTheme: string) => void;
 
   fontSize: number;
   setFontSize: (size: number) => void;
@@ -42,6 +42,12 @@ export function ThemeProvider({
     "light"
   );
 
+  const [fontSize, setFontSizeState] = useState<number>(
+    parseInt(
+      (typeof window !== "undefined" && localStorage.getItem("fontSize")) || session?.user?.fontSize || "19"
+    )
+  );
+
   useEffect(() => {
     if (
       session?.user?.theme &&
@@ -62,6 +68,27 @@ export function ThemeProvider({
     localStorage.setItem("theme", theme);
   }, [theme]);
 
+
+    // Update font size in root element and localStorage
+    useEffect(() => {
+      document.documentElement.style.setProperty(
+        "font-size",
+        `${fontSize}px`
+      );
+      localStorage.setItem("fontSize", fontSize.toString());
+    }, [fontSize]);
+
+    const setFontSize = (size: number) => {
+
+      if (size < 12 || size > 26) return; // Optional validation
+      setFontSizeState(size);
+
+      if (session?.user) {
+        session.user.fontSize = size;
+      }
+    };
+
+
   const toggleTheme = async (newTheme: string) => {
     console.log("called theme swithc to", newTheme);
     setTheme(newTheme);
@@ -75,10 +102,6 @@ export function ThemeProvider({
     }
   };
 
-  const fontSize = 16; // Default font size
-  const setFontSize = (size: number) => {
-    // Update font size logic
-  };
 
   const sidebarPreferedOpen = true; // Default sidebar state
   const toggleSidebarPreferedOpen = () => {

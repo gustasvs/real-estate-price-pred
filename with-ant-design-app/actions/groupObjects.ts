@@ -5,6 +5,7 @@ import { db } from "../db";
 import { auth } from "../auth";
 
 import amqp from 'amqplib'
+import { revalidatePath } from "next/cache";
 
 
 // import redisClient from "../redis/redisClient";
@@ -49,6 +50,9 @@ export const getObject = async (objectId: string) => {
 
 export const getObjects = async (groupId: string, filter: any) => {
   
+
+  console.log("Filter:", filter);
+
   const session = await auth();
   if (!session) {
     return { error: "User not authenticated" };
