@@ -16,13 +16,17 @@
     /* margin-right: 3em; */
 }
 
+.text-field-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 16px;
+}
+
 .profile-image-edit {
     opacity: 1;
     position: absolute;
     top: 70px;
-    /* Adjust based on preference */
     right: 70px;
-    /* Adjust based on preference */
     z-index: 10;
     transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
@@ -191,7 +195,7 @@
 .settings-container {
     width: 30%;
     display: flex;
-    padding-left: 2rem;
+    /* padding-left: 2rem; */
     flex-direction: column;
     gap: 1em;
 }

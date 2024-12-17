@@ -158,7 +158,7 @@ const MyProfileForm = () => {
         name: session.user?.name,
         email: session.user?.email,
       });
-    
+
       setUserPicture(session.user?.image || "");
     }
   }, [session]);
@@ -171,8 +171,8 @@ const MyProfileForm = () => {
         if (sessionUserImage) {
           const downloadUrl = await generateDownloadUrl(sessionUserImage, "profile-pictures");
 
-        console.log("Download URL:", downloadUrl);
-        if (typeof downloadUrl === "object" && "error" in downloadUrl) {
+          console.log("Download URL:", downloadUrl);
+          if (typeof downloadUrl === "object" && "error" in downloadUrl) {
           } else {
             setUserPicture(downloadUrl);
           }
@@ -182,7 +182,7 @@ const MyProfileForm = () => {
       fetchUserImage();
     }
   }
-  , [session]);
+    , [session]);
 
   const [editorHovered, setEditorHovered] = useState(false);
 
@@ -212,26 +212,26 @@ const MyProfileForm = () => {
         width: "100%",
         paddingBottom: "1rem",
       }}
-      
+
     >
       <div style={{
         display: "flex",
         flexDirection: "row",
         gap: "1rem",
-        justifyContent: "center",
+        justifyContent: "space-around",
         height: "100%",
       }}>
-      <div className={styles["form-container"]}>
-        <div className={styles["profile-summary-container"]}>
-          <Form.Item
-            name="pictures"
-            valuePropName="fileList"
-            getValueFromEvent={normFile}
-          >
-            <div
-              className={styles["profile-image-container"]}
+        <div className={styles["form-container"]}>
+          <div className={styles["profile-summary-container"]}>
+            <Form.Item
+              name="pictures"
+              valuePropName="fileList"
+              getValueFromEvent={normFile}
             >
-              {editorHovered && (
+              <div
+                className={styles["profile-image-container"]}
+              >
+                {editorHovered && (
                   <div className={styles["profile-image-edit-buttons"]} >
                     <Slider
                       value={imageScale}
@@ -273,97 +273,92 @@ const MyProfileForm = () => {
                       })}
                     />
                     <div className={styles["profile-image-edit-buttons-buttons"]}>
-                    <Button 
-                      onClick={() => {
-                        setEditorHovered(false)
-                        setUserPicture(session?.user?.image || "")
-                      }}
-                    >
-                      Atcelt
-                    </Button>
-                    <Button 
-                      type="primary"
-                      onClick={() => setEditorHovered(false)}
-                    >
-                      Apstiprināt
-                    </Button>
-                    <Popover
-                      placement="top"
-                      content={(
-                        <span className={styles["profile-image-edit-buttons-info-text"]}>
-                          Šī poga tikai apstiprina jaunās bildes novietojumu. Saglabāt var nospiežot "Saglabāt izmaiņas" pogu.
-                        </span>
-                      )} 
+                      <Button
+                        onClick={() => {
+                          setEditorHovered(false)
+                          setUserPicture(session?.user?.image || "")
+                        }}
+                      >
+                        Atcelt
+                      </Button>
+                      <Button
+                        type="primary"
+                        onClick={() => setEditorHovered(false)}
+                      >
+                        Apstiprināt
+                      </Button>
+                      <Popover
+                        placement="top"
+                        content={(
+                          <span className={styles["profile-image-edit-buttons-info-text"]}>
+                            Šī poga tikai apstiprina jaunās bildes novietojumu. Saglabāt var nospiežot "Saglabāt izmaiņas" pogu.
+                          </span>
+                        )}
 
-                    >
-                      <div className={styles["profile-image-edit-buttons-info"]}>
-                    <QuestionCircleOutlined />
+                      >
+                        <div className={styles["profile-image-edit-buttons-info"]}>
+                          <QuestionCircleOutlined />
+                        </div>
+                      </Popover>
                     </div>
-                    </Popover>
-                    </div>
-                  </div> 
+                  </div>
                 )}
-              <div className={`${styles["profile-image-edit"]} ${styles[`${editorHovered ? "hidden" : ""}`]}`}>
-                <EditOutlined 
-                  onClick={() => {
-                    setEditorHovered(true)
-                    document.getElementById('avatarUpload')?.click()
-                  }}
-                />
-              <input
-                type="file"
-                id="avatarUpload"
-                style={{ display: 'none' }}
-                accept="image/*"
-                onChange={(event) => {
-                  if (!event.target.files) return;
-                  const file = event.target.files[0];
-                  if (file) {
-                    // use url so user can immediately see the selected image
-                    setUserPicture(URL.createObjectURL(file)); 
-                    console.log("setting picture", file);
-                    // form.setFieldsValue({ pictures: [file] }); // this unfortunately doesn't work due to antd limitations
-                    setUploadedFile(file); // so we use a state instead
-                    
-                  }
-                }}
-              />
-            </div>
-            <AvatarEditor
-              image={userPicture || "https://static.vecteezy.com/system/resources/previews/030/504/836/non_2x/avatar-account-flat-isolated-on-transparent-background-for-graphic-and-web-design-default-social-media-profile-photo-symbol-profile-and-people-silhouette-user-icon-vector.jpg"}
-              width={210}
-              height={210}
-              scale={imageScale}
-              border={editorHovered ? 70 : 0}
-              rotate={0}
-              borderRadius={0}
-              className={`${styles["profile-image"]} ${editorHovered ? styles["profile-image-hovered"] : ""}`}
-            />
-            </div>
-          </Form.Item>
+                <div className={`${styles["profile-image-edit"]} ${styles[`${editorHovered ? "hidden" : ""}`]}`}>
+                  <EditOutlined
+                    onClick={() => {
+                      setEditorHovered(true)
+                      document.getElementById('avatarUpload')?.click()
+                    }}
+                  />
+                  <input
+                    type="file"
+                    id="avatarUpload"
+                    style={{ display: 'none' }}
+                    accept="image/*"
+                    onChange={(event) => {
+                      if (!event.target.files) return;
+                      const file = event.target.files[0];
+                      if (file) {
+                        // use url so user can immediately see the selected image
+                        setUserPicture(URL.createObjectURL(file));
+                        console.log("setting picture", file);
+                        // form.setFieldsValue({ pictures: [file] }); // this unfortunately doesn't work due to antd limitations
+                        setUploadedFile(file); // so we use a state instead
 
-          {/* </div> */}
-          <div className={styles["profile-summary"]}>
-            <div className={styles["profile-name"]}>
-              <span>{session?.user?.name || "example name"}</span>
-            </div>
-            <div className={styles["profile-email"]}>
-              <span>{session?.user?.email || "example email"}</span>
+                      }
+                    }}
+                  />
+                </div>
+                <AvatarEditor
+                  image={userPicture || "https://static.vecteezy.com/system/resources/previews/030/504/836/non_2x/avatar-account-flat-isolated-on-transparent-background-for-graphic-and-web-design-default-social-media-profile-photo-symbol-profile-and-people-silhouette-user-icon-vector.jpg"}
+                  width={210}
+                  height={210}
+                  scale={imageScale}
+                  border={editorHovered ? 70 : 0}
+                  position={editorHovered ? undefined : {x: 0.5, y: 0.5}}
+                  style={{
+                    cursor: editorHovered ? "grab" : "unset",
+                  }}
+                  rotate={0}
+                  borderRadius={0}
+                  className={`${styles["profile-image"]} ${editorHovered ? styles["profile-image-hovered"] : ""}`}
+                />
+              </div>
+            </Form.Item>
+
+            {/* </div> */}
+            <div className={styles["profile-summary"]}>
+              <div className={styles["profile-name"]}>
+                <span>{session?.user?.name || "example name"}</span>
+              </div>
+              <div className={styles["profile-email"]}>
+                <span>{session?.user?.email || "example email"}</span>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className={styles["text-field-container"]}>
-          <div style={{
-            display: "flex",
-            flexWrap: "wrap",
-          }}>
-            <div
-              style={{
-                display: "flex",
-                flex: "50%",
-              }}
-            >
+          <div className={styles["text-field-container"]}>
+            <div style={{ gridColumn: "1 / 2" }}>
               <Form.Item
                 name="name"
               >
@@ -373,16 +368,11 @@ const MyProfileForm = () => {
                   fullWidth
                   // variant="filled"
                   defaultValue={session?.user?.name}
-                  // placeholder={session?.user?.name || "Lietotāja vārds"}
+                // placeholder={session?.user?.name || "Lietotāja vārds"}
                 />
               </Form.Item>
             </div>
-            <div
-              style={{
-                display: "flex",
-                flex: "50%",
-              }}
-            >
+            <div style={{ gridColumn: "2 / 3" }}>
               <Form.Item
                 name="email"
                 rules={[{ required: true, message: "Please input the email!" }]}
@@ -391,23 +381,14 @@ const MyProfileForm = () => {
                   id="outlined-basic"
                   label="E-pasts"
                   variant="outlined"
+                  fullWidth
                   placeholder={session?.user?.email || "Lietotāja e-pasts"}
                   defaultValue={session?.user?.email}
                 />
               </Form.Item>
             </div>
-          </div>
 
-          <div style={{
-            display: "flex",
-            flexWrap: "wrap",
-          }}>
-            <div
-              style={{
-                display: "flex",
-                flex: "50%",
-              }}
-            >
+            <div style={{ gridColumn: "1 / 2" }}>
               <Form.Item
                 name="password"
               >
@@ -415,19 +396,14 @@ const MyProfileForm = () => {
                   id="outlined-basic"
                   label="Jauna parole"
                   variant="outlined"
-                  // type="password"
+                  fullWidth
                   onChange={(e) =>
                     setShowConfirmPassword(e.target.value.length > 0)
                   }
                 />
               </Form.Item>
             </div>
-            <div
-              style={{
-                display: "flex",
-                flex: "50%",
-              }}
-            >
+            <div style={{ gridColumn: "2 / 3" }}>
               {showConfirmPassword && (
                 <Form.Item
                   name="confirmPassword"
@@ -450,50 +426,50 @@ const MyProfileForm = () => {
                     label="Apstiprināt jauno paroli"
                     variant="outlined"
                     type="password"
+                    fullWidth
                   />
                 </Form.Item>
               )}
             </div>
           </div>
         </div>
-      </div>
 
-      <Divider type="vertical" style={{ borderColor: "var(--background-light-main)", height: "100%" }} />
-          
-      <div
-        className={styles["settings-container"]}
-      >
-        <div className={styles["section-title"]}>Personalizācija</div>
-        <Form.Item
-          name="font-size"
-          className={styles["settings-item"]}
+        <Divider type="vertical" style={{ borderColor: "var(--background-light-main)", height: "100%" }} />
+
+        <div
+          className={styles["settings-container"]}
         >
-          <div className={styles["settings-title"]}>Fonta izmērs:</div>
-          <StyledSlider
-            defaultValue={fontSize}
-            aria-label="font-size-slider"
-            onChange={(event, value) => {
-              if (typeof value === 'number') {
-                setFontSize(value);
-              }
-            }}
-            valueLabelDisplay="on"
-            step={1}
-            min={12}
-            max={26}
-          />
-        </Form.Item>
-        <Form.Item
-          name="color-theme"
-          className={styles["settings-item"]}
-        >
-          <div className={styles["settings-title"]}>Gaišais vai tumšais režīms:</div>
-          <ColorThemeSwitch
-            currentTheme={theme}
-            setCurrentTheme={toggleTheme}
-          />
-        </Form.Item>
-      </div>
+          <div className={styles["section-title"]}>Personalizācija</div>
+          <Form.Item
+            name="font-size"
+            className={styles["settings-item"]}
+          >
+            <div className={styles["settings-title"]}>Fonta izmērs:</div>
+            <StyledSlider
+              defaultValue={fontSize}
+              aria-label="font-size-slider"
+              onChange={(event, value) => {
+                if (typeof value === 'number') {
+                  setFontSize(value);
+                }
+              }}
+              valueLabelDisplay="on"
+              step={1}
+              min={12}
+              max={26}
+            />
+          </Form.Item>
+          <Form.Item
+            name="color-theme"
+            className={styles["settings-item"]}
+          >
+            <div className={styles["settings-title"]}>Gaišais vai tumšais režīms:</div>
+            <ColorThemeSwitch
+              currentTheme={theme}
+              setCurrentTheme={toggleTheme}
+            />
+          </Form.Item>
+        </div>
 
       </div>
 
@@ -501,14 +477,14 @@ const MyProfileForm = () => {
         className={styles["main-button-container"]}
       >
 
-      <Button
-        style={{ marginTop: "1.5rem" }}
-        className={`${styles["revert-button"]} ${styles["main-button"]}`}
-      >
-        Atcelt izmaiņas
-      </Button>
+        <Button
+          style={{ marginTop: "1.5rem" }}
+          className={`${styles["revert-button"]} ${styles["main-button"]}`}
+        >
+          Atcelt izmaiņas
+        </Button>
 
-      <Button
+        <Button
           type="primary"
           htmlType="submit"
           style={{ marginTop: "1.5rem" }}
