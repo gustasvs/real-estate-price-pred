@@ -44,7 +44,7 @@ export function ThemeProvider({
 
   const [fontSize, setFontSizeState] = useState<number>(
     parseInt(
-      (typeof window !== "undefined" && localStorage.getItem("fontSize")) || session?.user?.fontSize || "19"
+      (typeof window !== "undefined" && localStorage.getItem("fontSize")) || session?.user?.fontSize?.toString() || "19"
     )
   );
 

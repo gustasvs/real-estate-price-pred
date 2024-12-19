@@ -24,12 +24,10 @@ import { IoMdArrowRoundUp } from "react-icons/io";
 import styles from "./MasonryTable.module.css";
 import { useRouter, useSearchParams } from "next/navigation";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   getObjects as getObjectsApi,
-  createObject as createObjectApi,
-  deleteObject as deleteObjectApi,
   updateObject as updateObjectApi,
 } from "../../../actions/groupObjects";
 import { useSession } from "next-auth/react";
@@ -47,34 +45,53 @@ export const getPlural = (count: number, singular: string, plural: string) => {
   return plural;
 }
 
+const distributeItems = (
+  items: any[],
+  pattern: number[]
+) => {
+  let result = [];
+  let index = 0;
+  let rowIndex = 0;
+  while (index < items.length) {
+    let row = [];
+    let count = pattern[rowIndex % pattern.length];
+    for (let i = 0; i < count; i++) {
+      if (index < items.length) {
+        row.push(items[index]);
+        index++;
+      }
+    }
+    result.push(row);
+    rowIndex++;
+  }
+  return result;
+};
+
 
 const MasonryTable = ({
   group_id,
   columnCount,
   objects,
-  loading = false,
   showNavigateToGroup = false,
   revalidateDataFunction = () => { },
 }: {
   group_id: string;
   columnCount: number;
   objects: any[];
-  loading?: boolean;
   showNavigateToGroup?: boolean;
   revalidateDataFunction?: () => void;
 }): JSX.Element => {
   const router = useRouter();
-
   const searchParams = useSearchParams();
-
   const { data: session, status, update } = useSession();
 
-  const [localObjects, setLocalObjects] = useState(objects);
+  const [localObjects, setLocalObjects] = useState(distributeItems(
+    objects,
+    [2, 3, 2]
+  ));
+  const [isLoading, setLoading] = useState(false);
 
-  const deleteObject = async (id: string) => {
-    const result = await deleteObjectApi(id);
-    // await fetchObjects();
-  };
+  console.log("rerendering masonry table", objects);
 
   const onCardFavorite = async (id: string) => {
     const object = objects.find(
@@ -85,15 +102,28 @@ const MasonryTable = ({
     }
 
     // lets assume it will be set successfully
+    // setLocalObjects((prev) => {
+    //   return prev.map((obj) => {
+    //     if (obj.id === id) {
+    //       return {
+    //         ...obj,
+    //         favourite: !obj.favourite,
+    //       };
+    //     }
+    //     return obj;
+    //   });
+    // });
     setLocalObjects((prev) => {
-      return prev.map((obj) => {
-        if (obj.id === id) {
-          return {
-            ...obj,
-            favourite: !obj.favourite,
-          };
-        }
-        return obj;
+      return prev.map((row) => {
+        return row.map((obj) => {
+          if (obj.id === id) {
+            return {
+              ...obj,
+              favourite: !obj.favourite,
+            };
+          }
+          return obj;
+        });
       });
     });
 
@@ -146,16 +176,48 @@ const MasonryTable = ({
     element.style.transform = "translate(0, 0)";
   };
 
-  const animateAndSort = (event: any, fadeCompletely: boolean = false) => {
+  useEffect(() => {
+    if (!isLoading) {
+      objects.forEach((object) => {
+        const element = document.getElementById(`item-${object.id}`);
+        fadeIn(element);
+      });
+    }
+
+  }, [isLoading]);
+
+  const animateAndSort = async (event: any, fadeCompletely: boolean = false) => {
+    // fade out all items
     objects.forEach((object) => {
       const element = document.getElementById(`item-${object.id}`);
       fadeOut(element, fadeCompletely);
     });
-    fadeOut(document.getElementById(`item-add`), fadeCompletely);
+    // fadeOut(document.getElementById(`item-add`), fadeCompletely);
 
     // Set delay before reappearing
     const hiddenDuration = fadeCompletely ? 100 : 0; // Stay hidden for 1 second if fadeCompletely is true
 
+
+    
+
+    try {
+      // Fetch and sort data based on sortType
+      // const sortedObjects = await getObjectsApi({ groupId: group_id, 
+      // setLocalObjects(sortedObjects); // Update state with new sorted objects
+
+      const params = new URLSearchParams(searchParams);
+      params.set('residenceName', 'test');
+      
+
+      // router.replace(`?${params.toString()}`, { scroll: false });
+
+    } catch (error) {
+      console.error('Failed to fetch sorted objects:', error);
+    }
+
+
+
+    // fade back in
     setTimeout(() => {
       const randomOrder = [...objects];
       randomOrder.sort(() => Math.random() - 0.5);
@@ -166,33 +228,13 @@ const MasonryTable = ({
           const element = document.getElementById(`item-${object.id}`);
           fadeIn(element);
         });
-        fadeIn(document.getElementById(`item-add`));
+        // fadeIn(document.getElementById(`item-add`));
       }, hiddenDuration); // Wait before reappearing
     }, 500); // Delay for sorting
   };
 
 
-  const distributeItems = (
-    items: any[],
-    pattern: number[]
-  ) => {
-    let result = [];
-    let index = 0;
-    let rowIndex = 0;
-    while (index < items.length) {
-      let row = [];
-      let count = pattern[rowIndex % pattern.length];
-      for (let i = 0; i < count; i++) {
-        if (index < items.length) {
-          row.push(items[index]);
-          index++;
-        }
-      }
-      result.push(row);
-      rowIndex++;
-    }
-    return result;
-  };
+  
 
   const rowPattern = [2, 3, 2];
   const addItemPlaceholder = { id: null }; // Define the placeholder
@@ -201,10 +243,10 @@ const MasonryTable = ({
     ...localObjects,
     addItemPlaceholder,
   ]; // Append the placeholder
-  const rowItemsWithAddItem = distributeItems(
-    itemsWithPlaceholder,
-    rowPattern
-  ); // Distribute normally
+  // const rowItemsWithAddItem = distributeItems(
+  //   itemsWithPlaceholder,
+  //   rowPattern
+  // ); // Distribute normally
 
   // TODO implement flex grow from here: https://www.jiddo.ca/collection
 
@@ -227,28 +269,56 @@ const MasonryTable = ({
             marginTop: "0",
             width: "100%",
           }}
-          placeholder="Meklēt objektu pēc tā nosaukuma..." onChange={(e: any) => {
+          placeholder="Meklēt objektu pēc tā nosaukuma..." 
+          onChange={async (e: any) => {
+
             const value = e.target.value;
 
-            const params = new URLSearchParams(searchParams);
-            if (value) {
-              params.set('residenceName', value);
+            // commented out because as of now (12/19/2024) nextjs cant handle route params without rerendering 
+            // maybe in the future this can be implemented
+            
+            // const params = new URLSearchParams(searchParams);
+            // if (value) {
+            //   params.set('residenceName', value);
+            // } else {
+            //   params.delete('residenceName');
+            // }
+            // window.history.replaceState(null, '', `?${params.toString()}`);
+            // const paramsObject = Object.fromEntries(params.entries());
+
+            setLoading(true);
+
+            const objects = document.querySelectorAll(`.${styles["content"]}`);
+            objects.forEach((object) => {
+              fadeOut(object as HTMLElement, false);
+            });
+
+
+            const newLocalObjects = await getObjectsApi(group_id, {residenceName: value});
+
+            if (!('error' in newLocalObjects)) {
+              setLocalObjects(distributeItems(
+                newLocalObjects,
+                [2, 3, 2]
+              ));
             } else {
-              params.delete('residenceName');
+              console.error(newLocalObjects.error);
             }
 
-            router.replace(`?${params.toString()}`, { scroll: false });
-          }
-          } />
+            setLoading(false);
+
+            // router.replace(`?${params.toString()}`, { scroll: false });
+          }}
+        />
         <Button
           className={styles["sort-button"]}
-          onClick={animateAndSort}
+          onClick={(e) => animateAndSort(e, false)}
         >
           Kārtot pēc datuma
         </Button>
         <Button
           className={styles["sort-button"]}
-          onClick={animateAndSort}
+          onClick={(e) => animateAndSort(e, false)}
         >
           Kārtot pēc cenas
         </Button>
@@ -287,13 +357,14 @@ const MasonryTable = ({
       <div
         style={{ width: "90%", margin: "0 auto" }}
       >
-        {loading && (
+        {/* {isLoading ? (
           <div className={styles["loading"]}>
             <div className={styles["loading-spinner"]} />
           </div>
-        )}
+        ) : (
+          <> */}
 
-        {rowItemsWithAddItem.map((itemsInRow, rowIndex) => (
+        {localObjects.map((itemsInRow, rowIndex) => (
           <div
             key={`row-${rowIndex}`}
             style={{
@@ -812,6 +883,8 @@ const MasonryTable = ({
             ))}
           </div>
         ))}
+        {/* </>
+      )} */}
       </div>
     </div>
   );

@@ -4,10 +4,11 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Button, Divider } from "antd";
 import styles from "./Banner.module.css"; // Ensure you create a CSS module for styling
 
-import { Parallax } from "rc-scroll-anim";
+import { OverPack, Parallax } from "rc-scroll-anim";
 import { useRouter } from "next/navigation";
 import { FaArrowRight, FaHouseChimney, FaHouseChimneyUser, FaHouseLaptop } from "react-icons/fa6";
 import { BiArrowFromLeft, BiArrowToLeft, BiBuildingHouse, BiSolidRightArrow } from "react-icons/bi";
+import QueueAnim from "rc-queue-anim";
 
 const Banner = () => {
 
@@ -170,19 +171,22 @@ const Banner = () => {
         </div>
         <div className={styles["right-container"]}>
           <div className={styles["right-container-items"]}>
-            <BiBuildingHouse className={styles["get-started-icon"]} />
+            <OverPack>
+              
+              <BiBuildingHouse className={styles["get-started-icon"]} />
+            </OverPack>
             <div
-  className={styles["get-started-button"]}
-  onClick={() => {
-    router.push("/groups");
-  }}
->
-  <span className={styles["get-started-text"]}>
-    Sāc darbu un pievieno savu pirmo objektu
-  </span>
-  <FaArrowRight className={styles["get-started-next-arrow"]} />
-  <FaArrowRight className={styles["get-started-prev-arrow"]} />
-</div>
+              className={styles["get-started-button"]}
+              onClick={() => {
+                router.push("/groups");
+              }}
+            >
+              <span className={styles["get-started-text"]}>
+                Sāc darbu un pievieno savu pirmo objektu
+              </span>
+              <FaArrowRight className={styles["get-started-next-arrow"]} />
+              <FaArrowRight className={styles["get-started-prev-arrow"]} />
+            </div>
 
           </div>
         </div>

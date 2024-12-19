@@ -128,6 +128,7 @@ const Statistics: React.FC = () => {
             key="queue"
             leaveReverse
             className={styles["statistic-container"]}
+            
             onEnd={(e) => {
               // setValue((prev) => prev + 1000);
               // setValues(buttonContents.map((item) => item.value));
@@ -144,11 +145,7 @@ const Statistics: React.FC = () => {
             {buttonContents.map((buttonContent, index) => ( 
               <div id="like" key={index} className={styles["statistic"]} ref={likeBtnRef}>
                 <div className={`${styles["statistic-button"]} ${styles[`statistic-button-type-${index + 1}`]}`} onClick={()=>handleClick(buttonContent.labelLink)}>
-                  {buttonContent.icon}
-                </div>
-                <div className={styles["statistic-label"]}>
-                  <div className={styles["statistic-label-text"]}>
-                  {buttonContent.label}
+                  {/* {buttonContent.icon} */}
                   <TweenOne
                     animation={{
                       Children: {
@@ -165,9 +162,20 @@ const Statistics: React.FC = () => {
                       width: "fit-content",
                     }}
                   />
+                </div>
+                <QueueAnim
+                  key="queue1"
+                  // type="bottom"
+                  className={styles["statistic-label"]}>
+                
+                <div className={styles["statistic-label-text"]}>
+                  
+                  {buttonContent.label}
+                  
                   {buttonContent.labelLinkText}
-                  </div>
+
                   <div className={styles["statistic-label-link"]}>
+                    
                   {buttonContent.labelLinkExternal && <ExportOutlined />}
                     
                   {/* {buttonContent.labelLink && (
@@ -176,7 +184,10 @@ const Statistics: React.FC = () => {
                     </Link>  
                   )} */}
                   </div>
-                </div>
+
+                  </div>
+                  
+                </QueueAnim>
               </div>
             ))}
           </QueueAnim>

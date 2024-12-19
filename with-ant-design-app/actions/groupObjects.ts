@@ -6,13 +6,7 @@ import { auth } from "../auth";
 
 import amqp from 'amqplib'
 import { revalidatePath } from "next/cache";
-
-
-// import redisClient from "../redis/redisClient";
-
-// async function addObjectToStream(objectId: string) {
-//   await redisClient.xAdd('objectStream', '*', { objectId });
-// }
+import { generateDownloadUrl } from "../app/api/generateDownloadUrl";
 
 
 export const getObject = async (objectId: string) => {
@@ -49,7 +43,9 @@ export const getObject = async (objectId: string) => {
 };
 
 export const getObjects = async (groupId: string, filter: any) => {
-  
+
+  // 2 second delay
+  // await new Promise((resolve) => setTimeout(resolve, 2000));
 
   console.log("Filter:", filter);
 
@@ -78,7 +74,28 @@ export const getObjects = async (groupId: string, filter: any) => {
       },
 
     });
-    return objects;
+
+    const objectsWithPresignedDownloadUrls = await Promise.all(
+      objects.map(async (obj) => {
+        // console.log("obj", obj);
+        // return obj;
+        if (obj && obj.pictures && Array.isArray(obj.pictures)) {
+          const updatedPictures = await Promise.all(
+            obj.pictures.map(async (picture) => {
+              const downloadUrl = await generateDownloadUrl(picture, 'object-pictures');
+              return {
+                fileName: picture,
+                downloadUrl: typeof downloadUrl === 'object' && 'error' in downloadUrl ? null : downloadUrl,
+              };
+            })
+          );
+          return { ...obj, pictures: updatedPictures };
+        }
+        return obj;
+      })
+    );
+
+    return objectsWithPresignedDownloadUrls;
   } catch (error) {
     console.error("Error fetching objects:", error);
     return { error: "Failed to get objects" };
@@ -202,12 +219,6 @@ export const createObject = async (
     });
 
     try {
-      // await manageObjectState(newObject.id, 'queued');
-
-      // await redisClient.publish('objectCreationQueue', JSON.stringify({
-      //   objectId: newObject.id,
-      //   userId: user.id
-      // }));
   
     } catch (error) {
       console.error("Error queuing object rerendering:", error);

@@ -15,7 +15,7 @@ import {
 import styles from "./Groups.module.css";
 import { useRouter, useSearchParams } from "next/navigation";
 import NewGroupModal from "./new-card-modal";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BiBuildings, BiLeftArrow } from "react-icons/bi";
 import { useSession } from "next-auth/react";
 import SearchInput from "../search-input/SearchInput";
@@ -47,6 +47,8 @@ const CardTable = ({
 
   const { status } = useSession();
 
+  const [loading, setLoading] = useState(false);
+
   const [newGroupModalVisible, setNewGroupModalVisible] =
     useState(false);
 
@@ -61,6 +63,10 @@ const CardTable = ({
   };
 
   const cardRef = useRef(null);
+
+  useEffect(() => {
+    setLoading(false);
+  }, [groups]);
 
   if (status === "loading") {
     return <div></div>;
@@ -95,6 +101,7 @@ const CardTable = ({
           style={{ marginTop: 0, marginBottom: 0, width: "100%" }}
 
           onChange={(e: any) => {
+
             const value = e.target.value;
             // setSearchQuery(value);
 
@@ -105,7 +112,11 @@ const CardTable = ({
               params.delete('groupName');
             }
 
+            params.set('page', '1');
+
             router.replace(`?${params.toString()}`, { scroll: false });
+
+            setLoading(true);
           }}
         />
         <Button
@@ -121,9 +132,35 @@ const CardTable = ({
         style={{
           display: "flex",
           justifyContent: "center",
+          filter: `${loading ? "blur(10px)" : "none"}`,
         }}
         className={`${styles["groups-page"]} ${groups.length === 0 ? styles["groups-page-empty"] : ""}`}
       >
+        {/* {loading && (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                width: "100%",
+              }}
+            >
+              <div
+                className={styles["loading-groups"]}
+              >
+              </div>
+              <span
+                style={{
+                  color: "var(--background-light-main)",
+                  fontSize: "1.5rem",
+                  margin: "1rem",
+                }}
+              >
+                Meklē grupas...
+              </span>
+            </div>
+
+          )} */}
         {groups.length === 0 ? (
           <div
             style={{

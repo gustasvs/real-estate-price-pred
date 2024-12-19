@@ -43,7 +43,7 @@ export const getGroups = async (filter: any) => {
   const pageSize = Number.isInteger(parseInt(filter?.pageSize)) ? parseInt(filter?.pageSize) : 6;
   const offset = (page - 1) * pageSize;
 
-  console.log("Filter:", filter);
+  // console.log("Filter:", filter);
 
   try {
     const groups = await db.residenceGroup.findMany({

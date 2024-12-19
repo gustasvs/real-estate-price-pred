@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import {
   Sidebar,
@@ -31,6 +30,7 @@ import {
   useSearchParams,
 } from "next/navigation";
 import { FaGears, FaPersonFalling } from "react-icons/fa6";
+import Link from "next/link";
 
 const RewindUiSidebar = () => {
   const [collapsed, setCollapsed] = useState(
@@ -233,7 +233,9 @@ const RewindUiSidebar = () => {
             href="/"
             active={pathname === "/"}
           >
-            Sākums
+            {/* <Link href="/"> */}
+              Sākums
+            {/* </Link> */}
           </MenuItem>
           {/* </SubMenu> */}
 

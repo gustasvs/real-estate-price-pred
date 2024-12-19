@@ -41,26 +41,24 @@ const GroupPage = async ({
   const objectsResponse = await getObjects(params.group_id, searchParams);
   const objects = Array.isArray(objectsResponse) ? objectsResponse : [];
 
-    console.log("objects", objects);
-
     // Add pre-signed download URLs to pictures
-    const objectsWithPresignedDownloadUrls = await Promise.all(
-      objects.map(async (obj) => {
-        if (Array.isArray(obj.pictures)) {
-          const updatedPictures = await Promise.all(
-            obj.pictures.map(async (picture) => {
-              const downloadUrl = await generateDownloadUrl(picture, 'object-pictures');
-              return {
-                fileName: picture,
-                downloadUrl: typeof downloadUrl === 'object' && 'error' in downloadUrl ? null : downloadUrl,
-              };
-            })
-          );
-          return { ...obj, pictures: updatedPictures };
-        }
-        return obj;
-      })
-    );
+    // const objectsWithPresignedDownloadUrls = await Promise.all(
+    //   objects.map(async (obj) => {
+    //     if (Array.isArray(obj.pictures)) {
+    //       const updatedPictures = await Promise.all(
+    //         obj.pictures.map(async (picture) => {
+    //           const downloadUrl = await generateDownloadUrl(picture, 'object-pictures');
+    //           return {
+    //             fileName: picture,
+    //             downloadUrl: typeof downloadUrl === 'object' && 'error' in downloadUrl ? null : downloadUrl,
+    //           };
+    //         })
+    //       );
+    //       return { ...obj, pictures: updatedPictures };
+    //     }
+    //     return obj;
+    //   })
+    // );
 
     
   const groupResponse = await getGroupApi(params.group_id);
@@ -102,8 +100,7 @@ const GroupPage = async ({
         <MasonryTable
           group_id={group_id}
           columnCount={4}
-          objects={objectsWithPresignedDownloadUrls}
-          loading={false}
+          objects={objects}
           revalidateDataFunction={revalidateData}
         />
     </div>

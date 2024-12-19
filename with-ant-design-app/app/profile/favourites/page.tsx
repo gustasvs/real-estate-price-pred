@@ -74,7 +74,6 @@ const FavouriteObjectPage = async () => {
           group_id={"favourites"}
           columnCount={4}
           objects={objectsWithPresignedDownloadUrls}
-          loading={false}
           revalidateDataFunction={revalidateData}
         />
     </div>

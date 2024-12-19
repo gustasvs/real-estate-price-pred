@@ -25,7 +25,7 @@ const FavouriteButton = ({ favourite, onClick }: { onClick: (e: any) => void; fa
                 }
                 confetti({
                     particleCount: 20,
-                    // colors: ['#FF0000', '#00FF00', '#0000FF'],
+                    colors: ['#ffb341', '#b36b00', '#ffd699'],
                     spread: 90,
                     decay: 0.82,
                     startVelocity: 25,
