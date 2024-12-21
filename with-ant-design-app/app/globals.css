@@ -105,3 +105,16 @@ body {
 .ant-select-arrow svg {
   color: var(--text-brighter);
 }
+
+.ant-modal .ant-modal-close {
+  color: var(--background-light-main);
+  transition: all .2s cubic-bezier(0.075, 0.82, 0.165, 1)
+}
+
+.ant-modal .ant-modal-close:hover {
+  color: var(--text-brighter);
+}
+
+.ant-modal .ant-modal-close:active {
+  scale: .9;
+}

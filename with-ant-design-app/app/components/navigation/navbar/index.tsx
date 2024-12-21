@@ -86,6 +86,7 @@ const Navbar = ({
               <LoginModal
                 open={loginModalOpen}
                 setOpen={setLoginModalOpen}
+                setSignUpModalOpen={setSignUpModalOpen}
               />
               <Button
                 className={`${styles["rounded-button"]} ${styles["button-fill"]}`}
@@ -99,6 +100,7 @@ const Navbar = ({
               <SignUpModal
                 open={signUpModalOpen}
                 setOpen={setSignUpModalOpen}
+                setLoginModalOpen={setLoginModalOpen}
               />
             </div>
           ) : (
@@ -187,7 +189,7 @@ const Navbar = ({
                         ]
                       }
                       onClick={() => {
-                        router.push("/profile?page=1");
+                        router.push("/profile/favourites");
                       }}
                     >
                       <HeartFilled />

@@ -221,11 +221,11 @@ const RewindUiSidebar = () => {
           className={`${styles["left-sidebar-company-logo"]} ${collapsed ? styles["left-sidebar-company-logo-collapsed"] : ""}`}
         >
           <Logo />
-          <span
+          {/* <span
             className={styles["left-sidebar-company-title"]}
           >
             Icn
-          </span>
+          </span> */}
         </div>
         <Menu>
           <MenuItem

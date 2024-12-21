@@ -91,6 +91,10 @@ const MasonryTable = ({
   ));
   const [isLoading, setLoading] = useState(false);
 
+  const [sortState, setSortState] = useState({ field: null, order: null } as { field: string | null, order: string | null });
+
+  const [residenceName, setResidenceName] = useState("" as string);
+
   console.log("rerendering masonry table", objects);
 
   const onCardFavorite = async (id: string) => {
@@ -157,23 +161,27 @@ const MasonryTable = ({
       return;
     }
 
-    const randomX = 10 * (Math.random() > 0.5 ? 1 : -1);
-    const randomY = 10 * (Math.random() > 0.5 ? 1 : -1);
+    // const randomX = 10 * (Math.random() > 0.5 ? 1 : -1);
+    // const randomY = 10 * (Math.random() > 0.5 ? 1 : -1);
 
     element.style.transition = fadeCompletely
       ? `all 0.1s ease-out` // Fast transition when fading completely
-      : `all 0.48s cubic-bezier(0.23, 1, 0.32, 1)`;
-    element.style.opacity = fadeCompletely ? "0" : "0.5";
-    element.style.transform = `translate(${randomX}px, ${randomY}px)`;
+      : `all 0.78s cubic-bezier(0.23, 1, 0.32, 1)`;
+    element.style.opacity = fadeCompletely ? "0" : "0.4";
+    // element.style.transform = `translate(${randomX}px, ${randomY}px)`;
+    element.style.transform = 'scale(0.96)';
+    // element.style.filter = "blur(2px)";
   };
 
   const fadeIn = (element: HTMLElement | null) => {
     if (!element) {
       return;
     }
-    element.style.transition = `all 0.48s cubic-bezier(0.23, 1, 0.32, 1)`;
+    element.style.transition = `all 0.88s cubic-bezier(0.23, 1, 0.32, 1)`;
     element.style.opacity = "1"; // Fade in after delay
-    element.style.transform = "translate(0, 0)";
+    // element.style.transform = "translate(0, 0)";
+    element.style.transform = 'scale(1)';
+    // element.style.filter = "blur(0px)";
   };
 
   useEffect(() => {
@@ -182,11 +190,31 @@ const MasonryTable = ({
         const element = document.getElementById(`item-${object.id}`);
         fadeIn(element);
       });
+    } else {
+      const objects = document.querySelectorAll(`.${styles["content"]}`);
+      objects.forEach((object) => {
+        fadeOut(object as HTMLElement, false);
+      });
     }
-
   }, [isLoading]);
 
-  const animateAndSort = async (event: any, fadeCompletely: boolean = false) => {
+  useEffect(() => {
+    console.log(sortState);
+  }, [sortState]);
+
+  const getNextSortOrder = (field: string) => {
+    if (sortState.field !== field) return 'asc';
+    if (sortState.order === 'asc') return 'desc';
+    if (sortState.order === 'desc') return null;
+    return 'asc';
+  };
+
+  const animateAndSort = async (field: string, fadeCompletely: boolean = false) => {
+
+    const nextOrder = getNextSortOrder(field);
+    setSortState({ field: nextOrder !== null ? field : null, order: nextOrder });
+
+
     // fade out all items
     objects.forEach((object) => {
       const element = document.getElementById(`item-${object.id}`);
@@ -197,20 +225,14 @@ const MasonryTable = ({
     // Set delay before reappearing
     const hiddenDuration = fadeCompletely ? 100 : 0; // Stay hidden for 1 second if fadeCompletely is true
 
-
-    
-
     try {
-      // Fetch and sort data based on sortType
-      // const sortedObjects = await getObjectsApi({ groupId: group_id, 
-      // setLocalObjects(sortedObjects); // Update state with new sorted objects
-
-      const params = new URLSearchParams(searchParams);
-      params.set('residenceName', 'test');
-      
-
-      // router.replace(`?${params.toString()}`, { scroll: false });
-
+      const sortedObjects = await getObjectsApi(group_id, { residenceName: residenceName, sortBy: field, sortOrder: nextOrder });
+      if (!('error' in sortedObjects)) {
+        setLocalObjects(distributeItems(sortedObjects, [2, 3, 2]));
+      } else {
+        console.error(sortedObjects.error);
+      }
+      setLoading(false);
     } catch (error) {
       console.error('Failed to fetch sorted objects:', error);
     }
@@ -218,19 +240,14 @@ const MasonryTable = ({
 
 
     // fade back in
-    setTimeout(() => {
-      const randomOrder = [...objects];
-      randomOrder.sort(() => Math.random() - 0.5);
-      // setObjects(randomOrder);
 
-      setTimeout(() => {
-        objects.forEach((object) => {
-          const element = document.getElementById(`item-${object.id}`);
-          fadeIn(element);
-        });
-        // fadeIn(document.getElementById(`item-add`));
-      }, hiddenDuration); // Wait before reappearing
-    }, 500); // Delay for sorting
+    setTimeout(() => {
+      objects.forEach((object) => {
+        const element = document.getElementById(`item-${object.id}`);
+        fadeIn(element);
+      });
+      // fadeIn(document.getElementById(`item-add`));
+    }, hiddenDuration); // Wait before reappearing
   };
 
 
@@ -288,13 +305,9 @@ const MasonryTable = ({
 
             setLoading(true);
 
-            const objects = document.querySelectorAll(`.${styles["content"]}`);
-            objects.forEach((object) => {
-              fadeOut(object as HTMLElement, false);
-            });
+            setResidenceName(value);
 
-
-            const newLocalObjects = await getObjectsApi(group_id, {residenceName: value});
+            const newLocalObjects = await getObjectsApi(group_id, {residenceName: value, sortBy: sortState.field, sortOrder: sortState.order});
 
             if (!('error' in newLocalObjects)) {
               setLocalObjects(distributeItems(
@@ -312,15 +325,17 @@ const MasonryTable = ({
         />
         <Button
           className={styles["sort-button"]}
-          onClick={(e) => animateAndSort(e, false)}
+          onClick={(e) => animateAndSort("createdAt", false)}
         >
           Kārtot pēc datuma
+          <IoMdArrowRoundUp className={`${styles["sort-arrow"]} ${styles[`${sortState.field === "createdAt" ? sortState.order === "asc" ? "sort-arrow-up" : "sort-arrow-down" : "not-active"}`]}`} />
         </Button>
         <Button
           className={styles["sort-button"]}
-          onClick={(e) => animateAndSort(e, false)}
+          onClick={(e) => animateAndSort("price", false)}
         >
           Kārtot pēc cenas
+          <IoMdArrowRoundUp className={`${styles["sort-arrow"]} ${styles[`${sortState.field === "price" ? sortState.order === "asc" ? "sort-arrow-up" : "sort-arrow-down" : "not-active"}`]}`} />
         </Button>
         <div style={{
           display: "flex",
@@ -348,10 +363,30 @@ const MasonryTable = ({
             className={styles["sort-switch"]}
             checked={compactMode}
             onChange={(changed) => {
-              animateAndSort(null, true);
+              
+              objects.forEach((object) => {
+                const element = document.getElementById(`item-${object.id}`);
+                fadeOut(element, true);
+              });
               setCompactMode(changed);
+
+              setTimeout(() => {
+                objects.forEach((object) => {
+                  const element = document.getElementById(`item-${object.id}`);
+                  fadeIn(element);
+                });
+              }, 200);
             }} />
         </div>
+
+        <Button
+          type="primary"
+          className={styles["create-new-button"]}
+          icon={<PlusOutlined />}
+          onClick={handleAddButtonClick}
+        >
+          Pievienot jaunu objektu
+        </Button>
 
       </div>
       <div
@@ -363,6 +398,15 @@ const MasonryTable = ({
           </div>
         ) : (
           <> */}
+
+        {localObjects.length === 0 && (
+          <div>
+            <div className={styles["no-objects"]}/>
+            <span className={styles["no-objects-text"]}>
+              Nav atrasts neviens objekts
+            </span>
+          </div>
+        )}
 
         {localObjects.map((itemsInRow, rowIndex) => (
           <div
@@ -421,7 +465,7 @@ const MasonryTable = ({
                       item.pictures &&
                       Array.isArray(item.pictures) &&
                       item.pictures.length
-                    ) && (
+                    ) ? (
                         <div
                           className={
                             styles["content-image-container"]
@@ -487,7 +531,15 @@ const MasonryTable = ({
                                 )}
                           </div>
                         </div>
-                      )}
+                      ) : (
+                        // just so the base exists
+                        <div
+                          className={
+                            styles["content-image-container"]
+                          }
+                        />
+                      )
+                    }
 
                     {/* TITLE */}
                     {compactMode ? (

@@ -42,6 +42,18 @@
     align-items: center;
 }
 
+.create-new-button {
+    border-radius: 1em;
+    height: auto;
+    padding: 1em;
+    font-weight: 600;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.create-new-button svg {
+    color: var(--background-dark-main);
+}
 
 .content-wrapper {
     position: relative;
@@ -383,6 +395,7 @@
 
 .content-title-name-without-images {
     margin-left: 0;
+    padding-left: 0;
     text-align: center;
     font-size: 3rem;
     width: 100%;
@@ -399,8 +412,12 @@
     color: var(--text-brighter);
 }
 
+.content-wrapper:hover .content-title-name-without-images:not(.content-title-name-not-compact),
 .content-wrapper:hover .content-title-name-without-images {
-    margin-left: 0;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    transform: none;
 }
 
 .content-description-header {
@@ -677,4 +694,50 @@
 
 .content-description-action:hover {
     background-color: var(--background-darkest);
+}
+
+
+.no-objects {
+    /* image customised, but original credit to: */
+    /* https://dribbble.com/shots/5573953-Nothing-Found-Illustration */
+    background: url('/empty-table.svg') no-repeat center;
+    background-size: contain;
+    display: flex;
+    height: 50vh;
+    width: 50%;
+    margin: 0 auto;
+    /* height: auto */
+    filter: invert(100%) sepia(0%) saturate(7199%) hue-rotate(191deg) brightness(90%) contrast(93%);
+}
+
+.no-objects-text {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin: 1rem auto;
+    color: var(--background-light-secondary);
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+
+.sort-arrow {
+    transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1), opacity 0.3s ease;
+    opacity: 1;
+    /* Arrow is fully visible by default */
+}
+
+.sort-arrow-up {
+    transform: rotate(0deg);
+    /* Normal position for ascending */
+}
+
+.sort-arrow-down {
+    transform: rotate(180deg);
+    /* Flipped position for descending */
+}
+
+.not-active {
+    opacity: 0;
+    /* Make the arrow disappear when not active */
 }

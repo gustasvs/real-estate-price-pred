@@ -90,10 +90,15 @@
 }
 
 .soc-login-text {
-    font-size: 16px;
+    /* font-size: 16px;
     font-weight: 600;
     color: var(--background-gray);
-    margin-bottom: 1em;
+    margin-bottom: 1em; */
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--background-light-main);
+    margin-bottom: 2em;
+    text-align: center;
 }
 
 .login-text {

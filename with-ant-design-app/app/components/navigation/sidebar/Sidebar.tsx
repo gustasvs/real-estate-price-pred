@@ -35,11 +35,11 @@ const Sidebar: React.FC<SidebarProps> = ({
   return (
     <div className={styles["left-sidebar"]}>
       <div className={styles["left-sidebar-company-logo"]}>
-        <span
+        {/* <span
           className={styles["left-sidebar-company-title"]}
         >
           Icn
-        </span>
+        </span> */}
         <Logo />
       </div>
 
@@ -73,7 +73,8 @@ const Sidebar: React.FC<SidebarProps> = ({
             key="home"
             className={styles["left-sidebar-item"]}
           >
-            <GitlabOutlined />
+            {/* <GitlabOutlined /> */}
+            <div className={styles["left-sidebar-company-logo"]} />
             <span
               className={styles["left-sidebar-item-label"]}
             >

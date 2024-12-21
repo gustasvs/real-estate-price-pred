@@ -12,9 +12,10 @@ import { signIn } from "next-auth/react";
 interface SignUpModalProps {
   open: boolean;
   setOpen: (open: boolean) => void;
+  setLoginModalOpen: (open: boolean) => void;
 }
 
-const SignUpModal: React.FC<SignUpModalProps> = ({ open, setOpen }) => {
+const SignUpModal: React.FC<SignUpModalProps> = ({ open, setOpen, setLoginModalOpen }) => {
   const [error, setError] = useState<string | null>(null);
 
   // const router = useRouter();
@@ -89,9 +90,10 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ open, setOpen }) => {
         <div className={styles["sign-up-modal-contents"]}>
           <div className={styles["soc-login-container"]}>
             <span className={styles["soc-login-text"]}>
-              Izveido kontu izmantojot sociālos tīklus
+              {/* Izveido kontu izmantojot sociālos tīklus */}
+              Izveido kontu izmantojot e-pastu un paroli
             </span>
-            <div className={styles["soc-login-buttons"]}>
+            {/* <div className={styles["soc-login-buttons"]}>
               <GoogleOutlined
                 className={`${styles["soc-login-icon"]} ${styles["google-icon"]}`}
                 onClick={() => {
@@ -102,11 +104,11 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ open, setOpen }) => {
               <TwitterCircleFilled className={styles["soc-login-icon"]} />
 
               <GithubOutlined className={styles["soc-login-icon"]} />
-            </div>
+            </div> */}
           </div>
-          <div className={styles["divider-container"]}>
+          {/* <div className={styles["divider-container"]}>
             <Divider plain>vai</Divider>
-          </div>
+          </div> */}
           <div className={styles["email-sign-up-container"]}>
             <Form
               name="basic"
@@ -147,12 +149,12 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ open, setOpen }) => {
                   rules={[
                     {
                       required: true,
-                      message: "Please confirm your password!",
+                      message: "Lūdzu ievadiet atkārtotu paroli!",
                     },
                   ]}
                 >
                   <Input.Password
-                    placeholder="Confirm Password"
+                    placeholder="Atkārtota parole"
                     className={styles["password-input"]}
                   />
                 </Form.Item>
@@ -188,7 +190,7 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ open, setOpen }) => {
           </div>
           <div className={styles["log-in-container"]}>
             <span className={styles["log-in-text"]}>
-              Vai tev jau ir konts? <a href="#">Autorizēties</a>
+              Vai tev jau ir konts? <a onClick={() => {setOpen(false); setLoginModalOpen(true)} }>Autorizēties</a>
             </span>
           </div>
         </div>

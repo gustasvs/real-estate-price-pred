@@ -2,7 +2,7 @@
 
 .statistics {
   background-color: var(--background-dark-secondary);
-  background-color: #999b9c;
+  background-color: #adafb0;
   /* background-color: var(--background-light-secondary); */
   height: 60vh;
 }
@@ -42,7 +42,7 @@
 
 .statistic-container {
   display: flex;
-  padding-left: 12.5vw;
+  padding-left: calc(12.5vw - 6rem);
   width: 100%;
   height: 60vh;
   /* margin: auto 0; */

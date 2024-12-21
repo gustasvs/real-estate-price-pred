@@ -19,6 +19,8 @@ export const updateUserProfile = async (profileData: {
   password: string;
   confirmPassword: string;
   image: string | null;
+  fontSize: string | null;
+  theme: string | null;
 }) => {
   const session = await auth();
   const user = session?.user;
@@ -55,6 +57,9 @@ export const updateUserProfile = async (profileData: {
         ...(profileData.email && { email: profileData.email }),
         ...(profileData.image && { image: profileData.image }),
         ...(passwordHash && { hashedPassword: passwordHash }), // Only update if password is provided
+      
+        ...(profileData.fontSize && { fontSize: profileData.fontSize }),
+        ...(profileData.theme && { theme: profileData.theme }),
       },
     });
     return { user: updatedUser };

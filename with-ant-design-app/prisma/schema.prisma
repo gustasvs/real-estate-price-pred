@@ -63,7 +63,7 @@ model Residence {
 
   bedroomCount  Int
   bathroomCount Int
-  parkingCount  Int
+  parkingCount  Int @default(0)
 
   price          Float
   predictedPrice Float

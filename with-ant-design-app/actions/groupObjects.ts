@@ -42,7 +42,13 @@ export const getObject = async (objectId: string) => {
   }
 };
 
-export const getObjects = async (groupId: string, filter: any) => {
+interface Filter {
+  residenceName: string;
+  sortBy: string | null;
+  sortOrder: string | null;
+}
+
+export const getObjects = async (groupId: string, filter: Filter) => {
 
   // 2 second delay
   // await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -72,8 +78,8 @@ export const getObjects = async (groupId: string, filter: any) => {
         // residenceGroup: { userId: userId },
         ... (residenceName ? { name: { contains: residenceName, mode: "insensitive" } } : {}),
       },
-
-    });
+      ... (filter?.sortBy ? { orderBy: { [filter.sortBy]: filter.sortOrder } } : {}),
+      });
 
     const objectsWithPresignedDownloadUrls = await Promise.all(
       objects.map(async (obj) => {

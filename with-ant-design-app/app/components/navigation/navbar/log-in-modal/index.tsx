@@ -10,9 +10,10 @@ import { signIn } from "next-auth/react";
 interface LoginModalProps {
   open: boolean;
   setOpen: (open: boolean) => void;
+  setSignUpModalOpen: (open: boolean) => void;
 }
 
-const LoginModal: React.FC<LoginModalProps> = ({ open, setOpen }) => {
+const LoginModal: React.FC<LoginModalProps> = ({ open, setOpen, setSignUpModalOpen }) => {
   const [step, setStep] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
@@ -49,9 +50,10 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, setOpen }) => {
                 <span
                     className={styles["soc-login-text"]}
                   >
-                    Autorizēties izmantojot sociālos tīklus
+                    {/* Autorizēties izmantojot sociālos tīklus */}
+                    Autorizējies platformā izmantojot e-pastu un paroli
                   </span>
-                  <div className={styles["soc-login-buttons"]}>
+                  {/* <div className={styles["soc-login-buttons"]}>
                   <GoogleOutlined className={`${styles["soc-login-icon"]} ${styles["google-icon"]}`} onClick={() => {
                     signIn("google", { callbackUrl: "/" });
                   }}/>
@@ -60,11 +62,11 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, setOpen }) => {
 
                   <GithubOutlined className={styles["soc-login-icon"]} />
 
-                </div>
+                </div> */}
               </div>
-              <div className={styles["divider-container"]}>
+              {/* <div className={styles["divider-container"]}>
                 <Divider plain>vai</Divider>
-              </div>
+              </div> */}
               <div className={styles["email-login-container"]}>
                 <Form
                   name="basic"
@@ -110,7 +112,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, setOpen }) => {
               <div className={styles["signup-container"]}>
                 <span className={styles["signup-text"]}>
                   {/* Don't have an account? <a href="#">Sign up</a> */}
-                  Vēl nav konta? <a href="#">Reģistrēties</a>
+                  Vēl nav konta? <a onClick={() => {setOpen(false); setSignUpModalOpen(true)} }>Izveidot jaunu kontu</a>
                 </span>
               </div>
             </>

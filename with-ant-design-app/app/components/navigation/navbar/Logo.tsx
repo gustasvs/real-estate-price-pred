@@ -37,7 +37,7 @@ const Logo = () => {
   return (
     <>
       <Link href="/" style={{ display: showButton ? "none" : "flex", alignItems: "center" }}>
-        <GitlabOutlined style={{ fontSize: "48px", color: "white" }} />
+        <div className="logo"/>
       </Link>
       <div
         style={{

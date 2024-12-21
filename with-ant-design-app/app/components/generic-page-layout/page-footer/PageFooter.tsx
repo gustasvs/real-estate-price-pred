@@ -62,7 +62,7 @@ const PageFooter = () => {
         </div>
       </Divider>
       <div className={styles["footer-logo"]}>
-        <GitlabOutlined
+        <div
           className={styles["footer-logo-icon"]}
         />
         <div className={styles["footer-logo-text"]}>

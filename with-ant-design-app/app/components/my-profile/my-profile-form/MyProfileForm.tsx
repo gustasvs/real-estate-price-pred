@@ -32,6 +32,7 @@ import { generateDownloadUrl } from "../../../api/generateDownloadUrl";
 import ColorThemeSwitch from "../../navigation/navbar/dark-mode-switch/ColorThemeSwitch";
 import { useThemeContext } from "../../../context/ThemeContext";
 import { StyledSlider, StyledTextField } from "../../styled-mui-components/styled-components";
+import { init } from "next/dist/compiled/webpack/webpack";
 
 const props: UploadProps = {
   name: "file",
@@ -56,19 +57,16 @@ const props: UploadProps = {
 
 const MyProfileForm = () => {
   const { data: session, status, update } = useSession();
-  const router = useRouter();
-
   const { theme, toggleTheme, fontSize, setFontSize } = useThemeContext();
-
   const [form] = Form.useForm();
 
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
-
   const [userPicture, setUserPicture] = useState<string | File>("");
-
   const [imageScale, setImageScale] = useState(1);
-
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [initialValues, setInitialValues] = useState<any>({});
+
+  const [pictureLoading, setPictureLoading] = useState(false);
 
   const handleUpdateProfile = async (values: any) => {
     console.log("Received values of form: ", values);
@@ -113,8 +111,6 @@ const MyProfileForm = () => {
         // Save the unique object key (or MinIO file URL) for further processing
         uploadedImageUrl = `${objectKey}`; // Optionally, prepend the MinIO URL if required
 
-        console.log("Uploaded Image URL:", uploadedImageUrl);
-
       } catch (error) {
         console.error("Error uploading image to MinIO:", error);
         message.error("Image upload failed");
@@ -130,6 +126,16 @@ const MyProfileForm = () => {
       confirmPassword: values.confirmPassword || "",
       image: uploadedImageUrl,
       id: session?.user?.id || "",
+      fontSize: fontSize !== undefined ? fontSize.toString() : null,
+      theme: theme || null,
+    });
+
+    setInitialValues({
+      name: values.name,
+      email: values.email,
+      image: uploadedImageUrl,
+      fontSize: fontSize !== undefined ? fontSize.toString() : null,
+      theme: theme || null
     });
 
     console.log("res", res);
@@ -138,7 +144,7 @@ const MyProfileForm = () => {
       message.error("Failed to update profile");
     } else {
       message.success("Profile updated successfully");
-      await update();
+      // await update();
     }
   };
 
@@ -152,37 +158,61 @@ const MyProfileForm = () => {
   useEffect(() => {
     // fill form with user data
     if (session) {
-      console.log("filling form with user data");
-      console.log("session", session?.user);
       form.setFieldsValue({
         name: session.user?.name,
         email: session.user?.email,
       });
 
       setUserPicture(session.user?.image || "");
+    
+
+      // if (!initialValues.name && !initialValues.email && !initialValues.image && !initialValues.fontSize && !initialValues.theme) {
+        setInitialValues({
+          name: session.user?.name,
+          email: session.user?.email,
+          image: session.user?.image,
+          fontSize: session.user?.fontSize,
+          theme: session.user?.theme,
+        });
+      // }
     }
   }, [session]);
+
+  useEffect(() => {
+    console.log("initialValues", initialValues);
+  }, [initialValues]);
 
 
   useEffect(() => {
     if (session?.user?.image) {
       const fetchUserImage = async () => {
-        const sessionUserImage = session?.user?.image;
-        if (sessionUserImage) {
-          const downloadUrl = await generateDownloadUrl(sessionUserImage, "profile-pictures");
+        try {
+          const sessionUserImage = session?.user?.image;
+          if (sessionUserImage) {
+            const downloadUrl = await generateDownloadUrl(sessionUserImage, "profile-pictures");
 
-          console.log("Download URL:", downloadUrl);
-          if (typeof downloadUrl === "object" && "error" in downloadUrl) {
-          } else {
-            setUserPicture(downloadUrl);
+            console.log("Download URL:", downloadUrl);
+            if (typeof downloadUrl === "object" && "error" in downloadUrl) {
+              throw new Error(downloadUrl.error);
+            } else {
+              setUserPicture(downloadUrl);
+              // if (!initialValues.image) {
+              setInitialValues({
+                ...initialValues,
+                image: downloadUrl,
+              });
+              // }
+            }
           }
+        } catch (error) {
+          console.error("Error fetching user image:", error);
+        } finally {
         }
       };
 
       fetchUserImage();
     }
-  }
-    , [session]);
+  }, [session]);
 
   const [editorHovered, setEditorHovered] = useState(false);
 
@@ -199,8 +229,7 @@ const MyProfileForm = () => {
         email: session?.user
           ? session?.user?.email
           : "",
-      }
-      }
+      }}
       form={form}
       layout="horizontal"
       onFinish={handleUpdateProfile}
@@ -349,10 +378,10 @@ const MyProfileForm = () => {
             {/* </div> */}
             <div className={styles["profile-summary"]}>
               <div className={styles["profile-name"]}>
-                <span>{session?.user?.name || "example name"}</span>
+                <span>{initialValues?.name || "..."}</span>
               </div>
               <div className={styles["profile-email"]}>
-                <span>{session?.user?.email || "example email"}</span>
+                <span>{initialValues?.email || "..."}</span>
               </div>
             </div>
           </div>
@@ -367,6 +396,7 @@ const MyProfileForm = () => {
                   label="Vārds"
                   fullWidth
                   // variant="filled"
+                  value={form.getFieldValue('name') || ''}
                   defaultValue={session?.user?.name}
                 // placeholder={session?.user?.name || "Lietotāja vārds"}
                 />
@@ -441,12 +471,13 @@ const MyProfileForm = () => {
         >
           <div className={styles["section-title"]}>Personalizācija</div>
           <Form.Item
-            name="font-size"
+            name="fontSize"
             className={styles["settings-item"]}
           >
             <div className={styles["settings-title"]}>Fonta izmērs:</div>
             <StyledSlider
               defaultValue={fontSize}
+              value={fontSize}
               aria-label="font-size-slider"
               onChange={(event, value) => {
                 if (typeof value === 'number') {
@@ -454,13 +485,14 @@ const MyProfileForm = () => {
                 }
               }}
               valueLabelDisplay="on"
+              valueLabelFormat={(value) => `${value}px`}
               step={1}
               min={12}
               max={26}
             />
           </Form.Item>
           <Form.Item
-            name="color-theme"
+            name="theme"
             className={styles["settings-item"]}
           >
             <div className={styles["settings-title"]}>Gaišais vai tumšais režīms:</div>
@@ -480,6 +512,21 @@ const MyProfileForm = () => {
         <Button
           style={{ marginTop: "1.5rem" }}
           className={`${styles["revert-button"]} ${styles["main-button"]}`}
+          onClick={() => {
+            form.setFieldsValue({
+              name: initialValues.name,
+              email: initialValues.email,
+            });
+            setUserPicture(initialValues.image || "");
+            
+            console.log("current font size", fontSize);
+            console.log("initial font size", initialValues.fontSize);
+            
+            const resetFontSize = !initialValues.fontSize ? 19 : parseInt(initialValues.fontSize);
+            setFontSize(resetFontSize);
+            
+            toggleTheme(initialValues.theme);
+          }}
         >
           Atcelt izmaiņas
         </Button>

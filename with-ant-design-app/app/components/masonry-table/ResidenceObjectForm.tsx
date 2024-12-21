@@ -12,11 +12,14 @@ import {
   InputNumber,
   Row,
   Col,
+  Tooltip,
 } from "antd";
 import {
   InboxOutlined,
+  QuestionCircleOutlined,
   UploadOutlined,
 } from "@ant-design/icons";
+import { BsSignNoParking } from "react-icons/bs";
 
 import imageCompression from "browser-image-compression";
 
@@ -101,7 +104,7 @@ const ResidenceObjectForm = ({
         ? updateObjectApi
         : createObjectApi;
 
-    const picturePromises = values.pictures.map(
+    const picturePromises = values?.pictures?.map(
       async (file: any) => {
         console.log("FILE", file);
         // if the file has an originFileObj, it means it's a new file
@@ -239,7 +242,7 @@ const ResidenceObjectForm = ({
               {
                 required: true,
                 message:
-                  "Please input the name of the real estate object!",
+                  "Lūdzu ievadiet kā dēvēsiet šo īpašumu!",
               },
             ]}
             className={styles["form-item"]}
@@ -263,7 +266,7 @@ const ResidenceObjectForm = ({
               {
                 required: true,
                 message:
-                  "Please input the description of the real estate object!",
+                  "Lūdzu ievadiet aprakstu!",
               },
             ]}
           >
@@ -278,8 +281,8 @@ const ResidenceObjectForm = ({
               rows={3}
               // error={form.getFieldError('description').length > 0}
               // error={true}
-              error={!!form.getFieldError("name").length} // Checks if there are errors
-              helperText={form.getFieldError("description")}
+              // error={!!form.getFieldError("description").length} // Checks if there are errors
+              // helperText={form.getFieldError("description")}
               // helperText="Aprakstam jābūt vismaz 10 simbolus garumā"
             />
           </Form.Item>
@@ -291,7 +294,7 @@ const ResidenceObjectForm = ({
             rules={[
               {
                 required: true,
-                message: "Please input the address!",
+                message: "Lūdzu ievadiet objekta adresi!",
               },
             ]}
           >
@@ -311,7 +314,7 @@ const ResidenceObjectForm = ({
             rules={[
               {
                 required: true,
-                message: "Please input the area!",
+                message: "Lūdzu ievadiet objekta platību!",
               },
             ]}
           >
@@ -334,7 +337,7 @@ const ResidenceObjectForm = ({
                   {
                     required: true,
                     message:
-                      "Please input the number of bedrooms!",
+                      "Lūdzu ievadiet guļamistabu skaitu!",
                   },
                 ]}
               >
@@ -356,7 +359,7 @@ const ResidenceObjectForm = ({
                 rules={[
                   {
                     required: true,
-                    message: "Please input the number of bathrooms!",
+                    message: "Lūdzu ievadiet vannas istabu skaitu!",
                     transform: (value) => (value ? Number(value) : value),
                   },
                 ]}
@@ -367,7 +370,7 @@ const ResidenceObjectForm = ({
                   label="Vannas istabu skaits"
                   variant="outlined"
                   defaultValue={residence?.bathroomCount}
-                  type="number"
+                  // type="number"
                   placeholder="Ievadiet vannas istabu skaitu"
                 />
               </Form.Item>
@@ -377,25 +380,16 @@ const ResidenceObjectForm = ({
             <Col span={8}>
               <Form.Item
                 name="parkingCount"
-                rules={[
-                  {
-                    required: true,
-                    message:
-                      "Please input the number of parking spaces!",
-                  },
-                ]}
+                // rules={[
+                //   {
+                //     required: true
+                //     message:
+                //       "Lūdzu atzīmējiet, vai ir pieejamas stāvvietas!",
+                //   },
+                // ]}
               >
                 <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    outline: "1px solid var(--background-light-main)",
-                    borderRadius: "1em",
-                    // background: "var(--background-dark-main-hover)",
-                    cursor: "pointer",
-                  }}
+                  className={styles["parking-container"]}
                   onClick={() => {
                     setParkingAvailable((prev: number) => {
                       form.setFieldsValue({ parkingCount: prev ? 0 : 1 });
@@ -403,6 +397,19 @@ const ResidenceObjectForm = ({
                     });
                   }}
                 >
+                  <Tooltip title={parkingAvailable ? "Stāvvietas ir pieejamas" : "Stāvvietas nav pieejamas"}>
+                    <QuestionCircleOutlined
+                      style={{
+                        backgroundColor: "var(--background-dark-main)",
+                        position: "absolute",
+                        top: -10,
+                        right: -10,
+                        color: "var(--background-light-main)",
+                        fontSize: "1.5em",
+                        cursor: "pointer",
+                      }}
+                    />
+                  </Tooltip>
                   <label
                     style={{
                       color: "var(--background-light-main)",
@@ -414,6 +421,7 @@ const ResidenceObjectForm = ({
                   >
                     Stāvvietas pieejamiba
                   </label>
+                  {parkingAvailable ? (
                   <div
                     className={`${styles[`parking-icon`]} ${
                       styles[
@@ -425,6 +433,13 @@ const ResidenceObjectForm = ({
                       ]
                     }`}
                   ></div>
+                  ) : (
+                    <BsSignNoParking className={styles["parking-icon"]} style={{
+                      // red tint
+                      fill: "#ff0000",
+                      // filter: "invert(19%) sepia(95%) saturate(7481%) hue-rotate(360deg) brightness(96%) contrast(110%)",
+                    }}/>
+                  )}
                 </div>
               </Form.Item>
             </Col>
@@ -435,7 +450,7 @@ const ResidenceObjectForm = ({
             rules={[
               {
                 required: true,
-                message: "Please input the price!",
+                message: "Lūdzu ievadiet objekta cenu!",
               },
             ]}
           >

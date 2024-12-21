@@ -71,6 +71,11 @@ export function ThemeProvider({
 
     // Update font size in root element and localStorage
     useEffect(() => {
+
+      if (typeof fontSize !== "number") return;
+
+      if (fontSize < 12 || fontSize > 26) return;
+
       document.documentElement.style.setProperty(
         "font-size",
         `${fontSize}px`
@@ -80,11 +85,11 @@ export function ThemeProvider({
 
     const setFontSize = (size: number) => {
 
-      if (size < 12 || size > 26) return; // Optional validation
+      if (size < 12 || size > 26) return;
       setFontSizeState(size);
 
       if (session?.user) {
-        session.user.fontSize = size;
+        session.user.fontSize = size.toString();
       }
     };
 

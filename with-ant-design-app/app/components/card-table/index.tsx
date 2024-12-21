@@ -132,7 +132,9 @@ const CardTable = ({
         style={{
           display: "flex",
           justifyContent: "center",
-          filter: `${loading ? "blur(10px)" : "none"}`,
+          filter: `${loading ? "blur(2px)" : "none"}`,
+          transform: `${loading ? "scale(0.97)" : "scale(1)"}`,
+          transition: "all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
         }}
         className={`${styles["groups-page"]} ${groups.length === 0 ? styles["groups-page-empty"] : ""}`}
       >

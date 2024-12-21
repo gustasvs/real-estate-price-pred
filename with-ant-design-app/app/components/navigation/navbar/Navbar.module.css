@@ -13,6 +13,13 @@
     /* border-bottom: 1px solid var(--background-gray); */
 }
 
+.logo {
+    background: url("/logo.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
 .navbar-with-background {
     /* display: flex; */
     background: transparent;

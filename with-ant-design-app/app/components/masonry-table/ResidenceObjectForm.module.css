@@ -90,6 +90,20 @@
     border: none;
 }
 
+.parking-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    outline: 1px solid var(--background-light-secondary);
+    border-radius: 1em;
+    background: var(--background-dark-main-hover);
+    cursor: pointer;
+}
+
+.parking-container:hover {
+    outline: 1px solid var(--background-light-main);
+}
 
 .parking-icon {
     margin-right: 1.5em;
@@ -101,18 +115,24 @@
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
-    background: url("/parking/parking_2_colorised_borders.gif");
+    /* background: url("/parking/parking_2_colorised_borders.gif"); */
+    background: url("/parking/parking_input_color_bg.gif");
     filter: grayscale(50%);
     animation: none; /* Stops animation unless specified */
+    transition: filter 0.3s cubic-bezier(0.23, 1, 0.32, 1), transform 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
 }
 
 .parking-icon:hover {
     animation: gif-animation 1s steps(1) infinite; /* Animates only on hover */
-    filter: grayscale(0%);
+    filter: grayscale(10%);
+}
+
+.parking-container:active .parking-icon {
+    transform: scale(.93);
 }
 
 .parking-available {
-    background: url("/parking/parking_2_colorised_borders.gif");
+    background: url("/parking/parking_input_color_bg.gif");
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;

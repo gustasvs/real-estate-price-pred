@@ -19,6 +19,7 @@ const CustomPagination = (
 ) => {
     return (
         <Pagination
+            locale={{ items_per_page: "lapā" }}
             style={{
                 display: "flex",
                 justifyContent: "center",

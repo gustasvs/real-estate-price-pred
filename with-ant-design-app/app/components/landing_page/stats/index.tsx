@@ -23,17 +23,18 @@ import { AreaChartOutlined, BookOutlined, DatabaseOutlined, ExportOutlined } fro
 import { tsParticles } from "@tsparticles/engine";
 import { loadFull } from "tsparticles";
 import Particles from "@tsparticles/react";
+import { FaUsers } from "react-icons/fa6";
 
 
 TweenOne.plugins.push(Children);
 
 const buttonContents = [
-  { label: "Uzzini vairāk par platformā izmantotajiem ", value: 15000, labelLink: "/data", labelLinkText: " datu ierakstiem", labelLinkExternal: true,
+  { label: "Algoritma apmācīšanai izmantie īpašumi", value: 15000, labelLink: "/data", labelLinkText: "", labelLinkExternal: true,
     icon: <DatabaseOutlined /> },
-  { label: "Izpēti ", value: 189, labelLink: "/groups", labelLinkText: " publiski pieejamos sludinājumus",
-    icon: <BookOutlined />
+  { label: "Lietotāji, kuri veiksmīgi ieguvuši patiesās cenas", value: 189, labelLink: "/groups", labelLinkText: "",
+    icon: <FaUsers />
   },
-  { label: "Apskati ", value: 10, labelLink: "/groups", labelLinkText: " izmantotos sludinājumu veidus",
+  { label: "Stundas ieguldītas algoritma apmācīšanai", value: 10, labelLink: "/groups", labelLinkText: "",
     icon: <AreaChartOutlined />
   },
 ];

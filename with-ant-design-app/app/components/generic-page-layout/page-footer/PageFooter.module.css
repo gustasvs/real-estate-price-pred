@@ -35,12 +35,20 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
 }
 
 .footer-logo-icon {
-    font-size: 3.5em;
+    /* artificially cut off the company name */
+    transform: translateY(-1.9rem);
+    height: 6rem;
+    width: 10rem;
     transition: transform 0.48s cubic-bezier(0.23, 1, 0.32, 1);
     filter: invert(1);
+    background: url("/logo.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 .footer-logo-text {
