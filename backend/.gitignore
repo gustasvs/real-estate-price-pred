@@ -2,3 +2,5 @@ __pycache__/
 # /models
 /models/*.pth
 /data_from_web/images/*
+/data_from_web/*.txt
+/data_from_web/*.csv
