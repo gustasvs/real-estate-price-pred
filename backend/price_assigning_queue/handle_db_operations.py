@@ -77,3 +77,39 @@ def get_all_residences():
             cursor.close()
         if connection:
             connection.close()
+
+
+
+def update_object_predicted_price_in_db(object_id, predicted_price):
+    """
+    Updates the estimated price of a Residence object in the database.
+
+    :param object_id: The ID of the Residence object.
+    :param predicted_price: Predicted price for the object.
+    :return: None
+    """
+    try:
+        # Establish the database connection
+        connection = psycopg2.connect(DATABASE_URL)
+        cursor = connection.cursor(cursor_factory=RealDictCursor)
+        cursor.execute(f"SET search_path TO {DATABASE_SCHEMA};")
+
+        print("All columns of Residence table: ", cursor.execute("SELECT * FROM \"Residence\";"))
+
+        # Query to update the estimated price for the given object ID
+        query = """
+            UPDATE "Residence"
+            SET "predictedPrice" = %s
+            WHERE id = %s;
+            """
+        cursor.execute(query, (predicted_price, object_id))
+        connection.commit()
+
+    except Exception as e:
+        print(f"Error updating object estimated price: {e}")
+
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
