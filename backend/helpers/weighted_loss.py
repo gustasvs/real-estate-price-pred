@@ -65,11 +65,11 @@ def compute_bin_weights(targets, num_bins=20):
     epsilon = 1e-9  # using epsilon because np.digitize is one side inclusive
     bins = np.linspace(min(targets) - epsilon, max(targets) + epsilon, num_bins + 1)
     
-    print("bins", bins)
+    # print("bins", bins)
 
     bin_indices = np.digitize(targets, bins, right=True) - 1
 
-    print("bin_indices", bin_indices)
+    # print("bin_indices", bin_indices)
 
     
     unique_bins, bin_counts = np.unique(bin_indices, return_counts=True)
@@ -79,11 +79,20 @@ def compute_bin_weights(targets, num_bins=20):
     # scale weights so that the max weight is 1
     bin_weights = bin_weights / np.max(bin_weights)
 
-    print("bin weights: ", bin_weights)
+    # print("bin weights: ", bin_weights)
 
     
     full_bin_weights = np.zeros(num_bins)
     full_bin_weights[unique_bins] = bin_weights
+
+    if DEMO_MODE:
+        plt.figure(figsize=(10, 6))
+        plt.bar(range(num_bins), full_bin_weights, alpha=0.6, label='Bin Weights')
+        plt.xlabel('Bin Index')
+        plt.ylabel('Weight')
+        plt.title('Bin Weights Distribution')
+        plt.legend()
+        plt.show()
     
     return bins, full_bin_weights
 
@@ -91,13 +100,13 @@ def compute_bin_weights(targets, num_bins=20):
 class WeightedMSELoss(nn.Module):
     def __init__(self, bins, bin_weights, device='cpu'):
         super(WeightedMSELoss, self).__init__()
-        self.mse = nn.MSELoss(reduction='none')  # No reduction for manual weighting
-        self.bins = torch.tensor(bins, device=device)  # Ensure bins are a torch tensor on the correct device
-        self.bin_weights = torch.tensor(bin_weights, device=device)  # Ensure bin weights are a torch tensor on the correct device
+        self.mse = nn.MSELoss(reduction='none')
+        self.bins = torch.tensor(bins, device=device)
+        self.bin_weights = torch.tensor(bin_weights, device=device)
         self.device = device
 
-        if DEMO_MODE:
-            plot_loss_demonstration(self)
+        # if DEMO_MODE:
+        #     plot_loss_demonstration(self)
     
     def forward(self, predictions, targets):
         """
@@ -118,6 +127,9 @@ class WeightedMSELoss(nn.Module):
 
         bin_indices = torch.bucketize(targets, self.bins, right=True) - 1  
         batch_weights = self.bin_weights[bin_indices]
+
+        # print("targets", targets)
+        # print("bin_indices", bin_indices)
         # print("batch_weights", batch_weights)
 
         weighted_loss = (loss * batch_weights).mean()

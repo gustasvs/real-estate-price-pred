@@ -1,8 +1,10 @@
+import numpy as np
+
 import torch
 from torch.utils.data import DataLoader, Dataset
 from sklearn.model_selection import train_test_split
 
-from config.settings import BATCH_SIZE, ENABLE_DEV_LOGS, LEARNING_RATE, LOSS_FUNCT, EPOCHS, BATCHES_TO_AGGREGATE
+from config.settings import BATCH_SIZE, ENABLE_DEV_LOGS, MAX_IMAGES_PER_SAMPLE
 
 
 class ImageDataset(Dataset):
@@ -19,9 +21,16 @@ class ImageDataset(Dataset):
 
         # sampled_count = np.random.randint(2, len(sample_images) + 1)
         # sample_images = np.random.choice(sample_images, sampled_count, replace=False)
+
+        # limit max images to 10 and select random choice of images
+
+        num_images_to_select = min(len(sample_images), MAX_IMAGES_PER_SAMPLE)
+
+        random_indices = np.random.choice(len(sample_images), num_images_to_select, replace=False)
+        selected_images = [sample_images[idx] for idx in random_indices]
         
         # Preprocess and stack images
-        sample_images_extracted = process_sample(sample_images, self.feature_extractor)
+        sample_images_extracted = process_sample(selected_images, self.feature_extractor)
         if ENABLE_DEV_LOGS: print("current sample shape: ", sample_images_extracted.shape)
 
         price = self.prices[idx]

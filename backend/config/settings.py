@@ -5,7 +5,7 @@ DEMO_MODE = True
 # DEMO_MODE = False
 
 BATCH_SIZE = 1
-BATCHES_TO_AGGREGATE = 32
+BATCHES_TO_AGGREGATE = 20
 
 LEARNING_RATE = 1e-4
 EPOCHS = 4
@@ -14,4 +14,8 @@ LOSS_FUNCT = nn.MSELoss()
 # AGGREGATION_METHOD = "attention"
 AGGREGATION_METHOD = "mean"
 
-WEIGHTED_BIN_COUNT = 20 # by using 1 bin, weighted loss would be the same as MSE loss
+WEIGHTED_BIN_COUNT = 16 # by using 1 bin, weighted loss would be the same as MSE loss
+
+STANDART_DEV_TO_KEEP = 2
+
+MAX_IMAGES_PER_SAMPLE = 6

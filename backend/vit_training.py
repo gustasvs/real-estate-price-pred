@@ -50,7 +50,7 @@ def train_epoch(model, dataloader, optimizer, device, epoch):
 
     for mini_batch_idx, (sample, prices) in enumerate(dataloader, 1):
 
-        sample = [instance.to(device) for instance in sample]
+        sample = [instance.to(device, dtype=torch.float32) for instance in sample]
 
         if ENABLE_DEV_LOGS: print("one input in batch shape: ", sample[0].shape)  # Should print [8, 2, 3, 224, 224] for a batch size of 8
 
@@ -77,6 +77,7 @@ def train_epoch(model, dataloader, optimizer, device, epoch):
             optimizer.step()
             optimizer.zero_grad()
 
+            # TODO
             # print("aggregated_outputs: ", aggregated_outputs)
             # print("aggregated_prices: ", aggregated_prices)
 
@@ -112,9 +113,9 @@ def validate(model, dataloader, device):
     val_loss = 0
     with torch.no_grad():
         for pixel_values_list, prices in dataloader:
-            pixel_values_list = [instance.to(device) for instance in pixel_values_list]
+            pixel_values_list = [instance.to(device, dtype=torch.float32) for instance in pixel_values_list]
 
-            prices = prices.to(device)
+            prices = prices.to(device, dtype=torch.float32)
             
             outputs = model(pixel_values_list)
             loss = LOSS_FUNCT(outputs.squeeze(), prices)
@@ -122,8 +123,8 @@ def validate(model, dataloader, device):
     return val_loss / len(dataloader)
 
 
-count = 535
-# count = 300
+# count = 535
+count = 666
 
 images, prices = processed_data(count)
 bins, bin_weights = compute_bin_weights(prices, num_bins=WEIGHTED_BIN_COUNT)
@@ -147,6 +148,10 @@ models = {
     # "google/vit-base-patch16-224-in21k head-only": {"embedding_size": 768, "head_only": True},
     # "facebook/dinov2-large head-only": {"embedding_size": 1024, "head_only": True},
     # "facebook/dinov2-small head-only": {"embedding_size": 384, "head_only": True}
+    # "microsoft/resnet-50": {"embedding_size": 2048, "head_only": False},
+    # "WinKawaks/vit-tiny-patch16-224": {"embedding_size": 192, "head_only": False},
+    # "facebook/detr-resnet-50": {"embedding_size": 256, "head_only": True}, # 45 mil
+    # "hustvl/yolos": {"embedding_size": 192, "head_only": False} # 6.49 mil
 }
 
 # aggregation_methods = ["mean", "sum", "attention"]
@@ -193,15 +198,15 @@ ax[1].set_xlabel("Epochs")
 ax[1].set_ylabel("R2 Score")
 plt.show()
 
-plt.figure(figsize=(14, 10))
-heatmap = plt.imshow(results, cmap='magma', interpolation='nearest')
-plt.xticks(range(len(aggregation_methods)), aggregation_methods, rotation=45, ha="right")
-plt.yticks(range(len(models)), [name for name in models])
-plt.colorbar(heatmap)
-plt.title("Training Loss by Model and Aggregation Method")
-plt.xlabel("Aggregation Method")
-plt.ylabel("Model")
-plt.show()
+# plt.figure(figsize=(14, 10))
+# heatmap = plt.imshow(results, cmap='magma', interpolation='nearest')
+# plt.xticks(range(len(aggregation_methods)), aggregation_methods, rotation=45, ha="right")
+# plt.yticks(range(len(models)), [name for name in models])
+# plt.colorbar(heatmap)
+# plt.title("Training Loss by Model and Aggregation Method")
+# plt.xlabel("Aggregation Method")
+# plt.ylabel("Model")
+# plt.show()
 
 
 torch.save(model.state_dict(), "models/vit_regression_model.pth")

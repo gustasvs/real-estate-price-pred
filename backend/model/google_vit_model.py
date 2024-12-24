@@ -9,9 +9,9 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from transformers import ViTImageProcessor, ViTModel
+from transformers import ViTImageProcessor, ViTModel, DetrImageProcessor, DetrForObjectDetection, AutoModelForObjectDetection
 
-from transformers import AutoImageProcessor, ResNetForImageClassification, AutoModel
+from transformers import AutoImageProcessor, ResNetForImageClassification, AutoModel, AutoModelForImageClassification
 
 # so config can be imported
 import sys
@@ -84,12 +84,12 @@ class CustomViTHead(nn.Module):
     def __init__(self, embedding_layer_size=768):
         super(CustomViTHead, self).__init__()
         self.fc1 = nn.Linear(embedding_layer_size, 128)
-        self.fc2 = nn.Linear(128, 64)
-        self.fc3 = nn.Linear(64, 1)
-        self.dropout = nn.Dropout(0.3)
+        self.fc2 = nn.Linear(128, 96)
+        self.fc3 = nn.Linear(96, 1)
+        self.dropout = nn.Dropout(0.1)
 
     def forward(self, x):
-        x = self.dropout(x)
+        # x = self.dropout(x)
         x = nn.functional.relu(self.fc1(x))
         x = self.dropout(x)
         x = nn.functional.relu(self.fc2(x))
@@ -171,9 +171,22 @@ def get_vit_model(
     if "google" in model_name:
         base_model = ViTModel.from_pretrained(model_name)
         feature_extractor = ViTImageProcessor.from_pretrained(model_name)
+    elif "facebook/detr" in model_name:
+        feature_extractor = DetrImageProcessor.from_pretrained("facebook/detr-resnet-50", revision="no_timm")
+        base_model = DetrForObjectDetection.from_pretrained("facebook/detr-resnet-50", revision="no_timm")
     elif "facebook" in model_name:
         base_model = AutoModel.from_pretrained(model_name)
         feature_extractor = AutoImageProcessor.from_pretrained(model_name)
+    elif "resnet" in model_name:
+        base_model = ResNetForImageClassification.from_pretrained(model_name)
+        feature_extractor = AutoImageProcessor.from_pretrained(model_name)
+    elif "WinKawaks" in model_name:
+        base_model = AutoModelForImageClassification.from_pretrained(model_name)
+        feature_extractor = AutoImageProcessor.from_pretrained(model_name)
+    elif "hustvl/yolos" in model_name:
+        feature_extractor = AutoImageProcessor.from_pretrained("hustvl/yolos-tiny")
+        base_model = AutoModelForObjectDetection.from_pretrained("hustvl/yolos-tiny")
+
 
     if train_only_head:
         for param in base_model.parameters():
