@@ -61,9 +61,12 @@ model Residence {
   
   favourite Boolean @default(false)
 
-  bedroomCount  Int
-  bathroomCount Int
-  parkingCount  Int @default(0)
+  roomCount     Int
+  parkingAvailable  Boolean @default(false)
+  elevatorAvailable Boolean @default(false)
+
+  buildingFloors Int
+  floor          Int
 
   price          Float
   predictedPrice Float

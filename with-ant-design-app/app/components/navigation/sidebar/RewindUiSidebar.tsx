@@ -50,7 +50,8 @@ const RewindUiSidebar = () => {
   const [groups, setGroups] = useState<any>(null);
   useEffect(() => {
     getGroupsForSidebar().then((groups) => {
-      setGroups(groups);
+      // setGroups(groups);
+      setGroups(Array.isArray(groups) ? groups : []);
     });
   }, []);
 
@@ -244,7 +245,7 @@ const RewindUiSidebar = () => {
             active={pathname === "/groups"}
             label={"Manas Grupas"}
           >
-            {groups?.map((group: any) => (
+            {groups && groups.length !== 0 && groups?.map((group: any) => (
               <MenuItem
                 key={group.id}
                 href={`/groups/${group.id}`}

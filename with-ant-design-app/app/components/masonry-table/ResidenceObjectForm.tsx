@@ -50,12 +50,14 @@ const ResidenceObjectForm = ({
 
   const [form] = Form.useForm();
 
-  const [parkingAvailable, setParkingAvailable] = useState(residence?.parkingCount || 0);
+  const [parkingAvailable, setParkingAvailable] = useState(residence?.parkingAvailable || false);
+  const [elevatorAvailable, setElevatorAvailable] = useState(residence?.elevatorAvailable || false);
 
   const props: UploadProps = {
     name: "file",
     multiple: true,
     listType: "picture",
+    maxCount: 10,
     onChange(info) {
       const { status } = info.file;
       if (status !== "uploading") {
@@ -93,8 +95,11 @@ const ResidenceObjectForm = ({
 
     const processedValues = {
       ...values,
-      bathroomCount: Number(values.bathroomCount),
-      bedroomCount: Number(values.bedroomCount),
+      roomCount: Number(values.roomCount),
+      parkingAvailable: Boolean(values.parkingAvailable),
+      floor: Number(values.floor),
+      buildingFloors: Number(values.buildingFloors),
+      elevatorAvailable: Boolean(values.elevatorAvailable),
       area: Number(values.area),
       price: Number(values.price),
     };
@@ -206,7 +211,7 @@ const ResidenceObjectForm = ({
             ? "Objekts atjaunots veiksmīgi!"
             : "Objekts izveidots veiksmīgi!"
         );
-        // router.push(`/groups/${groupId}`);
+        router.push(`/groups/${groupId}`);
       }
     } catch (error) {
       console.error("Error processing images:", error);
@@ -329,37 +334,13 @@ const ResidenceObjectForm = ({
           </Form.Item>
 
           <Row gutter={16}>
-            <Col span={8}>
-              {/* Bedroom Count */}
+            <Col span={12}>
               <Form.Item
-                name="bedroomCount"
+                name="roomCount"
                 rules={[
                   {
                     required: true,
-                    message:
-                      "Lūdzu ievadiet guļamistabu skaitu!",
-                  },
-                ]}
-              >
-                <StyledNumberInput
-                  style={{ width: "100%" }}
-                  id="outlined-basic"
-                  label="Guļamistabu skaits"
-                  variant="outlined"
-                  defaultValue={residence?.bedroomCount}
-                  placeholder="Ievadiet guļamistabu skaitu"
-                />
-              </Form.Item>
-            </Col>
-
-            {/* Bathroom Count */}
-            <Col span={8}>
-              <Form.Item
-                name="bathroomCount"
-                rules={[
-                  {
-                    required: true,
-                    message: "Lūdzu ievadiet vannas istabu skaitu!",
+                    message: "Lūdzu ievadiet istabu skaitu!",
                     transform: (value) => (value ? Number(value) : value),
                   },
                 ]}
@@ -367,33 +348,26 @@ const ResidenceObjectForm = ({
                 <StyledNumberInput
                   style={{ width: "100%" }}
                   id="outlined-basic"
-                  label="Vannas istabu skaits"
+                  label="Istabu skaits"
                   variant="outlined"
-                  defaultValue={residence?.bathroomCount}
+                  defaultValue={residence?.roomCount}
                   // type="number"
-                  placeholder="Ievadiet vannas istabu skaitu"
+                  placeholder="Ievadiet istabu skaitu"
                 />
               </Form.Item>
             </Col>
 
             {/* Parking Count */}
-            <Col span={8}>
+            <Col span={12}>
               <Form.Item
-                name="parkingCount"
-                // rules={[
-                //   {
-                //     required: true
-                //     message:
-                //       "Lūdzu atzīmējiet, vai ir pieejamas stāvvietas!",
-                //   },
-                // ]}
+                name="parkingAvailable"
               >
                 <div
                   className={styles["parking-container"]}
                   onClick={() => {
-                    setParkingAvailable((prev: number) => {
-                      form.setFieldsValue({ parkingCount: prev ? 0 : 1 });
-                      return prev ? 0 : 1;
+                    setParkingAvailable((prev: boolean) => {
+                      form.setFieldsValue({ parkingAvailable: !prev });
+                      return prev ? false : true;
                     });
                   }}
                 >
@@ -407,6 +381,7 @@ const ResidenceObjectForm = ({
                         color: "var(--background-light-main)",
                         fontSize: "1.5em",
                         cursor: "pointer",
+                        borderRadius: "40%",
                       }}
                     />
                   </Tooltip>
@@ -434,6 +409,122 @@ const ResidenceObjectForm = ({
                     }`}
                   ></div>
                   ) : (
+                    <BsSignNoParking 
+                    // className={`${styles["parking-icon"]} ${styles["parking-unavailable"]}`}
+                    className={styles["parking-icon"]}
+                    style={{
+                      // red tint
+                      fill: "#ff0000",
+                      // filter: "invert(19%) sepia(95%) saturate(7481%) hue-rotate(360deg) brightness(96%) contrast(110%)",
+                    }}/>
+                  )}
+                </div>
+              </Form.Item>
+            </Col>
+
+            <Col span={8}>
+              <Form.Item
+                name="floor"
+                dependencies={["buildingFloors"]}
+                rules={[
+                  {
+                    required: true,
+                    message: "Lūdzu ievadiet stāvu!",
+                  },
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      if (!value || getFieldValue('buildingFloors') > value) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject(new Error('Stāvam jābūt mazākam par ēkas stāvu skaitu!'));
+                    },
+                  }),
+                ]}
+                
+              >
+                <StyledNumberInput
+                  style={{ width: "100%" }}
+                  id="outlined-basic"
+                  label="Stāvs"
+                  variant="outlined"
+                  defaultValue={residence?.floor}
+                  placeholder="Ievadiet stāvu"
+                />
+              </Form.Item>
+            </Col>
+
+            <Col span={8}>
+              <Form.Item
+                name="buildingFloors"
+                rules={[
+                  {
+                    required: true,
+                    message: "Lūdzu ievadiet ēkas stāvu skaitu!",
+                  },
+                ]}
+              >
+                <StyledNumberInput
+                  style={{ width: "100%" }}
+                  id="outlined-basic"
+                  label="Ēkas stāvu skaits"
+                  variant="outlined"
+                  defaultValue={residence?.buildingFloors}
+                  placeholder="Ievadiet ēkas stāvu skaitu"
+                />
+              </Form.Item>
+            </Col>
+
+            <Col span={8}>
+              <Form.Item
+                name="elevatorAvailable"
+              >
+                <div
+                  className={styles["parking-container"]}
+                  onClick={() => {
+                    setElevatorAvailable((prev: boolean) => {
+                      form.setFieldsValue({ elevatorAvailable: !prev });
+                      return prev ? false : true;
+                    });
+                  }}
+                >
+                  <Tooltip title={elevatorAvailable ? "Lifts ir pieejams" : "Lifts nav pieejams"}>
+                    <QuestionCircleOutlined
+                      style={{
+                        backgroundColor: "var(--background-dark-main)",
+                        position: "absolute",
+                        top: -10,
+                        right: -10,
+                        color: "var(--background-light-main)",
+                        fontSize: "1.5em",
+                        cursor: "pointer",
+                        borderRadius: "40%",
+                      }}
+                    />
+                  </Tooltip>
+                  <label
+                    style={{
+                      color: "var(--background-light-main)",
+                      // fontWeight: "bold",
+                      paddingLeft: "1em",
+                      fontSize: ".9rem",
+                      cursor: "pointer",
+                    }}
+                  >
+                    Lifta pieejamība
+                  </label>
+                  {elevatorAvailable ? (
+                  <div
+                    className={`${styles[`parking-icon`]} ${
+                      styles[
+                        `${
+                          elevatorAvailable
+                            ? "parking-available"
+                            : "parking-unavailable"
+                        }`
+                      ]
+                    }`}
+                  ></div>
+                  ) : (
                     <BsSignNoParking className={styles["parking-icon"]} style={{
                       // red tint
                       fill: "#ff0000",
@@ -443,6 +534,7 @@ const ResidenceObjectForm = ({
                 </div>
               </Form.Item>
             </Col>
+
           </Row>
           {/* Price */}
           <Form.Item
@@ -492,6 +584,10 @@ const ResidenceObjectForm = ({
               <p className={styles["upload-hint"]}> */}
                {" "}Publiskotās bildes tiek automātiski uzskatītas kā publisks īpašums. Uzmanies, lai tajās nebūtu tava personīgā informācija!
               </p>
+              <div className={styles["upload-hint"]}>
+                {/* {form.getFieldValue("pictures")?.length || 0}/10 bildes augšupielādētas */}
+                Var augšupielādēt līdz 10 bildēm*
+              </div>
             </Dragger>
 
           </Form.Item>

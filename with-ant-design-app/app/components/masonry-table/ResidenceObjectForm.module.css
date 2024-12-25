@@ -97,6 +97,7 @@
     justify-content: center;
     outline: 1px solid var(--background-light-secondary);
     border-radius: 1em;
+    gap: 1em;
     background: var(--background-dark-main-hover);
     cursor: pointer;
 }
@@ -143,5 +144,4 @@
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
-
 }

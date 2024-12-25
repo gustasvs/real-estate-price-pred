@@ -137,29 +137,6 @@ export const getMyFavoriteObjects = async () => {
 };
 
 
-// model Residence {
-//   id          String @id @default(uuid())
-//   name        String
-//   address     String
-//   area        Float
-//   description String
-
-//   bedroomCount  Int
-//   bathroomCount Int
-//   parkingCount  Int
-
-//   price          Float
-//   predictedPrice Float
-
-//   groupId        String
-//   residenceGroup ResidenceGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
-
-//   pictures String[]
-
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
-// }
-
 export const createObject = async (
   groupId: string,
   objectData: {
@@ -167,9 +144,14 @@ export const createObject = async (
     address: string;
     area: number;
     description: string;
-    bedroomCount: number;
-    bathroomCount: number;
-    parkingCount: number;
+    roomCount: number;
+    parkingAvailable: boolean;
+  
+    floor: number;
+    buildingFloors: number;
+  
+    elevatorAvailable: boolean;
+    
     price: number;
     pictures: string[];
   }
@@ -216,9 +198,14 @@ export const createObject = async (
       pictures: picturesExtracted,
       groupId: groupId,
       area: parseFloat(objectData.area.toString()),
-      bedroomCount: parseInt(objectData.bedroomCount.toString()),
-      bathroomCount: parseInt(objectData.bathroomCount.toString()),
-      parkingCount: objectData.parkingCount ? 1 : 0,
+
+      roomCount: parseInt(objectData.roomCount.toString()),
+      parkingAvailable: objectData.parkingAvailable,
+      elevatorAvailable: objectData.elevatorAvailable,
+
+      floor: parseInt(objectData.floor.toString()),
+      buildingFloors: parseInt(objectData.buildingFloors.toString()),
+
       price: parseFloat(objectData.price.toString()),
       predictedPrice: 0,
       },
@@ -244,9 +231,13 @@ export const updateObject = async (
     address?: string;
     area?: number;
     description?: string;
-    bedroomCount?: number;
-    bathroomCount?: number;
-    parkingCount?: number;
+
+    roomCount?: number;
+    parkingAvailable?: boolean;
+    floor?: number;
+    buildingFloors?: number;
+    elevatorAvailable?: boolean;
+
     price?: number;
     predictedPrice?: number;
     groupId?: string;

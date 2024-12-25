@@ -11,7 +11,7 @@ import {
   FaShower,
 } from "react-icons/fa6";
 import { IoBedOutline } from "react-icons/io5";
-import { FaCarSide } from "react-icons/fa";
+import { FaCarSide, FaDoorOpen, FaRegBuilding } from "react-icons/fa";
 import {
   Divider,
   Button,
@@ -797,7 +797,7 @@ const MasonryTable = ({
                                 ]
                               }
                             >
-                              Pieraksti:
+                              Piezīmes:
                             </span>
                             <span
                               className={
@@ -848,18 +848,7 @@ const MasonryTable = ({
                               ]
                             }
                           >
-                            <div
-                              className={
-                                styles[
-                                "content-description-bed-counts"
-                                ]
-                              }
-                            >
-                              <IoBedOutline />
-                              <span>
-                                {`${item.bedroomCount ?? "-"} ${getPlural(item.bedroomCount, "Guļamistaba", "Guļamistabas")}`}
-                              </span>
-                            </div>
+                            
                             <div
                               className={
                                 styles[
@@ -867,12 +856,26 @@ const MasonryTable = ({
                                 ]
                               }
                             >
-                              <FaShower />
+                              <FaDoorOpen />
                               <span>
-                                {`${item.bathroomCount ?? "-"} ${getPlural(item.bathroomCount, "Vannaistaba", "Vannaistabas")}`}
+                                {`${item.roomCount ?? "-"} ${getPlural(item.roomCount, "Istaba", "Istabas")}`}
                               </span>
                             </div>
-                            {Boolean(item.parkingCount) && (
+                            <div
+                              className={
+                                styles[
+                                "content-description-bed-counts"
+                                ]
+                              }
+                            >
+                              {/* <IoBedOutline /> */}
+                              <FaRegBuilding className={styles["content-description-floor-icon"]} />
+                              <span>
+                                {/* {`${item.bedroomCount ?? "-"} ${getPlural(item.bedroomCount, "Stāvs", "Stāvi")}`} */}
+                                {`${item.floor ?? "-"}/${item.buildingFloors ?? "-"} ${getPlural(item.floor, "Stāvs", "Stāvs")}`}
+                              </span>
+                            </div>
+                            {Boolean(item.parkingAvailable) && (
                               <div
                                 className={
                                   styles[

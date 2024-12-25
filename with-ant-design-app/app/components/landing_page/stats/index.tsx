@@ -29,16 +29,15 @@ import { FaUsers } from "react-icons/fa6";
 TweenOne.plugins.push(Children);
 
 const buttonContents = [
-  { label: "Algoritma apmācīšanai izmantie īpašumi", value: 15000, labelLink: "/data", labelLinkText: "", labelLinkExternal: true,
+  { label: "Algoritma apmācīšanai izmantie īpašumi", value: 1459, labelLink: "/data", labelLinkText: "", labelLinkExternal: true,
     icon: <DatabaseOutlined /> },
-  { label: "Lietotāji, kuri veiksmīgi ieguvuši patiesās cenas", value: 189, labelLink: "/groups", labelLinkText: "",
+  { label: "Algoritma apmācīšanai izmantotās bildes", value: 19926, labelLink: "/data", labelLinkText: "",
     icon: <FaUsers />
   },
-  { label: "Stundas ieguldītas algoritma apmācīšanai", value: 10, labelLink: "/groups", labelLinkText: "",
+  { label: "Stundas ieguldītas algoritma apmācīšanai", value: 29.1, labelLink: "/data", labelLinkText: "",
     icon: <AreaChartOutlined />
   },
 ];
-
 
 
 async function loadParticles(options: any) {

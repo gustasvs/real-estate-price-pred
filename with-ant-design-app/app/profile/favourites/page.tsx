@@ -11,9 +11,14 @@ export interface ResidenceObjectType {
   address?: string;
   area?: number;
   description?: string;
-  bedroomCount?: number;
-  bathroomCount?: number;
-  parkingCount?: number;
+  roomCount?: number;
+  parkingAvailable?: number;
+
+  floor?: number;
+  buildingFloors?: number;
+
+  elevatorAvailable?: boolean;
+  
   price?: number;
   predictedPrice?: number;
   pictures?: { base64: string; status: string }[];
