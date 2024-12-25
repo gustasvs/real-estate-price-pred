@@ -201,7 +201,7 @@ def get_vit_model(
             param.requires_grad = False
 
     aggregator = ImageAggregator(aggregation_method=aggregation_method, embedding_layer_size=embedding_size)
-    custom_head = CustomViTHead(embedding_layer_size=embedding_size, additional_metadata_count=7)
+    custom_head = CustomViTHead(embedding_layer_size=embedding_size, additional_metadata_count=6)
     model = ViTMultiImageRegressionModel(base_model, aggregator, custom_head)
 
     return model, feature_extractor

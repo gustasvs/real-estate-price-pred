@@ -193,6 +193,9 @@ for i, aggregation_method in enumerate(aggregation_methods):
         print(f"Training model: {actual_model_name}, aggregation method: {aggregation_method}, train_only_head: {train_only_head}")
 
         model, feature_extractor = get_vit_model(aggregation_method=aggregation_method, model_name=actual_model_name, train_only_head=train_only_head, embedding_size=embedding_size)
+        
+        # model.load_state_dict(torch.load("models/vit_regression_model.pth")) # load weights
+        
         model.to(device)
         
         train_loader, val_loader = get_data_loaders(inputs, prices, feature_extractor)

@@ -7,12 +7,12 @@ from helpers.data_loader import get_data_loaders
 
 from helpers.processed_data import processed_data
 
-from config.settings import AGGREGATION_METHOD
+from config.settings import AGGREGATION_METHOD, SAMPLES_TO_USE
 
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-images, prices = processed_data(535)
+images, prices = processed_data(SAMPLES_TO_USE)
 
 model, feature_extractor = get_vit_model(aggregation_method=AGGREGATION_METHOD)
 

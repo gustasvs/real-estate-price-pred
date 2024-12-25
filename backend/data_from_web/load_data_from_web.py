@@ -7,6 +7,8 @@ import numpy as np
 from sklearn.preprocessing import OneHotEncoder
 import matplotlib.pyplot as plt
 
+from helpers.handle_scaling_params import handle_scaling_params
+
 # AVERAGE_DAYS_IN_MONTH = 30.44
 AVERAGE_DAYS_IN_MONTH = 12
 
@@ -97,12 +99,12 @@ def extract_additional_metadata(row):
         street = row['Iela']
         district = row['Rajons']
 
-        # if int(aparment_floor) > int(building_floors):
-        #     print(f"Apartment floor is higher than building floors: {row['URL'].split('/')[-1]} {aparment_floor} > {building_floors} ")
-        #     print("Swapping the values")
-        #     temp_apartment_floor = aparment_floor
-        #     aparment_floor = building_floors
-        #     building_floors = temp_apartment_floor
+        if int(aparment_floor) > int(building_floors):
+            # print(f"Apartment floor is higher than building floors: {row['URL'].split('/')[-1]} {aparment_floor} > {building_floors} ")
+            # print("Swapping the values")
+            temp_apartment_floor = 0 + int(aparment_floor)
+            aparment_floor = building_floors
+            building_floors = temp_apartment_floor
 
         additional_metadata = [square_meters, rooms_count, aparment_floor, building_floors, has_elevator, street, district]
 
@@ -131,34 +133,39 @@ def normalise_and_prepare_additional_metadata(additional_metadata):
         else:
             floor_ratio.append(ap_floor / bldg_floors)
 
-    def min_max_scale(data):
+        if ap_floor / bldg_floors > 1:
+            print(ap_floor, bldg_floors, ap_floor / bldg_floors, bldg_floors / ap_floor)
+
+    def min_max_scale(data, name=None):
+        
+        handle_scaling_params(name, parameters={'std': np.std(data), 'mean': np.mean(data)}, save=True)
         # return (np.array(data) - min(data)) / (max(data) - min(data))
         return (np.array(data) - np.mean(data)) / np.std(data)
         # return np.array(data)
 
-    square_meters = min_max_scale(square_meters)
-    rooms_count = min_max_scale(rooms_count)
-    apartment_floor = min_max_scale(apartment_floor)
-    building_floors = min_max_scale(building_floors)
+    square_meters = min_max_scale(square_meters, name="square_meters")
+    rooms_count = min_max_scale(rooms_count, name="rooms_count")
+    apartment_floor = min_max_scale(apartment_floor, name="apartment_floor")
+    building_floors = min_max_scale(building_floors, name="building_floors")
 
 
-    unique_districts = sorted(set(district))
-    print(f"Unique Districts: {unique_districts}")
-    encoder = OneHotEncoder(categories=[unique_districts], sparse_output=False)
+    # unique_districts = sorted(set(district))
+    # print(f"Unique Districts: {unique_districts}")
+    # encoder = OneHotEncoder(categories=[unique_districts], sparse_output=False)
     # district_one_hot = encoder.fit_transform(np.array(district).reshape(-1, 1))
     # district_one_hot = np.array([1 for _ in range(len(district))])
-    district_one_hot = np.array([unique_districts.index(d) for d in district])
+    # district_one_hot = np.array([unique_districts.index(d) for d in district])
 
-    district_one_hot = min_max_scale(district_one_hot)
+    # district_one_hot = min_max_scale(district_one_hot)
 
-    print(f"District One Hot Shape: {district_one_hot.shape}")
+    # print(f"District One Hot Shape: {district_one_hot.shape}")
     print(f"Rooms Count Shape: {np.array(rooms_count).shape}")
     print(f"Apartment Floor Shape: {np.array(apartment_floor).shape}")
     print(f"Building Floors Shape: {np.array(building_floors).shape}")
     print(f"Floor Ratio Shape: {np.array(floor_ratio).shape}")
     print(f"Has Elevator Shape: {np.array(has_elevator).shape}")
 
-    output_metadata = np.column_stack((square_meters, rooms_count, apartment_floor, building_floors, floor_ratio, has_elevator, district_one_hot))
+    output_metadata = np.column_stack((square_meters, rooms_count, apartment_floor, building_floors, floor_ratio, has_elevator)) # district_one_hot
 
     # plt.hist(square_meters, bins=20)
     # plt.title("Square Meters distribution")
@@ -168,12 +175,21 @@ def normalise_and_prepare_additional_metadata(additional_metadata):
     # plt.title("Rooms Count distribution")
     # plt.show()  
 
-    # fig, ax = plt.subplots(1, 2, figsize=(15, 5))
-    # ax[0].hist(apartment_floor, bins=20)
-    # ax[0].set_title("Apartment Floor distribution")
-    # ax[1].hist(building_floors, bins=20)
-    # ax[1].set_title("Building Floors distribution")
-    # plt.show()
+    fig, ax = plt.subplots(2, 2, figsize=(15, 5))
+    ax[0, 0].hist(apartment_floor, bins=20)
+    ax[0, 0].set_title("Apartment Floor distribution")
+    ax[0, 1].hist(building_floors, bins=20)
+    ax[0, 1].set_title("Building Floors distribution")
+    fig.delaxes(ax[1, 0])
+    fig.delaxes(ax[1, 1])
+    ax_big = fig.add_subplot(2, 1, 2)
+    bins_floor_ratio = np.linspace(0, 1, 21)  # Create 20 bins between 0 and 1
+    ax_big.hist(floor_ratio, bins=bins_floor_ratio, range=(0, 1))
+    ax_big.set_title("Floor Ratio distribution")
+    ax_big.set_title("Floor Ratio distribution")
+
+    plt.show()
+
 
     # plt.hist(floor_ratio, bins=20)
     # plt.title("Floor Ratio distribution")
@@ -193,7 +209,7 @@ def extract_images_and_prices(count: int, root_dir: str, use_square_meters: bool
     additional_metadata = []
 
     with open(f'{root_dir}real_estate_data.csv', 'r') as csv_file:
-        reader = csv.DictReader(csv_file, fieldnames=csv_columns)        
+        reader = csv.DictReader(csv_file, fieldnames=csv_columns)
         
         for index, row in enumerate(reader):
             if index >= count:
