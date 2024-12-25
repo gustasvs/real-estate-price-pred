@@ -13,6 +13,9 @@ from transformers import ViTImageProcessor, ViTModel, DetrImageProcessor, DetrFo
 
 from transformers import AutoImageProcessor, ResNetForImageClassification, AutoModel, AutoModelForImageClassification
 
+# import cv2
+# import matplotlib.pyplot as plt
+
 # so config can be imported
 import sys
 from pathlib import Path
@@ -81,25 +84,38 @@ class ImageAggregator(nn.Module):
 
 
 class CustomViTHead(nn.Module):
-    def __init__(self, embedding_layer_size=768):
+    def __init__(self, embedding_layer_size=768, additional_metadata_count=5):
         super(CustomViTHead, self).__init__()
-        self.fc1 = nn.Linear(embedding_layer_size, 128)
-        self.fc2 = nn.Linear(128, 96)
-        self.fc3 = nn.Linear(96, 1)
-        self.dropout = nn.Dropout(0.1)
-
-    def forward(self, x):
-        # x = self.dropout(x)
-        x = nn.functional.relu(self.fc1(x))
-        x = self.dropout(x)
-        x = nn.functional.relu(self.fc2(x))
-        # x = self.dropout(x)
-        x = self.fc3(x)
-        return x.squeeze(-1)
 
 
+        # image embeddings layers
+        self.fc_image = nn.Linear(embedding_layer_size, 128)
+        self.dropout_image = nn.Dropout(0.2)
 
-# Combine base model with custom head
+        # additional metadata layers
+        self.fc_features = nn.Linear(additional_metadata_count, 64)
+        self.dropout_features = nn.Dropout(0.2)
+
+        # combined layers
+        self.fc_combined = nn.Linear(128 + 64, 96)
+        self.fc_final = nn.Linear(96, 1)
+
+    def forward(self, aggregated_image_embeddings, additional_metadata):
+        
+        # Process image embeddings
+        img_out = nn.functional.relu(self.fc_image(aggregated_image_embeddings))
+        img_out = self.dropout_image(img_out)
+
+        # Process additional features
+        md_out = nn.functional.relu(self.fc_features(additional_metadata))
+        md_out = self.dropout_features(md_out)
+
+        # Concatenate and process combined data
+        combined = torch.cat([img_out, md_out], dim=-1)
+        combined = nn.functional.relu(self.fc_combined(combined))
+        output = self.fc_final(combined)
+        return output.squeeze(-1)
+
 class ViTMultiImageRegressionModel(nn.Module):
     def __init__(self, base_model, aggregator, custom_head):
         super(ViTMultiImageRegressionModel, self).__init__()
@@ -109,55 +125,47 @@ class ViTMultiImageRegressionModel(nn.Module):
 
     def forward(self, batch):
         batch_embeddings = []
-        
-        # create embeddings for all images in one sample in batch
-        for sample in batch:
-            # You only need to stack if instance_images is a list of tensors, otherwise directly use the tensor.
-            attention_maps = []
-            instance_embeddings = []
-            
-            # import cv2
-            # import matplotlib.pyplot as plt
+        batch_metadata = []
 
-            for image in sample:
+        for sample in batch:
+
+            sample_images = sample[0]
+            sample_additional_metadata = sample[1]
+
+            # print("Sample images shape: ", sample_images.shape)
+            # print("Sample additional metadata shape: ", sample_additional_metadata.shape)
+
+            instance_embeddings = []
+
+            for image in sample_images:
                 outputs = self.base_model(pixel_values=image.unsqueeze(0))
                 embeddings = outputs.last_hidden_state[:, 0, :]  # CLS token
                 instance_embeddings.append(embeddings)
 
-            #     # Handle attentions
-            #     attentions = outputs.attentions[-1]  # Last layer attentions
-            #     avg_attention_map = attentions.mean(dim=1)  # Average across heads
-            #     cls_attention = avg_attention_map[:, 0, 1:]  # Focus on [CLS]-to-patch attentions
-
-            #     # Reshape the attention to match the patch grid
-            #     patch_size = int(cls_attention.size(-1) ** 0.5)  # Assumes square patch grid
-            #     cls_attention = cls_attention.view(patch_size, patch_size)
-
-            #     attention_map_resized = cv2.resize(cls_attention.cpu().detach().numpy(), (224, 224))
-            #     attention_maps.append(attention_map_resized)
-
-            # # Visualization
-            # for img, attn_map in zip(sample, attention_maps):
-            #     attention_map_normalized = (attn_map - attn_map.min()) / (attn_map.max() - attn_map.min())  # Normalize for visualization
-            #     plt.imshow(img.permute(1, 2, 0).cpu().numpy())  # Image
-            #     plt.imshow(attention_map_normalized, cmap='jet', alpha=0.5)  # Attention map overlay
-            #     plt.axis('off')
-            #     plt.show()
-
-
             instance_embeddings = torch.cat(instance_embeddings, dim=0)
             batch_embeddings.append(instance_embeddings)
+
+            batch_metadata.append(sample_additional_metadata)  
         
-        aggregated_embeddings = torch.stack([
+        aggregated_image_embeddings = torch.stack([
+            #* iterates over batches NOT over images in a single sample (as it might seem with first glance)
             self.aggregator(instance) for instance in batch_embeddings
         ])
 
-        if ENABLE_DEV_LOGS: print("Aggregated embeddings shape: ", aggregated_embeddings.shape)
-        
-        # Pass aggregated embedding through regression head
-        output = self.custom_head(aggregated_embeddings)
-        if ENABLE_DEV_LOGS: print("Final output shape: ", output.shape)
-        return output
+
+        outputs = []
+        for embeddings, metadata in zip(aggregated_image_embeddings, batch_metadata):
+            # print("Aggregated embeddings shape: ", embeddings.shape)
+            # print("Metadata shape: ", metadata)
+            output = self.custom_head(embeddings, metadata)
+            outputs.append(output)
+
+            # print("Output: ", output)
+
+        final_output = torch.stack(outputs)
+        # print("Final output shape: ", final_output.shape)
+
+        return final_output
 
 
 def get_vit_model(
@@ -193,7 +201,7 @@ def get_vit_model(
             param.requires_grad = False
 
     aggregator = ImageAggregator(aggregation_method=aggregation_method, embedding_layer_size=embedding_size)
-    custom_head = CustomViTHead(embedding_layer_size=embedding_size)
+    custom_head = CustomViTHead(embedding_layer_size=embedding_size, additional_metadata_count=7)
     model = ViTMultiImageRegressionModel(base_model, aggregator, custom_head)
 
     return model, feature_extractor

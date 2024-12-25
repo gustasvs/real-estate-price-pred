@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 
 
-MAX_PAGES = 5
+MAX_PAGES = 47
 
 HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:133.0) Gecko/20100101 Firefox/133.0',
@@ -70,7 +70,7 @@ def save_links_to_file(links, filename='links.txt'):
         for link in updated_links:
             file.write(link + '\n')
 
-    print(f"Added {len(new_links)} new links to the file, Total unique links: {len(updated_links)}")
+    print(f"Added {len(updated_links) - len(existing_links) } new links to the file, Total unique links: {len(updated_links)}")
 
 
 
@@ -82,7 +82,8 @@ if __name__ == '__main__':
     # start_url = 'https://www.ss.lv/lv/real-estate/flats/riga/ziepniekkalns/hand_over/'
     # start_url = 'https://www.ss.lv/lv/real-estate/flats/riga/purvciems/hand_over/'
     # start_url = 'https://www.ss.lv/lv/real-estate/flats/riga/mezhapark/hand_over/'
-    start_url = 'https://www.ss.lv/lv/real-estate/flats/riga/mezhciems/hand_over/'
+    # start_url = 'https://www.ss.lv/lv/real-estate/flats/riga/mezhciems/hand_over/'
+    start_url = 'https://www.ss.lv/lv/real-estate/flats/riga/all/hand_over/'
     all_links = fetch_item_links(start_url)
     save_links_to_file(all_links)
 

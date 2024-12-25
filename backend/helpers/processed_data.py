@@ -9,38 +9,39 @@ from helpers.label_smothing import apply_lds, apply_fds, adaptive_lds
 
 from data_from_web.load_data_from_web import extract_images_and_prices
 
-from config.settings import DEMO_MODE, STANDART_DEV_TO_KEEP
+from config.settings import DEMO_MODE, STANDART_DEV_TO_KEEP, USE_SQUARE_METERS, USE_ADDITIONAL_METADATA
 
 def processed_data(count):
     """
     returns inputs and targets scaled, normalized 
     """
     
+    # CALIFORNIA HOUSING DATASET
     # images = load_images(count) # shape = [count, image_count, image]
     # print("Images loaded...")
-
-    # prices = [np.random.randint(100, 1000) for _ in range(count)]
     # prices = load_prices(count) # shape = [count]
     # print("Prices loaded...")
 
-    prices, images = extract_images_and_prices(count, root_dir="data_from_web/")
+    # LATVIAN REAL ESTATE DATASET
+    prices, images, additional_metadata = extract_images_and_prices(count, root_dir="data_from_web/", use_square_meters=USE_SQUARE_METERS)
 
-    # if DEMO_MODE:
-    #     plt.hist(prices, bins=20)
-    #     plt.title("Price distribution before removing outliers")
-    #     plt.show()
+    print(f"Prices count: {len(prices)}, Images count: {len(images)}, Additional metadata count: {len(additional_metadata)}")
 
+    # filter out outliers
     mean_price = np.mean(prices)
     std_price = np.std(prices)
-
     print(f"Mean price: {mean_price}, std price: {std_price}")
     print(f"thresholds: {mean_price - STANDART_DEV_TO_KEEP * std_price} and {mean_price + STANDART_DEV_TO_KEEP * std_price}")
-
+    
+    
     filtered_indices = [i for i in range(len(prices)) if mean_price - STANDART_DEV_TO_KEEP * std_price < prices[i] < mean_price + STANDART_DEV_TO_KEEP * std_price]
     filtered_prices = [prices[i] for i in filtered_indices]
     filtered_images = [images[i] for i in filtered_indices]
+    filtered_additional_metadata = [additional_metadata[i] for i in filtered_indices]
+
     prices = filtered_prices
     images = filtered_images
+    additional_metadata = filtered_additional_metadata
 
     count = len(prices)
 
@@ -48,10 +49,10 @@ def processed_data(count):
     print(f"Filtered count: {count}")
     print(f"*" * 20)
 
-    if DEMO_MODE:
-        plt.hist(prices, bins=20)
-        plt.title("Price distribution after removing outliers")
-        plt.show()
+    # if DEMO_MODE:
+    #     plt.hist(prices, bins=20)
+    #     plt.title("Price distribution after removing outliers")
+    #     plt.show()
 
     prices = np.array(prices)
 
@@ -85,6 +86,9 @@ def processed_data(count):
     scaler = MinMaxScaler()
     prices = scaler.fit_transform(np.array(prices).reshape(-1, 1)).flatten()
 
+    # redefine stuff function returns clearer
+    inputs = np.array([[images[i], additional_metadata[i]] for i in range(len(images))]) if USE_ADDITIONAL_METADATA else images
+    targets = prices
 
-    return images, prices
+    return inputs, targets
 
