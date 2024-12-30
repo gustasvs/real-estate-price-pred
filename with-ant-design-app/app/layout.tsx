@@ -10,6 +10,7 @@ import theme from "./themeConfig";
 import { Roboto } from "next/font/google";
 import { ThemeProvider } from "./context/ThemeContext";
 import Navbar from "./components/navigation/navbar";
+import { Providers } from "./providers";
 
 const roboto = Roboto({
   weight: "400",
@@ -17,7 +18,7 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
-  title: "Inovācija cenu noteikšanā",
+  title: "SmartEstate",
   description: "Nosakiet cenu, izmantojot inovatīvus risinājumus",
 };
 
@@ -25,14 +26,16 @@ function RootLayout({ children }: React.PropsWithChildren) {
   return (
     <html lang="en">
       <body className={roboto.className}>
-        <SessionProvider>
+        
           <ConfigProvider theme={theme}>
+          <Providers>
             <ThemeProvider>
               <Navbar homePage={false} />
-              {children}
+              
+                {children}
             </ThemeProvider>
+            </Providers>
           </ConfigProvider>
-        </SessionProvider>
       </body>
     </html>
   );

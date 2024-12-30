@@ -47,6 +47,9 @@ const CardTable = ({
 
   const { status } = useSession();
 
+  const currentSession = useSession();
+  console.log("currentSession", currentSession);
+
   const [loading, setLoading] = useState(false);
 
   const [newGroupModalVisible, setNewGroupModalVisible] =

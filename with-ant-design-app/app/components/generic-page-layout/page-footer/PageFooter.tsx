@@ -67,11 +67,9 @@ const PageFooter = () => {
         />
         <div className={styles["footer-logo-text"]}>
           <span className={styles["footer-logo-title"]}>
-            "Inovācija cenu noteikšanā"
+            "SmartEstate"
           </span>
-          <br></br>
-          Visas tiesības aizsargātas ©
-          {new Date().getFullYear()}
+          © {new Date().getFullYear()}
         </div>
       </div>
       <div className={styles["footer-links"]}>

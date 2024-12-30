@@ -33,7 +33,7 @@ def generate_presigned_url(client, file_name, bucket_name, expiry=24*60*60):
 def fetch_images_from_presigned_urls(urls):
     images = []
     for url in urls:
-        print("Fetching image from URL: ", url)
+        # print("Fetching image from URL: ", url)
         response = requests.get(url)
         image = Image.open(BytesIO(response.content)).convert("RGB")
         images.append(image)

@@ -26,7 +26,7 @@ class ImageDataset(Dataset):
         random_indices = np.random.choice(len(sample_images), num_images_to_select, replace=False)
         selected_images = [sample_images[idx] for idx in random_indices]
         # Preprocess and stack images
-        sample_images_extracted = process_sample(selected_images, self.feature_extractor)
+        sample_images_extracted = process_sample_images(selected_images, self.feature_extractor)
         if ENABLE_DEV_LOGS: print("current sample shape: ", sample_images_extracted.shape)
 
         # additional_metadata = [1, 1, 1, 1, 1]
@@ -58,7 +58,7 @@ def get_data_loaders(inputs, prices, feature_extractor):
 
     return train_loader, val_loader
 
-def process_sample(images, feature_extractor):
+def process_sample_images(images, feature_extractor):
     sample_images_extracted = torch.stack([
         feature_extractor(images=img, return_tensors="pt")['pixel_values'].squeeze(0) for img in images
     ])

@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Alert, Button, Divider, Form, Input, Modal } from "antd";
 import styles from "./LogInModal.module.css";
 import { GithubOutlined, GoogleCircleFilled, GoogleOutlined, TwitterCircleFilled } from "@ant-design/icons";
 import { login } from "../../../../../actions/auth";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 
 interface LoginModalProps {
   open: boolean;
@@ -17,8 +17,11 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, setOpen, setSignUpModalOp
   const [step, setStep] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
+  const { data: session } = useSession();
+
   const handleCloseModal = () => {
     setOpen(false);
+    setError(null);
   };
 
   const handleSignIn = async (values: { email: string; password: string }) => {
@@ -34,6 +37,12 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, setOpen, setSignUpModalOp
       setError(null);
     }
   };
+
+  useEffect(() => {
+    if (session && session.error)
+      setError(session.error as string);
+  }, [session]);
+
   return (
     <>
       <Modal

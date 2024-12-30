@@ -45,6 +45,52 @@ def get_object_images_from_db(object_id):
         if connection:
             connection.close()
 
+
+def get_object_metadata_from_db(object_id):
+    """
+    Retrieves the metadata associated with a Residence object from the database:
+        area        Float
+        roomCount   Integer
+        elevatorAvailable   Boolean
+        floor           Integer
+        buildingFloors  Integer
+
+    :param object_id: The ID of the Residence object.
+    :return: A dictionary of metadata or an empty dictionary if not found.
+    """
+
+    connection = None
+    cursor = None
+
+    try:
+        # Establish the database connection
+        connection = psycopg2.connect(DATABASE_URL)
+        cursor = connection.cursor(cursor_factory=RealDictCursor)
+        cursor.execute(f"SET search_path TO {DATABASE_SCHEMA};")
+
+        # Query to fetch the metadata for the given object ID
+        query = """
+        SELECT area, "roomCount", "elevatorAvailable", floor, "buildingFloors"
+        FROM "Residence"
+        WHERE id = %s;
+        """
+        cursor.execute(query, (object_id,))
+        result = cursor.fetchone()
+
+        # Extract and return the metadata
+        return result if result else {}
+    except Exception as e:
+        print(f"Error fetching object metadata: {e}")
+        return {}
+
+    finally:
+        if cursor:
+            cursor.close()
+        if connection:
+            connection.close()
+
+
+
 def get_all_residences():
     """
     Retrieves and prints all Residence objects from the database.

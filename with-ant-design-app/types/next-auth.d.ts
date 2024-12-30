@@ -20,8 +20,8 @@ declare module "next-auth" {
         /** The user's postal address. */
         theme: string | null;
         fontSize: string | null;
-        }
-
+        
+      }
   }
   
   interface User {

@@ -130,7 +130,7 @@ const Banner = () => {
         className={styles.content}
       >
         <div className={styles["left-container"]}>
-          <div className={styles.title}>Inovācija cenu noteikšanā</div>
+          <div className={styles.title}>SmartEstate</div>
           <div style={{
             display: "flex",
             width: "80%",

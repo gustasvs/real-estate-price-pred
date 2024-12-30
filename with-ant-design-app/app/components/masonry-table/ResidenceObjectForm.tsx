@@ -32,6 +32,7 @@ import {
 import { generateUploadUrl } from "../../api/generateUploadUrl";
 import { useSession } from "next-auth/react";
 import { StyledNumberInput, StyledTextField } from "../styled-mui-components/styled-components";
+import { ElevatorOutlined, NotAccessible } from "@mui/icons-material";
 
 const { Dragger } = Upload;
 
@@ -392,6 +393,8 @@ const ResidenceObjectForm = ({
                       paddingLeft: "1em",
                       fontSize: ".9rem",
                       cursor: "pointer",
+                      height: "1.4375em",
+                      padding: "16.5px 14px 16.5px 14px",
                     }}
                   >
                     Stāvvietas pieejamiba
@@ -399,13 +402,7 @@ const ResidenceObjectForm = ({
                   {parkingAvailable ? (
                   <div
                     className={`${styles[`parking-icon`]} ${
-                      styles[
-                        `${
-                          parkingAvailable
-                            ? "parking-available"
-                            : "parking-unavailable"
-                        }`
-                      ]
+                      styles["parking-available"]
                     }`}
                   ></div>
                   ) : (
@@ -414,6 +411,7 @@ const ResidenceObjectForm = ({
                     className={styles["parking-icon"]}
                     style={{
                       // red tint
+                      height: "2.5rem",
                       fill: "#ff0000",
                       // filter: "invert(19%) sepia(95%) saturate(7481%) hue-rotate(360deg) brightness(96%) contrast(110%)",
                     }}/>
@@ -433,7 +431,7 @@ const ResidenceObjectForm = ({
                   },
                   ({ getFieldValue }) => ({
                     validator(_, value) {
-                      if (!value || getFieldValue('buildingFloors') > value) {
+                      if (!value || getFieldValue('buildingFloors') >= value) {
                         return Promise.resolve();
                       }
                       return Promise.reject(new Error('Stāvam jābūt mazākam par ēkas stāvu skaitu!'));
@@ -508,29 +506,20 @@ const ResidenceObjectForm = ({
                       paddingLeft: "1em",
                       fontSize: ".9rem",
                       cursor: "pointer",
+                      height: "1.4375em",
+                      padding: "11.5px 14px 21.5px 14px",
+                      lineHeight: "1",
+                      textAlign: "center",
                     }}
                   >
                     Lifta pieejamība
                   </label>
-                  {elevatorAvailable ? (
-                  <div
-                    className={`${styles[`parking-icon`]} ${
-                      styles[
-                        `${
-                          elevatorAvailable
-                            ? "parking-available"
-                            : "parking-unavailable"
-                        }`
-                      ]
-                    }`}
-                  ></div>
-                  ) : (
-                    <BsSignNoParking className={styles["parking-icon"]} style={{
-                      // red tint
-                      fill: "#ff0000",
-                      // filter: "invert(19%) sepia(95%) saturate(7481%) hue-rotate(360deg) brightness(96%) contrast(110%)",
-                    }}/>
-                  )}
+                  {elevatorAvailable ? 
+                    <ElevatorOutlined style={{ color: "yellowgreen", fontSize: "2.5rem", marginRight: "1rem" }} 
+                    className={styles["parking-icon"]} /> 
+                    : 
+                    <NotAccessible style={{ fill: "red", marginRight: "1rem" }} className={styles["parking-icon"]}/>
+                  }
                 </div>
               </Form.Item>
             </Col>

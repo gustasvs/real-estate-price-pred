@@ -5,3 +5,11 @@ export function saltAndHashPassword(password: any) {
   const hash = bcrypt.hashSync(password, salt); // Synchronously hash the password
   return hash; // Return the hash directly as a string
 }
+
+export function generateRandomHashedString() {
+  return bcrypt.hashSync(
+    Math.random().toString(36).substring(2, 15) +
+      Math.random().toString(36).substring(2, 15),
+    10
+  );
+}

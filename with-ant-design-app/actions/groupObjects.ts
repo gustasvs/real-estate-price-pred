@@ -1,17 +1,17 @@
 "use server";
 
-import { useSession } from "next-auth/react";
 import { db } from "../db";
-import { auth } from "../auth";
 
 import amqp from 'amqplib'
 import { revalidatePath } from "next/cache";
 import { generateDownloadUrl } from "../app/api/generateDownloadUrl";
 
+import { getServerSession } from "next-auth";
+import { authOptions } from "../auth";
 
 export const getObject = async (objectId: string) => {
 
-  const session = await auth();
+  const session = await getServerSession(authOptions);
 
   if (!session) {
     return { error: "User not authenticated" };
@@ -55,7 +55,7 @@ export const getObjects = async (groupId: string, filter: Filter) => {
 
   console.log("Filter:", filter);
 
-  const session = await auth();
+  const session = await getServerSession(authOptions);
   if (!session) {
     return { error: "User not authenticated" };
   }
@@ -78,7 +78,7 @@ export const getObjects = async (groupId: string, filter: Filter) => {
         // residenceGroup: { userId: userId },
         ... (residenceName ? { name: { contains: residenceName, mode: "insensitive" } } : {}),
       },
-      ... (filter?.sortBy ? { orderBy: { [filter.sortBy]: filter.sortOrder } } : {}),
+      ... (filter?.sortBy && filter?.sortOrder ? { orderBy: { [filter.sortBy]: filter.sortOrder } } : {}),
       });
 
     const objectsWithPresignedDownloadUrls = await Promise.all(
@@ -109,7 +109,7 @@ export const getObjects = async (groupId: string, filter: Filter) => {
 };
 
 export const getMyFavoriteObjects = async () => {
-  const session = await auth();
+  const session = await getServerSession(authOptions);
   if (!session) {
     return { error: "User not authenticated" };
   }
@@ -159,7 +159,7 @@ export const createObject = async (
   try {
 
     
-  const session = await auth();
+  const session = await getServerSession(authOptions);
 
   const user = session?.user;
 

@@ -141,9 +141,11 @@ const MyProfileForm = () => {
     console.log("res", res);
 
     if ("error" in res) {
-      message.error("Failed to update profile");
+      message.error(res.error);
+    } else if ("message" in res) {
+      message.info(res.message, 10);
     } else {
-      message.success("Profile updated successfully");
+      message.success("Profils atjaunots veiksmīgi");
       // await update();
     }
   };
@@ -157,61 +159,40 @@ const MyProfileForm = () => {
 
   useEffect(() => {
     // fill form with user data
-    if (session) {
-      form.setFieldsValue({
-        name: session.user?.name,
-        email: session.user?.email,
-      });
+    const fillInitialValues = async () => {
+      if (session) {
 
-      setUserPicture(session.user?.image || "");
-    
+        console.log("session", session);
 
-      // if (!initialValues.name && !initialValues.email && !initialValues.image && !initialValues.fontSize && !initialValues.theme) {
+        form.setFieldsValue({
+          name: session.user?.name,
+          email: session.user?.email,
+        });
+
+        let userPicture = session?.user?.image || "";
+
+        const sessionUserImage = session?.user?.image;
+        if (sessionUserImage) {
+          const downloadUrl = await generateDownloadUrl(sessionUserImage, "profile-pictures");
+
+          console.log("Download URL:", downloadUrl);
+          if (typeof downloadUrl === "object" && "error" in downloadUrl) {
+            console.error(`Failed to get download URL for ${sessionUserImage}: ${downloadUrl.error}`);
+          } else {
+            setUserPicture(downloadUrl);
+            userPicture = downloadUrl;
+          }
+        }
         setInitialValues({
           name: session.user?.name,
           email: session.user?.email,
-          image: session.user?.image,
+          image: userPicture,
           fontSize: session.user?.fontSize,
           theme: session.user?.theme,
         });
-      // }
+      }
     }
-  }, [session]);
-
-  useEffect(() => {
-    console.log("initialValues", initialValues);
-  }, [initialValues]);
-
-
-  useEffect(() => {
-    if (session?.user?.image) {
-      const fetchUserImage = async () => {
-        try {
-          const sessionUserImage = session?.user?.image;
-          if (sessionUserImage) {
-            const downloadUrl = await generateDownloadUrl(sessionUserImage, "profile-pictures");
-
-            console.log("Download URL:", downloadUrl);
-            if (typeof downloadUrl === "object" && "error" in downloadUrl) {
-              throw new Error(downloadUrl.error);
-            } else {
-              setUserPicture(downloadUrl);
-              // if (!initialValues.image) {
-              setInitialValues({
-                ...initialValues,
-                image: downloadUrl,
-              });
-              // }
-            }
-          }
-        } catch (error) {
-          console.error("Error fetching user image:", error);
-        } finally {
-        }
-      };
-
-      fetchUserImage();
-    }
+    fillInitialValues();
   }, [session]);
 
   const [editorHovered, setEditorHovered] = useState(false);
@@ -364,7 +345,7 @@ const MyProfileForm = () => {
                   height={210}
                   scale={imageScale}
                   border={editorHovered ? 70 : 0}
-                  position={editorHovered ? undefined : {x: 0.5, y: 0.5}}
+                  position={editorHovered ? undefined : { x: 0.5, y: 0.5 }}
                   style={{
                     cursor: editorHovered ? "grab" : "unset",
                   }}
@@ -375,7 +356,7 @@ const MyProfileForm = () => {
               </div>
             </Form.Item>
 
-            {/* </div> */}
+            {console.log("initialValues", initialValues)}
             <div className={styles["profile-summary"]}>
               <div className={styles["profile-name"]}>
                 <span>{initialValues?.name || "..."}</span>
@@ -518,13 +499,13 @@ const MyProfileForm = () => {
               email: initialValues.email,
             });
             setUserPicture(initialValues.image || "");
-            
+
             console.log("current font size", fontSize);
             console.log("initial font size", initialValues.fontSize);
-            
+
             const resetFontSize = !initialValues.fontSize ? 19 : parseInt(initialValues.fontSize);
             setFontSize(resetFontSize);
-            
+
             toggleTheme(initialValues.theme);
           }}
         >

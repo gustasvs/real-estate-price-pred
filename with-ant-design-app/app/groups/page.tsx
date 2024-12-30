@@ -19,6 +19,8 @@ const GroupsPage = async ({
 
   console.log("params", searchParams);
 
+  
+
   const fetchGroups = async () => {
     "use server";
     const { groups, total, error } = await getGroupsApi(

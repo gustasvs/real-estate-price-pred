@@ -10,6 +10,7 @@ from helpers.label_smothing import apply_lds, apply_fds, adaptive_lds
 from data_from_web.load_data_from_web import extract_images_and_prices
 
 from helpers.handle_scaling_params import handle_scaling_params
+from helpers.data_loader import process_sample_images
 
 from config.settings import DEMO_MODE, STANDART_DEV_TO_KEEP, USE_SQUARE_METERS, USE_ADDITIONAL_METADATA
 
@@ -97,3 +98,32 @@ def processed_data(count):
 
     return inputs, targets
 
+def scale_metadata_for_sample(metadata):
+
+    square_meters_ranges = handle_scaling_params("square_meters")
+    rooms_count_ranges = handle_scaling_params("rooms_count")
+    apartment_floor_ranges = handle_scaling_params("apartment_floor")
+    building_floors_ranges = handle_scaling_params("building_floors")
+    price_ranges = handle_scaling_params("prices")
+
+    print("Square meters ranges: ", square_meters_ranges)
+    print("Rooms count ranges: ", rooms_count_ranges)
+    print("Apartment floor ranges: ", apartment_floor_ranges)
+    print("Building floors ranges: ", building_floors_ranges)
+    print("Price ranges: ", price_ranges)
+
+    scaled_square_meters = (metadata['area'] - square_meters_ranges["mean"]) / square_meters_ranges["std"]
+    scaled_rooms_count = (metadata['roomCount'] - rooms_count_ranges["mean"]) / rooms_count_ranges["std"]
+    scaled_apartment_floor = (metadata['floor'] - apartment_floor_ranges["mean"]) / apartment_floor_ranges["std"]
+    scaled_building_floors = (metadata['buildingFloors'] - building_floors_ranges["mean"]) / building_floors_ranges["std"]
+
+    scaled_floor_ratio = metadata['floor'] / metadata['buildingFloors']
+
+    has_elevator = 1 if metadata['elevatorAvailable'] else 0
+
+
+    return [scaled_square_meters, scaled_rooms_count, scaled_apartment_floor, scaled_building_floors, scaled_floor_ratio, has_elevator]
+
+def descale_price(price):
+    price_ranges = handle_scaling_params("prices")
+    return price * (price_ranges["max"] - price_ranges["min"]) + price_ranges["min"]

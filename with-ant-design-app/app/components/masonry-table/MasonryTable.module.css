@@ -125,6 +125,13 @@
     outline: 1px solid var(--background-light-main);
 }
 
+.content-cheaper:not(.content-not-compact) .content-description {
+    outline: 3px solid yellowgreen;
+}
+.content-more-expensive:not(.content-not-compact) .content-description {
+    outline: 3px solid lightcoral;
+}
+
 .content-wrapper:hover .content-description {
     transition: transform 0.6s cubic-bezier(0.25, 1.25, 0.5, 1);
     transform: scaleY(1);
@@ -219,6 +226,22 @@
     transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
     transition: border-radius none;
     outline: 1px solid var(--background-light-main);
+}
+
+.content-cheaper {
+    outline: 3px solid yellowgreen;
+}
+.content-more-expensive {
+    outline: 3px solid lightcoral;
+}
+
+.content-cheaper:not(.content-not-compact) {
+    outline: 3px solid yellowgreen;
+    border: none;
+}
+.content-more-expensive:not(.content-not-compact) {
+    outline: 3px solid lightcoral;
+    border: none;
 }
 
 .content-wrapper:hover .content:not(.content-add) {
@@ -511,7 +534,7 @@
 }
 
 .arrow-up {
-    color: green;
+    color: yellowgreen;
     /* border-bottom-color: green; */
     /* transform: rotate(-45deg); */
 }
@@ -519,7 +542,7 @@
 .arrow-down {
     /* border-bottom-color: red; */
     /* transform: rotate(45deg); */
-    color: red;
+    color: coral;
     transform: rotate(180deg);
 }
 

@@ -2,12 +2,14 @@
 
 import { useSession } from "next-auth/react";
 import { db } from "../db";
-import { auth } from "../auth";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../auth";
+import { revalidatePath } from "next/cache";
 
 
 // Get one group
 export const getGroup = async (groupId: string) => {
-  const session = await auth();
+  const session = await getServerSession(authOptions);
   // console.log("session in groups", session);
   const user = session?.user;
   if (!user || !user.id) {
@@ -29,8 +31,8 @@ export const getGroup = async (groupId: string) => {
 
 // Get all groups
 export const getGroups = async (filter: any) => {
-  const session = await auth();
-  // console.log("session in groups", session);
+  const session = await getServerSession(authOptions);
+  console.log("session in groups", session);
   const user = session?.user;
   if (!user || !user.id) {
     return { error: "Unauthorized" };
@@ -80,7 +82,7 @@ export const getGroups = async (filter: any) => {
 
 // Get minimal group info for sidebar
 export const getGroupsForSidebar = async () => {
-  const session = await auth();
+  const session = await getServerSession(authOptions);
   // console.log("session in groups", session);
   const user = session?.user;
   if (!user || !user.id) {
@@ -108,9 +110,13 @@ export const getGroupsForSidebar = async () => {
 // Create a new group
 export const createGroup = async (groupName: string) => {
 
-  const session = await auth();
+  console.log("groupName", groupName);
 
-  // console.log("session in groups", session);
+  const session = await getServerSession(authOptions);
+
+  console.log("session in groups create", session);
+
+  console.log("groupName", groupName);
 
   const user = session?.user;
 
@@ -127,7 +133,14 @@ export const createGroup = async (groupName: string) => {
         userId: userId,
       },
     });
+
+    console.log("newGroup", newGroup);
+
+    revalidatePath("/groups");
+
     return newGroup;
+
+
   } catch (error) {
     console.error("Error creating group:", error);
     return { error: "Failed to create group" };
@@ -137,7 +150,7 @@ export const createGroup = async (groupName: string) => {
 // Update an existing group
 export const updateGroup = async (groupId: string, newGroupName: string) => {
 
-  const session = await auth();
+  const session = await getServerSession(authOptions);
   
   const user = session?.user;
 
@@ -173,7 +186,10 @@ export const updateGroup = async (groupId: string, newGroupName: string) => {
 
     const updatedGroup = await db.residenceGroup.update({
       where: { id: groupId },
-      data: { name: newGroupName },
+      data: { 
+        name: newGroupName, 
+        updatedAt: new Date(),
+      },
     });
     return updatedGroup;
   } catch (error) {

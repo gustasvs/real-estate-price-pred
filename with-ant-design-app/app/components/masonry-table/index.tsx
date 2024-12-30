@@ -3,11 +3,13 @@
 import {
   EditOutlined,
   PlusOutlined,
+  QuestionCircleOutlined,
 } from "@ant-design/icons";
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import {
   FaChevronDown,
   FaChevronUp,
+  FaElevator,
   FaShower,
 } from "react-icons/fa6";
 import { IoBedOutline } from "react-icons/io5";
@@ -36,6 +38,7 @@ import SearchInput from "../search-input/SearchInput";
 
 import FavouriteButton from "./FavouriteButton";
 import { StyledIconButton } from "../styled-mui-components/styled-components";
+import { QuestionMarkOutlined } from "@mui/icons-material";
 
 export const getPlural = (count: number, singular: string, plural: string) => {
   // count ends in 1, but not 11
@@ -334,7 +337,7 @@ const MasonryTable = ({
           className={styles["sort-button"]}
           onClick={(e) => animateAndSort("price", false)}
         >
-          Kārtot pēc cenas
+          Kārtot pēc tirgus cenas
           <IoMdArrowRoundUp className={`${styles["sort-arrow"]} ${styles[`${sortState.field === "price" ? sortState.order === "asc" ? "sort-arrow-up" : "sort-arrow-down" : "not-active"}`]}`} />
         </Button>
         <div style={{
@@ -458,7 +461,7 @@ const MasonryTable = ({
                 ) : (
                   <div
                     id={`item-${item.id}`}
-                    className={`${styles["content"]} ${!compactMode ? styles["content-not-compact"] : ""}`}
+                    className={`${styles["content"]} ${!compactMode ? styles["content-not-compact"] : ""} ${item.predictedPrice > 0 ? item.predictedPrice > item.price ? styles["content-cheaper"] : styles["content-more-expensive"] : ""}`}
                     key={item.id}
                   >
                     {Boolean(
@@ -665,7 +668,7 @@ const MasonryTable = ({
                                   styles["price-label"]
                                 }
                               >
-                                Aprēķinātā cena:
+                                Aprēķinātā vērtība:
                               </span>
                               <div
                                 className={
@@ -680,7 +683,7 @@ const MasonryTable = ({
                                   }
                                 >
                                   {item.predictedPrice > 0 ? (
-                                    <>{item.predictedPrice} €</>
+                                    <>{item.predictedPrice.toFixed(1)} €</>
                                   ) : (
                                     <>
 
@@ -707,12 +710,29 @@ const MasonryTable = ({
                                 {Boolean(item.predictedPrice) && (
                                   <>
                                     {item.predictedPrice > (item.price ?? 0) ? (
+                                       <Tooltip 
+                                        style={{maxWidth: "150px"}}
+                                       title={
+                                        `Īpašumu ir izdevīgi iegādāties, jo tā tirgus cena ir par ${Math.round(item.predictedPrice - item.price)} € zemāka nekā modeļa aprēķinātā cena.`
+                                      }>
+                                        <StyledIconButton>
                                       <IoMdArrowRoundUp className={`${styles["price-arrow"]} ${styles["arrow-up"]}`} />
+                                      </StyledIconButton>
+                                      </Tooltip>
+                                      
                                     ) : item.predictedPrice === (item.price ?? 0) ? (
                                       // <BiEqualizer className={`${styles["price-arrow"]} ${styles["arrow-neutral"]}`} />
                                       <></>
                                     ) : (
+                                      <Tooltip 
+                                        style={{maxWidth: "150px"}}
+                                       title={
+                                        `Īpašumu nav izdevīgi iegādāties, jo tā tirgus cena ir par ~${Math.round(item.price - item.predictedPrice)} € augstāka nekā modeļa aprēķinātā cena.`
+                                      }>
+                                        <StyledIconButton>
                                       <IoMdArrowRoundUp className={`${styles["price-arrow"]} ${styles["arrow-down"]}`} />
+                                      </StyledIconButton>
+                                      </Tooltip>
                                     )}
                                   </>
                                 )}
@@ -875,6 +895,23 @@ const MasonryTable = ({
                                 {`${item.floor ?? "-"}/${item.buildingFloors ?? "-"} ${getPlural(item.floor, "Stāvs", "Stāvs")}`}
                               </span>
                             </div>
+                            {Boolean(item.elevatorAvailable) && (
+                              <div
+                                className={
+                                  styles[
+                                  "content-description-house-area"
+                                  ]
+                                }
+                              >
+                                <Tooltip title={
+                                        "Lifts ir pieejams."
+                                      }>
+                                        <StyledIconButton>
+                                          <FaElevator />
+                                        </StyledIconButton>
+                                      </Tooltip>
+                              </div>
+                            )}
                             {Boolean(item.parkingAvailable) && (
                               <div
                                 className={

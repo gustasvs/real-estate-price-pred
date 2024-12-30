@@ -31,6 +31,7 @@ import {
 } from "next/navigation";
 import { FaGears, FaPersonFalling } from "react-icons/fa6";
 import Link from "next/link";
+import { BiSolidBuildings } from "react-icons/bi";
 
 const RewindUiSidebar = () => {
   const [collapsed, setCollapsed] = useState(
@@ -241,7 +242,7 @@ const RewindUiSidebar = () => {
           {/* </SubMenu> */}
 
           <SubMenu
-            icon={<HddOutlined />}
+            icon={<BiSolidBuildings />}
             active={pathname === "/groups"}
             label={"Manas Grupas"}
           >

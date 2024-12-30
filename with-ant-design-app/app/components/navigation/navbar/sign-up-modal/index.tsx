@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Alert, Button, Divider, Form, Input, Modal } from "antd";
+import { Alert, Button, Divider, Form, Input, message, Modal } from "antd";
 import {
   GithubOutlined,
   GoogleOutlined,
@@ -70,8 +70,11 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ open, setOpen, setLoginModalO
       redirect: false, // Prevent automatic navigation on error
     });
 
+    message.success("Reģistrācija veiksmīga! Lūdzu pārbaudiet savu e-pastu, lai apstiprinātu savu kontu.");
+
     if (result && "error" in result) {
-      setError("Kļūda reģistrējoties! Lūdzu pārbaudiet ievadītos datus, vai mēģiniet vēlreiz vēlāk.");
+      // setError("Kļūda reģistrējoties! Lūdzu pārbaudiet ievadītos datus, vai mēģiniet vēlreiz vēlāk.");
+      setError(result.error);
     } else {
       setError(null);
       // router.push("/profile");

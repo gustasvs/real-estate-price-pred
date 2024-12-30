@@ -65,6 +65,8 @@ const Navbar = ({
   // if session is not loaded yet, return null
   if (status === "loading") return null
 
+  console.log("session", session);
+
   return (
     <div
       className={`${styles.navbar} ${
@@ -73,7 +75,7 @@ const Navbar = ({
     >
       <div className={styles.container}>
         <div className={styles.content}>
-          {!session ? (
+          {!session || !session.user || !session.user.id ? (
             <div className={styles["profile-container"]}>
               <Button
                 className={styles["rounded-button"]}
@@ -223,6 +225,12 @@ const Navbar = ({
                       onClick={() => {
                         console.log("logout");
                         logout()
+                          .then(() => {
+                            router.push("/");
+                          })
+                          .catch((e) => {
+                            console.error(e);
+                          });
                       }}
                     >
                       <BiLogOut />
