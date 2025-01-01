@@ -38,6 +38,9 @@ export const authOptions = {
       if (token.error) {
         session.error = token.error;
       }
+      if (token.message) {
+        session.message = token.message;
+      }
 
       return session;
     },
@@ -48,6 +51,9 @@ export const authOptions = {
 
         if (user.error) {
           token.error = user.error;
+        }
+        if (user.message) {
+          token.message = user.message;
         }
 
         token.sub = user.id;
@@ -131,7 +137,7 @@ export const authOptions = {
 
           // redirect to verify email page
 
-          return { error: "Lūdzu apstipriniet savu e-pastu" };
+          return { message: "Lūdzu pārbaudiet savu e-pastu, lai apstiprinātu savu kontu." };
         }
 
         let user: any = await db.user.findUnique({

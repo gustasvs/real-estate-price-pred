@@ -145,7 +145,7 @@ const MyProfileForm = () => {
     } else if ("message" in res) {
       message.info(res.message, 10);
     } else {
-      message.success("Profils atjaunots veiksmīgi");
+      message.success("Konts atjaunots veiksmīgi");
       // await update();
     }
   };

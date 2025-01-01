@@ -8,6 +8,7 @@ import { generateDownloadUrl } from "../app/api/generateDownloadUrl";
 
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth";
+import sendRabbitMessage from "./rabbit_queue";
 
 export const getObject = async (objectId: string) => {
 
@@ -211,6 +212,14 @@ export const createObject = async (
       },
     });
 
+    const objectId = newObject.id;
+
+    const messageRes = await sendRabbitMessage(objectId);
+
+    if (messageRes.error) {
+      console.error("Error queuing object rerendering:", messageRes.error);
+    }
+
     try {
   
     } catch (error) {
@@ -255,7 +264,10 @@ export const updateObject = async (
     // Update non-picture fields
     const updatedObject = await db.residence.update({
       where: { id: objectId },
-      data: validData,
+      data: {
+        ...validData,
+        predictedPrice: undefined,
+      },
     });
 
     const currentPictures = updatedObject.pictures;
@@ -286,7 +298,13 @@ export const updateObject = async (
         });
     }
 
-    return { success: true, updatedObject };
+    const messageRes = await sendRabbitMessage(objectId);
+
+    if (messageRes.error) {
+      console.error("Error queuing object rerendering:", messageRes.error);
+    }
+
+    return { success: messageRes.success, updatedObject };
   } catch (error) {
     console.error("Error updating object:", error);
     return { error: "Failed to update object" };

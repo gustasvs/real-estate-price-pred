@@ -192,8 +192,6 @@
 }
 
 .submit-button {
-    background-color: var(--background-dark-secondary);
-    color: var(--background-light-secondary);
     border-radius: 30px;
     height: 48px;
     width: 70%;
@@ -206,7 +204,6 @@
     align-items: center;
 }
 
-.submit-button:hover {
-    background-color: var(--background-light-secondary);
-    color: var(--background-dark-secondary);
+.footer-link {
+    color: var(--link-color);
 }

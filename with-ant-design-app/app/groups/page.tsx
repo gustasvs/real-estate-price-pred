@@ -9,7 +9,7 @@ import {
   updateGroup as updateGroupApi,
 } from "../../actions/group";
 import PageHeader from "../components/generic-page-layout/page-header/PageHeader";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 const GroupsPage = async ({
   searchParams,

@@ -7,6 +7,7 @@ import {
 import { useRouter } from "next/navigation";
 import Logo from "../navbar/Logo";
 import { BiBookAdd } from "react-icons/bi";
+import Link from "next/link";
 
 interface SidebarProps {
   sidebarItems: {
@@ -34,28 +35,17 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <div className={styles["left-sidebar"]}>
-      <div className={styles["left-sidebar-company-logo"]}>
-        {/* <span
-          className={styles["left-sidebar-company-title"]}
-        >
-          Icn
-        </span> */}
+      <div className={styles["left-sidebar-company-logo"]}
+        onClick={() => {
+        
+          console.log("clicked")
+          router.push("/")
+        }}
+      >
+        <Link href="/">
         <Logo />
+        </Link>
       </div>
-
-      {/* <div className={styles["left-sidebar-header"]}>
-        <div
-          className={styles["left-sidebar-back-arrow"]}
-          onClick={() => router.back()}
-        >
-          <ArrowLeftOutlined />
-        </div>
-        <div
-          className={styles["left-sidebar-header-title"]}
-        >
-          <span>{title}</span>
-        </div>
-      </div> */}
       <div className={styles["left-sidebar-items"]}>
         <div
           className={styles.indicator}
@@ -83,7 +73,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           </div>
         </div>
 
-        
+
 
         <div
           key="my-groups"
@@ -99,9 +89,8 @@ const Sidebar: React.FC<SidebarProps> = ({
         {sidebarItems?.map((item) => (
           <div
             key={item.id}
-            className={`${styles["left-sidebar-item"]} ${
-              activeNavItem === item.id ? styles.active : ""
-            }`}
+            className={`${styles["left-sidebar-item"]} ${activeNavItem === item.id ? styles.active : ""
+              }`}
             onClick={() =>
               onNavClick(
                 item.object_id ? item.object_id : item.id

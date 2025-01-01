@@ -11,6 +11,11 @@ export const StyledTextField = styled(TextField)({
 
     '& .MuiInputBase-root': {
         backgroundColor: "var(--background-dark-main-hover)",
+        outlineColor: "var(--background-light-main)",
+    },
+
+    '& .MuiOutlinedInput-root fieldset': {
+        borderColor: "var(--background-light-main) !important",
     },
 
     '& label': {
@@ -83,6 +88,10 @@ export const StyledNumberInput = styled(TextField)({
 
     '& .MuiInputBase-root': {
         backgroundColor: "var(--background-dark-main-hover)",
+    },
+
+    '& .MuiOutlinedInput-root fieldset': {
+        borderColor: "var(--background-light-main) !important",
     },
 
     '& label': {

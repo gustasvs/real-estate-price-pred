@@ -15,7 +15,7 @@
     cursor: pointer;
 }
 
-.content-description-action:active {
+.content-description-action:active:not(.content-description-action-favourite-form) {
     transform: scale(0.95);
 }
 
@@ -97,6 +97,6 @@
 	z-index: 60;
 /* 	filter: url(#gooeyness); */
 }
-.btn:active {
+.btn:active:not(.content-description-action-favourite-form) {
 	transform: scale(0.9) translate(-55%, -55%);
 }

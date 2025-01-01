@@ -1,8 +1,7 @@
 
 
 .statistics {
-  background-color: var(--background-dark-secondary);
-  background-color: #adafb0;
+  background-color: var(--background-statistics);
   /* background-color: var(--background-light-secondary); */
   height: 60vh;
 }
@@ -46,7 +45,7 @@
   width: 100%;
   height: 60vh;
   /* margin: auto 0; */
-  margin-top: calc(30vh - 100px);
+  margin-top: calc(30vh - 118px);
 }
 
 .statistic {

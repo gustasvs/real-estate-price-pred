@@ -48,7 +48,6 @@ const CardTable = ({
   const { status } = useSession();
 
   const currentSession = useSession();
-  console.log("currentSession", currentSession);
 
   const [loading, setLoading] = useState(false);
 
@@ -62,7 +61,7 @@ const CardTable = ({
   const colSpan: number = 24 / columnCount;
 
   const handleAddButtonClick = () => {
-    setNewGroupModalVisible(true); // Open modal on add button click
+    setNewGroupModalVisible(true);
   };
 
   const cardRef = useRef(null);
@@ -71,15 +70,33 @@ const CardTable = ({
     setLoading(false);
   }, [groups]);
 
+  useEffect(() => {
+    if (searchParams && searchParams.get('new')) {
+      setNewGroupModalVisible(true);
+    }
+  }, [searchParams]);
+
   if (status === "loading") {
     return <div></div>;
   }
+
+  const setOpen = (value: boolean) => {
+    if (value) {
+      setNewGroupModalVisible(true);
+    } else {
+      setNewGroupModalVisible(false);
+      setEditGroupId(null);
+      const params = new URLSearchParams(searchParams);
+      params.delete('new');
+      router.replace(`?${params.toString()}`, { scroll: false });
+    }
+  };
 
   return (
     <>
       <NewGroupModal
         open={newGroupModalVisible}
-        setOpen={setNewGroupModalVisible}
+        setOpen={setOpen}
         isEditing={editGroupId !== null}
         groupName={editGroupName}
         groupId={editGroupId ?? ""}
@@ -93,7 +110,7 @@ const CardTable = ({
           } else {
             createGroup(groupName);
           }
-          setNewGroupModalVisible(false);
+          setOpen(false);
         }}
       />
       <div className={styles["card-table-header"]}>

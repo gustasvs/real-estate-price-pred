@@ -27,6 +27,9 @@
   --group-main: #2e2c27e4;
   --group-secondary: #75726bc5;
   --group-third: #f1e8d3ad;
+  --link-color: #9dd9ff;
+
+  --background-statistics: #adafb0;
 }
 
 body {
@@ -66,9 +69,12 @@ body {
   --link-color: #c355f5; /* Lightened link color for better visibility */
 
   --group-main: #dddddde4; /* Main group background lightened */
-  --group-secondary: #56585ac5; /* Secondary group background darkened for contrast */
-  --group-third: #191a1dad; /* Third group background darkened for distinction */
+  --group-secondary: #aebccac5; /* Secondary group background darkened for contrast */
+  --group-third: #7387c4ad; /* Third group background darkened for distinction */
 
+  --link-color: #196492;
+
+  --background-statistics: #2a3033;
 }
 
 
@@ -117,4 +123,8 @@ body {
 
 .ant-modal .ant-modal-close:active {
   scale: .9;
+}
+
+.anticon.ant-input-password-icon svg {
+  fill: var(--text-brighter);
 }

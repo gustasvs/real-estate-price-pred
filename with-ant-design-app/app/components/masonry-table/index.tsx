@@ -934,6 +934,7 @@ const MasonryTable = ({
                           >
                             <FavouriteButton
                               favourite={item.favourite}
+                              fromForm={false}
                               onClick={(e) => {
                                 e.stopPropagation();
                                 e.preventDefault();

@@ -17,7 +17,11 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, setOpen, setSignUpModalOp
   const [step, setStep] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
-  const { data: session } = useSession();
+  interface CustomSession {
+    error?: string;
+  }
+
+  const { data: session } = useSession() as { data: CustomSession | null };
 
   const handleCloseModal = () => {
     setOpen(false);
@@ -121,7 +125,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ open, setOpen, setSignUpModalOp
               <div className={styles["signup-container"]}>
                 <span className={styles["signup-text"]}>
                   {/* Don't have an account? <a href="#">Sign up</a> */}
-                  Vēl nav konta? <a onClick={() => {setOpen(false); setSignUpModalOpen(true)} }>Izveidot jaunu kontu</a>
+                  Vēl nav konta? <a onClick={() => {setOpen(false); setSignUpModalOpen(true)} } className={styles["footer-link"]}>Izveidot jaunu kontu</a>
                 </span>
               </div>
             </>

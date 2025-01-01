@@ -33,6 +33,8 @@ import { generateUploadUrl } from "../../api/generateUploadUrl";
 import { useSession } from "next-auth/react";
 import { StyledNumberInput, StyledTextField } from "../styled-mui-components/styled-components";
 import { ElevatorOutlined, NotAccessible } from "@mui/icons-material";
+import FavouriteButton from "./FavouriteButton";
+import { useThemeContext } from "../../context/ThemeContext";
 
 const { Dragger } = Upload;
 
@@ -49,10 +51,13 @@ const ResidenceObjectForm = ({
 
   const { data: session, status, update } = useSession();
 
+  const { theme } = useThemeContext();
+
   const [form] = Form.useForm();
 
-  const [parkingAvailable, setParkingAvailable] = useState(residence?.parkingAvailable || false);
-  const [elevatorAvailable, setElevatorAvailable] = useState(residence?.elevatorAvailable || false);
+  const [parkingAvailable, setParkingAvailable] = useState<boolean>(residence?.parkingAvailable || false);
+  const [elevatorAvailable, setElevatorAvailable] = useState<boolean>(residence?.elevatorAvailable || false);
+  const [favourite, setFavourite] = useState<boolean>(residence?.favourite || false);
 
   const props: UploadProps = {
     name: "file",
@@ -101,6 +106,7 @@ const ResidenceObjectForm = ({
       floor: Number(values.floor),
       buildingFloors: Number(values.buildingFloors),
       elevatorAvailable: Boolean(values.elevatorAvailable),
+      favourite: Boolean(values.favourite),
       area: Number(values.area),
       price: Number(values.price),
     };
@@ -235,6 +241,7 @@ const ResidenceObjectForm = ({
       form={form}
       layout="horizontal"
       onFinish={handleSubmit}
+      scrollToFirstError
       className={styles["form-container"]}
     >
       <Row gutter={[84, 64]}>
@@ -401,9 +408,8 @@ const ResidenceObjectForm = ({
                   </label>
                   {parkingAvailable ? (
                   <div
-                    className={`${styles[`parking-icon`]} ${
-                      styles["parking-available"]
-                    }`}
+                    className={`${styles[`parking-icon`]} ${styles["parking-available"]}
+                      ${styles[`${theme !== "dark" ? "parking-available-light" : ""}`]}`}
                   ></div>
                   ) : (
                     <BsSignNoParking 
@@ -413,6 +419,7 @@ const ResidenceObjectForm = ({
                       // red tint
                       height: "2.5rem",
                       fill: "#ff0000",
+                      background: "var(--background-dark-main-hover)",
                       // filter: "invert(19%) sepia(95%) saturate(7481%) hue-rotate(360deg) brightness(96%) contrast(110%)",
                     }}/>
                   )}
@@ -515,10 +522,10 @@ const ResidenceObjectForm = ({
                     Lifta pieejamība
                   </label>
                   {elevatorAvailable ? 
-                    <ElevatorOutlined style={{ color: "yellowgreen", fontSize: "2.5rem", marginRight: "1rem" }} 
+                    <ElevatorOutlined style={{ color: "yellowgreen", fontSize: "2.5rem", marginRight: "1rem", background: "var(--background-dark-main-hover)" }} 
                     className={styles["parking-icon"]} /> 
                     : 
-                    <NotAccessible style={{ fill: "red", marginRight: "1rem" }} className={styles["parking-icon"]}/>
+                    <NotAccessible style={{ fill: "red", marginRight: "1rem", width: "2.5rem", height: "2.5rem", background: "var(--background-dark-main-hover)" }} className={styles["parking-icon"]}/>
                   }
                 </div>
               </Form.Item>
@@ -544,6 +551,43 @@ const ResidenceObjectForm = ({
               placeholder="Ievadiet objekta cenu"
             />
           </Form.Item>
+        {/*  */}
+        {objectId !== "new" && (
+          <Form.Item name="favourite">
+            <Tooltip title={"Atzīmē šo dzīvokli, un vēlāk to varēsi ātri atrast favorītu sarakstā!"}>
+                    <QuestionCircleOutlined
+                      style={{
+                        backgroundColor: "var(--background-dark-main)",
+                        position: "absolute",
+                        top: -10,
+                        right: -10,
+                        color: "var(--background-light-main)",
+                        fontSize: "1.5em",
+                        cursor: "pointer",
+                        borderRadius: "40%",
+                      }}
+                    />
+                  </Tooltip>
+            <FavouriteButton
+              style={{ 
+                backgroundColor: "var(--background-dark-main-hover",
+                border: "1px solid var(--background-light-main)",
+                borderRadius: "1em",
+                height: "1.4375em",
+                padding: "16.5px 14px 16.5px 14px",
+              }}
+              fromForm={true}
+              favourite={favourite}
+              onClick={(e) => {
+                setFavourite((prev: boolean) => {
+                  form.setFieldsValue({ favourite: !prev });
+                  return prev ? false : true;
+                });
+              }}
+            />
+          </Form.Item>
+        )}
+
         </Col>
         {/* Right Side */}
         <Col span={12}>
@@ -553,7 +597,12 @@ const ResidenceObjectForm = ({
             // label={<span className={styles["label"]}>Pictures</span>}
             valuePropName="fileList"
             getValueFromEvent={normFile}
-            //   extra="Upload pictures of the real estate object"
+            rules={[
+              {
+                required: true,
+                message: "Lūdzu augšupielādējiet bildes!",
+              },
+            ]}
           >
             {/* <MemoizedDragger {...props} /> */}
             <Dragger {...props}>

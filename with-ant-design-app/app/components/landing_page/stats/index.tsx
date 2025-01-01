@@ -29,12 +29,12 @@ import { FaUsers } from "react-icons/fa6";
 TweenOne.plugins.push(Children);
 
 const buttonContents = [
-  { label: "Algoritma apmācīšanai izmantie īpašumi", value: 1459, labelLink: "/data", labelLinkText: "", labelLinkExternal: true,
+  { label: "Algoritma apmācīšanai izmantie īpašumi", value: 1459, labelLink: "https://www.ss.lv/lv/real-estate/flats/riga/all/hand_over/", labelLinkText: "", labelLinkExternal: true,
     icon: <DatabaseOutlined /> },
-  { label: "Algoritma apmācīšanai izmantotās bildes", value: 19926, labelLink: "/data", labelLinkText: "",
+  { label: "Algoritma apmācīšanai izmantotās bildes", value: 19926, labelLinkText: "",
     icon: <FaUsers />
   },
-  { label: "Stundas ieguldītas algoritma apmācīšanai", value: 29.1, labelLink: "/data", labelLinkText: "",
+  { label: "Stundas ieguldītas algoritma apmācīšanai", value: 29.1, labelLinkText: "",
     icon: <AreaChartOutlined />
   },
 ];
@@ -106,11 +106,12 @@ const Statistics: React.FC = () => {
   
   const [dotPosition, setDotPosition] = useState<DotPosition>("top");
 
-  const handleClick = (link: string) => {
-    // setValue((prevValue) => prevValue + 1000);
-    // setValues((prevValues) => prevValues.map((value) => value + 1000));
+  const handleClick = (link: string | undefined) => {
+    
+    if (link) {
+      window.open(link);
+    }
 
-    router.push(link); // Redirect after animationme
   };
 
   return (

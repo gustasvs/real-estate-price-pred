@@ -44,6 +44,14 @@ const theme: ThemeConfig = {
       colorPrimaryTextActive: "var(--background-dark-main)", // primary button text color on active
 
     },
+    Input: {
+      colorBgBase: "var(--background-dark-main-hover)",
+      colorBgContainer: "var(--background-dark-main-hover)",
+      // hoverBg: "var(--background-dark-main)",
+      colorText: "var(--background-light-secondary)",
+      colorTextBase: "var(--background-light-secondary)",
+      colorTextPlaceholder: "var(--background-light-main)",
+    },
     Modal: {
       contentBg: "var(--background-dark-main)",
       headerBg: "var(--background-dark-main)",

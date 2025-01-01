@@ -5,14 +5,22 @@ import { Button, Divider } from "antd";
 import styles from "./Banner.module.css"; // Ensure you create a CSS module for styling
 
 import { OverPack, Parallax } from "rc-scroll-anim";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { FaArrowRight, FaHouseChimney, FaHouseChimneyUser, FaHouseLaptop } from "react-icons/fa6";
 import { BiArrowFromLeft, BiArrowToLeft, BiBuildingHouse, BiSolidRightArrow } from "react-icons/bi";
 import QueueAnim from "rc-queue-anim";
+import { useSession } from "next-auth/react";
+import { useThemeContext } from "../../../context/ThemeContext";
 
 const Banner = () => {
 
   const router = useRouter();
+
+  const { theme } = useThemeContext();
+
+  const { data: session, status, update } = useSession();
+
+  const searchParams = useSearchParams();
 
   const numberOfObjects = 90;
 
@@ -104,6 +112,7 @@ const Banner = () => {
           opacity: layer / 5,
           transform: `translate(-50%, -50%)`,
           animationDelay: `${index * 0.5}s`, // Delay based on index, modify as needed
+          filter: theme === "dark" ? "invert(1)" : "invert(0)",
           // transition: "left 0.1s linear, top 0.1s linear",
           ...(layer && { '--scale': (3 + (layer / 2)).toString() } as React.CSSProperties)
         }}
@@ -112,6 +121,8 @@ const Banner = () => {
     );
   });
 
+  const getStartedText = session?.user?.email ? "Sāc darbu pievienojot savu pirmo objektu!" : "Sāc darbu izveidojot savu kontu!";
+// 
   return (
     // <Parallax
     //   // animation={[{ y: 100, opacity: 0, playScale: [0.9, 1] }]}
@@ -178,11 +189,18 @@ const Banner = () => {
             <div
               className={styles["get-started-button"]}
               onClick={() => {
-                router.push("/groups");
+                if (session?.user?.email) {
+                  router.push("/groups");
+                } else {
+                  const params = new URLSearchParams(searchParams);
+                  params.set("modal", "sign-up");
+
+                  router.replace(`?${params.toString()}`, { scroll: false });
+                }
               }}
             >
               <span className={styles["get-started-text"]}>
-                Sāc darbu un pievieno savu pirmo objektu
+                {getStartedText}
               </span>
               <FaArrowRight className={styles["get-started-next-arrow"]} />
               <FaArrowRight className={styles["get-started-prev-arrow"]} />

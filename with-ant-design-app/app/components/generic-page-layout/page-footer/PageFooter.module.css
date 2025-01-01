@@ -40,13 +40,13 @@
 
 .footer-logo-icon {
     /* artificially cut off the company name */
-    transform: translateY(-1.9rem);
+    /* transform: translateY(-1.9rem); */
     height: 6rem;
-    width: 10rem;
+    width: 15rem;
     transition: transform 0.48s cubic-bezier(0.23, 1, 0.32, 1);
     filter: invert(1);
     background: url("/logo.png");
-    background-size: cover;
+    background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
 }
@@ -61,6 +61,8 @@
     gap: .8rem;
     align-items: center;
     justify-content: center;
+    margin-bottom: 1.5rem;
+    margin-top: .5rem;
 }
 
 .footer-logo-title {

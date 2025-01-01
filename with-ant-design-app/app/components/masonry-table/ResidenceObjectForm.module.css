@@ -139,6 +139,10 @@
     background-position: center;
 }
 
+.parking-available-light {
+    background-image: url("/parking/parking_input_color_bg_light.gif");
+}
+
 .parking-unavailable {
     background: url("/parking/no-parking.png");
     background-size: cover;

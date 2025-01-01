@@ -1,4 +1,4 @@
-import amqp
+import pika
 import json
 
 from PIL import Image
@@ -25,28 +25,29 @@ from price_assigning_queue.handle_minio_storage_operations import create_minio_c
 
 def object_processing_queue():
 
-    get_all_residences()
+    # get_all_residences()
 
     minio_client = create_minio_client()
 
-    with amqp.Connection(host='localhost') as c:
+    try:
+
+        c = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+
         ch = c.channel()
-        def on_message(message):
 
+        def on_message(ch, method, properties, body):
 
-            print('Received message (delivery tag: {}): {}'.format(message.delivery_tag, message.body))
+            print('Received message (delivery tag: {}): {}'.format(method.delivery_tag, body))
 
-            # STEP 1: extract object id from message
-            message_body = json.loads(message.body)
-            object_id = message_body.get('objectId')
-
+            body = json.loads(body.decode('utf-8'))
+            object_id = body.get('objectId')
 
             # STEP 2.1: get image urls from postgres using object id
             residence_image_urls = get_object_images_from_db(object_id)
 
             if not residence_image_urls or len(residence_image_urls) == 0:
                 print("No images found for object with id: ", object_id)
-                ch.basic_ack(message.delivery_tag)
+                ch.basic_ack(method.delivery_tag)
                 return
             print(f"Fetched {len(residence_image_urls)} images for object with id: {object_id}")
 
@@ -70,7 +71,7 @@ def object_processing_queue():
 
             if not metadata:
                 print("No metadata found for object with id: ", object_id)
-                ch.basic_ack(message.delivery_tag)
+                ch.basic_ack(method.delivery_tag)
                 return
 
             print("Metadata: ", metadata)
@@ -89,20 +90,22 @@ def object_processing_queue():
             print("Descaled price: ", descaled_price)
             # predicted_price = get_price_estimate_from_vit_model(images)
             predicted_price = descaled_price * metadata['area']
+
+            print("Predicted final price: ", predicted_price)
             
             # STEP 5: update postgres databases object with calculated price prediction
             update_object_predicted_price_in_db(object_id, predicted_price)
 
             # STEP 6: confirm message and wait for next message
-            ch.basic_ack(message.delivery_tag)
+            ch.basic_ack(method.delivery_tag)
+        
         ch.queue_declare(queue='objectCreationQueue', durable=True, auto_delete=False)
-        ch.basic_consume(queue='objectCreationQueue', callback=on_message)
-        print('Waiting for messages. To exit press CTRL+C')
-        try:
-            while True:
-                c.drain_events()
-        except KeyboardInterrupt:
-            print('Exiting...')
+        ch.basic_consume(queue='objectCreationQueue', on_message_callback=on_message, auto_ack=False)
 
-        # images = get_object_images_from_db(object_id)
-        # print(images)
+        print(' [*] Waiting for messages. To exit press CTRL+C')
+        ch.start_consuming()
+
+    except KeyboardInterrupt:
+        print("Exiting...")
+        return
+

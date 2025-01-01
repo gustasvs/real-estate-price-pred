@@ -167,7 +167,7 @@ const Navbar = ({
                       }}
                     >
                       <UserOutlined />
-                      <span>Mans profils</span>
+                      <span className={styles["profile-dropdown-navigation-text"]}>Mans profils</span>
                     </div>
 
                     <div
@@ -181,7 +181,7 @@ const Navbar = ({
                       }}
                     >
                       <BiSolidBuildings />
-                      <span>Mani objekti</span>
+                      <span className={styles["profile-dropdown-navigation-text"]}>Mani objekti</span>
                     </div>
 
                     <div
@@ -195,7 +195,7 @@ const Navbar = ({
                       }}
                     >
                       <HeartFilled />
-                      <span>Mani atzīmētie objekti</span>
+                      <span className={styles["profile-dropdown-navigation-text"]}>Mani atzīmētie objekti</span>
                     </div>
 
                     <div
@@ -209,7 +209,7 @@ const Navbar = ({
                       }}
                     >
                       <IoSettingsSharp />
-                      <span>Iestatījumi</span>
+                      <span className={styles["profile-dropdown-navigation-text"]}>Iestatījumi</span>
                     </div>
 
                     <Divider
@@ -234,7 +234,7 @@ const Navbar = ({
                       }}
                     >
                       <BiLogOut />
-                      <span>Iziet</span>
+                      <span className={styles["profile-dropdown-navigation-text"]}>Iziet</span>
                     </div>
                   </div>
                 )}

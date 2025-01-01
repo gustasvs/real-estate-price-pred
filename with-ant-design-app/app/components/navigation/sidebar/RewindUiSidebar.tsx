@@ -27,13 +27,20 @@ import { MdOutlineKeyboardDoubleArrowLeft } from "react-icons/md";
 import { getGroupsForSidebar } from "../../../../actions/group";
 import {
   usePathname,
+  useRouter,
   useSearchParams,
 } from "next/navigation";
 import { FaGears, FaPersonFalling } from "react-icons/fa6";
 import Link from "next/link";
 import { BiSolidBuildings } from "react-icons/bi";
+import { useThemeContext } from "../../../context/ThemeContext";
 
 const RewindUiSidebar = () => {
+
+  const router = useRouter();
+  
+  const { theme } = useThemeContext();
+
   const [collapsed, setCollapsed] = useState(
     (typeof window !== "undefined" &&
     localStorage.getItem("sidebarCollapsed") === "true") || false);
@@ -221,6 +228,10 @@ const RewindUiSidebar = () => {
       >
         <div
           className={`${styles["left-sidebar-company-logo"]} ${collapsed ? styles["left-sidebar-company-logo-collapsed"] : ""}`}
+          onClick={() => router.push("/")}
+          style={{
+            filter: theme === "dark" ? "invert(1)" : "brightness(0) saturate(100%) invert(15%) sepia(9%) saturate(702%) hue-rotate(155deg) brightness(96%) contrast(90%)",
+          }}
         >
           <Logo />
           {/* <span
@@ -258,7 +269,7 @@ const RewindUiSidebar = () => {
             ))}
             <MenuItem
               icon={<PlusOutlined />}
-              href="/groups/new"
+              href="/groups?new=true"
             >
               Pievienot jaunu
             </MenuItem>

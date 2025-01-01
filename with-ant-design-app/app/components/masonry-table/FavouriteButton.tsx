@@ -13,9 +13,18 @@ import {
     PlusOutlined,
 } from "@ant-design/icons";
 
-const FavouriteButton = ({ favourite, onClick }: { onClick: (e: any) => void; favourite: boolean }
-) => {
-    
+const FavouriteButton = ({ 
+    favourite, 
+    onClick,
+    fromForm=false,
+    ...props 
+}: { 
+    onClick: (e: any) => void; 
+    favourite: boolean;
+    fromForm: boolean; 
+    [key: string]: any 
+}) => {
+
     return (
         <div
             onClick={(e) => {
@@ -33,18 +42,12 @@ const FavouriteButton = ({ favourite, onClick }: { onClick: (e: any) => void; fa
                     origin: { x: e.clientX / window.innerWidth, y: e.clientY / window.innerHeight }
                 });
             }}
-            className={`${styles[
-                "content-description-action"
-            ]
-                } ${styles[
-                "content-description-action-favourite"
-                ]
-                } ${favourite
-                    ? styles[
-                    "content-description-action-favourite-active"
-                    ]
-                    : ""
-                }`}
+            className={`${styles["content-description-action"]} 
+            ${styles["content-description-action-favourite"]} 
+            ${favourite ? styles["content-description-action-favourite-active"]: ""}
+            ${fromForm ? styles["content-description-action-favourite-form"]: ""}
+            `}
+            {...props}
         >
             {favourite ? (
                 <HeartFilled />

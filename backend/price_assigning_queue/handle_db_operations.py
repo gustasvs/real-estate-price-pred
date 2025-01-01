@@ -140,15 +140,14 @@ def update_object_predicted_price_in_db(object_id, predicted_price):
         cursor = connection.cursor(cursor_factory=RealDictCursor)
         cursor.execute(f"SET search_path TO {DATABASE_SCHEMA};")
 
-        print("All columns of Residence table: ", cursor.execute("SELECT * FROM \"Residence\";"))
-
         # Query to update the estimated price for the given object ID
         query = """
             UPDATE "Residence"
             SET "predictedPrice" = %s
             WHERE id = %s;
             """
-        cursor.execute(query, (predicted_price, object_id))
+        res = cursor.execute(query, (predicted_price, object_id))
+        print("Update result: ", res)
         connection.commit()
 
     except Exception as e:
