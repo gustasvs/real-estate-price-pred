@@ -3,7 +3,10 @@ backend/data/dataset
 backend/data/metadata.txt
 backend/data/processed_dataset
 
-
 __pycache__
 /backend/models/vit_regression_model.pth
 with-ant-design-app/.env
+
+.env
+.env.docker
+.env.local
