@@ -18,7 +18,9 @@ model, feature_extractor = get_vit_model(aggregation_method=AGGREGATION_METHOD)
 
 print("Loading the model...")
 
-model.load_state_dict(torch.load("models/vit_regression_model.pth", map_location=device))
+model.load_state_dict(
+    torch.load("models/vit_regression_model.pth", map_location=device)
+)
 
 print("Model loaded...")
 
@@ -33,13 +35,17 @@ def compute_predicted_price(images, metadata):
 
     sample = [
         [
-            instance[0].to(device, dtype=torch.float32),  # Assuming instance[0] is already a tensor
-            torch.tensor(instance[1], device=device, dtype=torch.float32) if isinstance(instance[1], np.ndarray) else instance[1].to(device, dtype=torch.float32)
+            instance[0].to(
+                device, dtype=torch.float32
+            ),  # Assuming instance[0] is already a tensor
+            (
+                torch.tensor(instance[1], device=device, dtype=torch.float32)
+                if isinstance(instance[1], np.ndarray)
+                else instance[1].to(device, dtype=torch.float32)
+            ),
         ]
     ]
 
     prediction = model(sample)
 
     return prediction.item()
-
-

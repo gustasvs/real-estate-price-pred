@@ -13,28 +13,29 @@ from helpers.handle_scaling_params import handle_scaling_params
 AVERAGE_DAYS_IN_MONTH = 12
 
 keywords = ["Cena", "Platība", "Istabas", "Stāvs", "Iela", "Rajons"]
-csv_columns = keywords + ['URL', 'Images']
+csv_columns = keywords + ["URL", "Images"]
 
 day_prices = []
 month_prices = []
 
+
 def extract_price(row, use_square_meters=False):
-    price = row['Cena']
+    price = row["Cena"]
 
-    price_str = row['Cena'].split(' ')[0]
+    price_str = row["Cena"].split(" ")[0]
 
-    if "€" not in row['Cena'].split(' ')[1]:
-        price_str += row['Cena'].split(' ')[1]
+    if "€" not in row["Cena"].split(" ")[1]:
+        price_str += row["Cena"].split(" ")[1]
 
-        if "€" not in row['Cena'].split(' ')[2]:
-            price_str += row['Cena'].split(' ')[2]
+        if "€" not in row["Cena"].split(" ")[2]:
+            price_str += row["Cena"].split(" ")[2]
 
     # Option to use price per square meter if requested
     if use_square_meters:
-        price_per_sqm = float(row['Cena'].split('(')[1].split(' ')[0])
+        price_per_sqm = float(row["Cena"].split("(")[1].split(" ")[0])
         price_str = price_per_sqm
 
-    price_type = "day" if "dienā" in row['Cena'] else "month"
+    price_type = "day" if "dienā" in row["Cena"] else "month"
 
     # for now skip the rows with price per day
     # if price_type == "day":
@@ -58,7 +59,7 @@ def extract_price(row, use_square_meters=False):
     #     for ax, img in zip(axes, sample_images):
     #         if img is None:
     #             continue
-            
+
     #         ax.imshow(img)
     #         # ax.set_title(f"Price: {price}")
     #         ax.axis('off')
@@ -72,8 +73,9 @@ def extract_price(row, use_square_meters=False):
 
     return price
 
+
 def extract_images(row, root_dir):
-    image_list = json.loads(row['Images'])
+    image_list = json.loads(row["Images"])
     sample_images = []
     for image in image_list:
         image_path = f"{root_dir}images/{image}"
@@ -85,19 +87,20 @@ def extract_images(row, root_dir):
 
     return sample_images
 
+
 def extract_additional_metadata(row):
     additional_metadata = []
 
     try:
 
         # "Platība", "Istabas", "Stāvs", "Iela", "Rajons"
-        square_meters = row['Platība'].split(' ')[0].strip()
-        rooms_count = row['Istabas'].strip()
-        aparment_floor = row['Stāvs'].split('/')[0].strip()
-        building_floors = row['Stāvs'].split('/')[1].strip()
-        has_elevator = 1 if "lifts" in row['Stāvs'] else 0
-        street = row['Iela']
-        district = row['Rajons']
+        square_meters = row["Platība"].split(" ")[0].strip()
+        rooms_count = row["Istabas"].strip()
+        aparment_floor = row["Stāvs"].split("/")[0].strip()
+        building_floors = row["Stāvs"].split("/")[1].strip()
+        has_elevator = 1 if "lifts" in row["Stāvs"] else 0
+        street = row["Iela"]
+        district = row["Rajons"]
 
         if int(aparment_floor) > int(building_floors):
             # print(f"Apartment floor is higher than building floors: {row['URL'].split('/')[-1]} {aparment_floor} > {building_floors} ")
@@ -106,7 +109,15 @@ def extract_additional_metadata(row):
             aparment_floor = building_floors
             building_floors = temp_apartment_floor
 
-        additional_metadata = [square_meters, rooms_count, aparment_floor, building_floors, has_elevator, street, district]
+        additional_metadata = [
+            square_meters,
+            rooms_count,
+            aparment_floor,
+            building_floors,
+            has_elevator,
+            street,
+            district,
+        ]
 
     except Exception as e:
         print(f"Error: {e}")
@@ -114,18 +125,21 @@ def extract_additional_metadata(row):
 
     return additional_metadata
 
+
 def normalise_and_prepare_additional_metadata(additional_metadata):
     # "Platība", "Istabas", "Stāvs", "Iela", "Rajons"
-    
+
     square_meters = [float(metadata[0]) for metadata in additional_metadata]
     rooms_count = [int(metadata[1]) for metadata in additional_metadata]
     apartment_floor = [int(metadata[2]) for metadata in additional_metadata]
     building_floors = [int(metadata[3]) for metadata in additional_metadata]
     has_elevator = [metadata[4] for metadata in additional_metadata]
-    street = [metadata[5] for metadata in additional_metadata] # Not used for now
+    street = [metadata[5] for metadata in additional_metadata]  # Not used for now
     district = [metadata[6] for metadata in additional_metadata]
 
-    print(f"Square Meters: {np.array(square_meters).shape} \n Rooms Count: {np.array(rooms_count).shape} \n Apartment Floor: {np.array(apartment_floor).shape} \n Building Floors: {np.array(building_floors).shape} \n Has Elevator: {np.array(has_elevator).shape} \n Street: {np.array(street).shape} \n District: {np.array(district).shape}")
+    print(
+        f"Square Meters: {np.array(square_meters).shape} \n Rooms Count: {np.array(rooms_count).shape} \n Apartment Floor: {np.array(apartment_floor).shape} \n Building Floors: {np.array(building_floors).shape} \n Has Elevator: {np.array(has_elevator).shape} \n Street: {np.array(street).shape} \n District: {np.array(district).shape}"
+    )
     floor_ratio = []
     for ap_floor, bldg_floors in zip(apartment_floor, building_floors):
         if bldg_floors == 0:
@@ -137,8 +151,10 @@ def normalise_and_prepare_additional_metadata(additional_metadata):
             print(ap_floor, bldg_floors, ap_floor / bldg_floors, bldg_floors / ap_floor)
 
     def min_max_scale(data, name=None):
-        
-        handle_scaling_params(name, parameters={'std': np.std(data), 'mean': np.mean(data)}, save=True)
+
+        handle_scaling_params(
+            name, parameters={"std": np.std(data), "mean": np.mean(data)}, save=True
+        )
         # return (np.array(data) - min(data)) / (max(data) - min(data))
         return (np.array(data) - np.mean(data)) / np.std(data)
         # return np.array(data)
@@ -147,7 +163,6 @@ def normalise_and_prepare_additional_metadata(additional_metadata):
     rooms_count = min_max_scale(rooms_count, name="rooms_count")
     apartment_floor = min_max_scale(apartment_floor, name="apartment_floor")
     building_floors = min_max_scale(building_floors, name="building_floors")
-
 
     # unique_districts = sorted(set(district))
     # print(f"Unique Districts: {unique_districts}")
@@ -165,7 +180,16 @@ def normalise_and_prepare_additional_metadata(additional_metadata):
     print(f"Floor Ratio Shape: {np.array(floor_ratio).shape}")
     print(f"Has Elevator Shape: {np.array(has_elevator).shape}")
 
-    output_metadata = np.column_stack((square_meters, rooms_count, apartment_floor, building_floors, floor_ratio, has_elevator)) # district_one_hot
+    output_metadata = np.column_stack(
+        (
+            square_meters,
+            rooms_count,
+            apartment_floor,
+            building_floors,
+            floor_ratio,
+            has_elevator,
+        )
+    )  # district_one_hot
 
     # plt.hist(square_meters, bins=20)
     # plt.title("Square Meters distribution")
@@ -173,7 +197,7 @@ def normalise_and_prepare_additional_metadata(additional_metadata):
 
     # plt.hist(rooms_count, bins=20)
     # plt.title("Rooms Count distribution")
-    # plt.show()  
+    # plt.show()
 
     fig, ax = plt.subplots(2, 2, figsize=(15, 5))
     ax[0, 0].hist(apartment_floor, bins=20)
@@ -189,7 +213,6 @@ def normalise_and_prepare_additional_metadata(additional_metadata):
     ax_big.set_title("Floor Ratio distribution")
 
     plt.show()
-
 
     # plt.hist(floor_ratio, bins=20)
     # plt.title("Floor Ratio distribution")
@@ -208,26 +231,25 @@ def extract_images_and_prices(count: int, root_dir: str, use_square_meters: bool
     images = []
     additional_metadata = []
 
-    with open(f'{root_dir}real_estate_data.csv', 'r') as csv_file:
+    with open(f"{root_dir}real_estate_data.csv", "r") as csv_file:
         reader = csv.DictReader(csv_file, fieldnames=csv_columns)
-        
+
         for index, row in enumerate(reader):
             if index >= count:
                 break
 
-            if "Citi" in row['Istabas']:
+            if "Citi" in row["Istabas"]:
                 continue
-            
+
             row_price = extract_price(row, use_square_meters)
             row_images = extract_images(row, root_dir)
             row_additional_metadata = extract_additional_metadata(row)
-        
+
             prices.append(float(row_price))
             images.append(row_images)
             additional_metadata.append(row_additional_metadata)
 
     additional_metadata = normalise_and_prepare_additional_metadata(additional_metadata)
-    
 
     # mean_day_prices = np.mean(day_prices)
     # mean_month_prices = np.mean(month_prices)
@@ -244,8 +266,6 @@ def extract_images_and_prices(count: int, root_dir: str, use_square_meters: bool
     # plt.ylabel("Frequency")
     # plt.show()
 
-
-
     # plt.hist(prices, bins=40)
     # plt.title("Price distribution before removing outliers")
     # mean_price = np.mean(prices)
@@ -257,9 +277,9 @@ def extract_images_and_prices(count: int, root_dir: str, use_square_meters: bool
     #     plt.text(mean_price - i * std_price, plt.ylim()[1] * 0.9, f'-{i}σ', color='r')
 
     # plt.show()
-    
+
     return prices, images, additional_metadata
 
 
 if __name__ == "__main__":
-    prices, images = extract_images_and_prices(666, root_dir = "", use_square_meters = True)
+    prices, images = extract_images_and_prices(666, root_dir="", use_square_meters=True)

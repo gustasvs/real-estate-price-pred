@@ -19,7 +19,7 @@ def load_images(count: int):
 
     image_folder = "data/dataset"
     images = []
-    
+
     for i in range(1, count + 1):
         sample_images = []
         categories = ["bathroom", "bedroom", "frontal", "kitchen"]
@@ -30,12 +30,11 @@ def load_images(count: int):
                 image = Image.open(image_path).convert("RGB")
                 image = image.resize((224, 224))
                 sample_images.append(image)
-        
+
         images.append(sample_images)
 
     return images
-    
+
 
 if __name__ == "__main__":
     images = load_images(5)
-    

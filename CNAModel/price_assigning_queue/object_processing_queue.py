@@ -9,6 +9,7 @@ from helpers.processed_data import scale_metadata_for_sample, descale_price
 print("Imported...")
 
 from price_assigning_queue.compute_predicted_price import compute_predicted_price
+
 # def compute_predicted_price(images, metadata):
 #     return 0.0
 
@@ -21,8 +22,18 @@ from price_assigning_queue.compute_predicted_price import compute_predicted_pric
 #     sys.path.append(str(project_root))
 
 
-from price_assigning_queue.handle_db_operations import get_object_images_from_db, get_all_residences, update_object_predicted_price_in_db, get_object_metadata_from_db
-from price_assigning_queue.handle_minio_storage_operations import create_minio_client, generate_presigned_url, fetch_images_from_presigned_urls
+from price_assigning_queue.handle_db_operations import (
+    get_object_images_from_db,
+    get_all_residences,
+    update_object_predicted_price_in_db,
+    get_object_metadata_from_db,
+)
+from price_assigning_queue.handle_minio_storage_operations import (
+    create_minio_client,
+    generate_presigned_url,
+    fetch_images_from_presigned_urls,
+)
+
 
 def object_processing_queue():
 
@@ -32,13 +43,15 @@ def object_processing_queue():
 
     try:
 
-        print("Connecting to RabbitMQ...") 
+        print("Connecting to RabbitMQ...")
         # c = None
         # while not c:
         #     try:
         #         print("Trying to connect to RabbitMQ...")
         time.sleep(10)
-        c = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq', port=5672, heartbeat=600))
+        c = pika.BlockingConnection(
+            pika.ConnectionParameters(host="rabbitmq", port=5672, heartbeat=600)
+        )
         #     except AMQPConnectionError as e:
         #         print("Failed to connect to RabbitMQ. Retrying...")
         #     except Exception as e:
@@ -48,15 +61,17 @@ def object_processing_queue():
 
         print("Connected")
 
-        
-
         def on_message(ch, method, properties, body):
             try:
 
-                print('Received message (delivery tag: {}): {}'.format(method.delivery_tag, body))
+                print(
+                    "Received message (delivery tag: {}): {}".format(
+                        method.delivery_tag, body
+                    )
+                )
 
-                body = json.loads(body.decode('utf-8'))
-                object_id = body.get('objectId')
+                body = json.loads(body.decode("utf-8"))
+                object_id = body.get("objectId")
 
                 # STEP 2.1: get image urls from postgres using object id
                 residence_image_urls = get_object_images_from_db(object_id)
@@ -65,15 +80,21 @@ def object_processing_queue():
                     print("No images found for object with id: ", object_id)
                     ch.basic_ack(method.delivery_tag)
                     return
-                print(f"Fetched {len(residence_image_urls)} images for object with id: {object_id}")
+                print(
+                    f"Fetched {len(residence_image_urls)} images for object with id: {object_id}"
+                )
 
                 residence_image_pre_signed_urls = []
                 for image_url in residence_image_urls:
                     # print("Image URL: ", image_url)
-                    presigned_url = generate_presigned_url(minio_client, image_url, 'object-pictures')
+                    presigned_url = generate_presigned_url(
+                        minio_client, image_url, "object-pictures"
+                    )
                     # print("Pre-signed URL: ", presigned_url)
                     residence_image_pre_signed_urls.append(presigned_url)
-                images = fetch_images_from_presigned_urls(residence_image_pre_signed_urls)
+                images = fetch_images_from_presigned_urls(
+                    residence_image_pre_signed_urls
+                )
                 # fig = plt.figure(figsize=(10, 10))
                 # rows = len(images) // 2
                 # columns = 2
@@ -105,10 +126,10 @@ def object_processing_queue():
                 descaled_price = descale_price(prediction)
                 print("Descaled price: ", descaled_price)
                 # predicted_price = get_price_estimate_from_vit_model(images)
-                predicted_price = descaled_price * metadata['area']
+                predicted_price = descaled_price * metadata["area"]
 
                 print("Predicted final price: ", predicted_price)
-                
+
                 # STEP 5: update postgres databases object with calculated price prediction
                 update_object_predicted_price_in_db(object_id, predicted_price)
 
@@ -118,16 +139,16 @@ def object_processing_queue():
             except Exception as e:
                 print(f"Error processing object: {e}")
                 ch.basic_nack(method.delivery_tag)
-        
-        
 
-        queue_state = ch.queue_declare(queue='objectCreationQueue', passive=True)
-        print(f"Queue {queue_state.method.queue} has {queue_state.method.message_count} messages.")
-        ch.basic_consume(queue='objectCreationQueue', on_message_callback=on_message, auto_ack=False)
+        queue_state = ch.queue_declare(queue="objectCreationQueue", passive=True)
+        print(
+            f"Queue {queue_state.method.queue} has {queue_state.method.message_count} messages."
+        )
+        ch.basic_consume(
+            queue="objectCreationQueue", on_message_callback=on_message, auto_ack=False
+        )
 
-        
-
-        print(' [*] Waiting for messages. To exit press CTRL+C')
+        print(" [*] Waiting for messages. To exit press CTRL+C")
         try:
             ch.start_consuming()
         except:
@@ -140,4 +161,3 @@ def object_processing_queue():
     except Exception as e:
         print(f"Error processing object: {e}")
         return
-
