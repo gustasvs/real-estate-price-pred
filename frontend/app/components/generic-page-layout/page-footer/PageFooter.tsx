@@ -2,7 +2,7 @@
 
 import styles from "./PageFooter.module.css";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Breadcrumb,
   Divider,
@@ -26,6 +26,12 @@ const PageFooter = () => {
 
   const { theme } = useThemeContext();
 
+  const [currentTheme, setCurrentTheme] = useState<string>("dark");
+    useEffect(() => {
+      console.log("Theme changed to:", theme);
+      setCurrentTheme(theme);
+    }, [theme]);
+
   return (
     <div className={styles["footer-container"]}>
       <Divider style={{ borderColor: "var(--background-light-secondary)" }}>
@@ -47,23 +53,29 @@ const PageFooter = () => {
           /> */}
           <XOutlined
             className={styles["footer-social-icon"]}
-            // onClick={() => {
-            //   "use client";
-            //   window.open(
-            //     "https://x.com/gustasvs",	
-            //   );
-            // }
-            // }
+            onClick={() => {
+              "use client";
+              window.open(
+                "https://x.com/gustasvs",	
+              );
+            }
+            }
+            style={{
+              filter: currentTheme === "dark" ? "invert(1)" : "brightness(0) saturate(100%) invert(15%) sepia(9%) saturate(702%) hue-rotate(155deg) brightness(96%) contrast(90%)",
+            }}
           />
           <GithubOutlined
             className={styles["footer-social-icon"]}
-            // onClick={() => {
-            //   "use client";
-            //   window.open(
-            //     "https://github.com/gustasvs",
-            //   );
-            // }
-            // }
+            onClick={() => {
+              "use client";
+              window.open(
+                "https://github.com/gustasvs",
+              );
+            }
+            }
+            style={{
+              filter: currentTheme === "dark" ? "invert(1)" : "brightness(0) saturate(100%) invert(15%) sepia(9%) saturate(702%) hue-rotate(155deg) brightness(96%) contrast(90%)",
+            }}
           />
         </div>
       </Divider>
@@ -71,7 +83,7 @@ const PageFooter = () => {
         <div
           className={styles["footer-logo-icon"]}
           style={{
-            filter: theme === "dark" ? "invert(1)" : "brightness(0) saturate(100%) invert(15%) sepia(9%) saturate(702%) hue-rotate(155deg) brightness(96%) contrast(90%)",
+            filter: currentTheme === "dark" ? "invert(1)" : "brightness(0) saturate(100%) invert(15%) sepia(9%) saturate(702%) hue-rotate(155deg) brightness(96%) contrast(90%)",
           }}
         />
         <div className={styles["footer-logo-text"]}>

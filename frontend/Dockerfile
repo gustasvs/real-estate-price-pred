@@ -6,10 +6,11 @@ COPY package*.json ./
 
 RUN npm install
 
+RUN apt-get update && apt-get install -y postgresql-client
+
 COPY . .
 
-# optionally run these to initialise the database
-# RUN npx prisma generate
+RUN npx prisma generate --schema=./prisma/schema.prisma
 # RUN npx prisma db push
 # RUN npx prisma migrate dev
 
@@ -26,4 +27,9 @@ EXPOSE 3000
 # RUN npm run dev
 
 # Start the Next.js app
-CMD ["npm", "run", "dev"]
+# CMD ["npm", "run", "dev"]
+COPY wait-for-postgres.sh /wait-for-postgres.sh
+RUN chmod +x /wait-for-postgres.sh
+
+# Start the application
+CMD ["/wait-for-postgres.sh", "db", "npm run dev"]

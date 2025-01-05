@@ -1,0 +1,6 @@
+data_from_web/images/
+data/dataset/
+
+*.md
+*.pyc
+__pycache__/

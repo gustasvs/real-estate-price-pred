@@ -29,7 +29,7 @@ import {
   getObject as getObjectApi,
   updateObject as updateObjectApi,
 } from "../../../actions/groupObjects";
-import { generateUploadUrl } from "../../api/generateUploadUrl";
+import { generateUploadUrl, uploadFile } from "../../api/generateUploadUrl";
 import { useSession } from "next-auth/react";
 import { StyledNumberInput, StyledTextField } from "../styled-mui-components/styled-components";
 import { ElevatorOutlined, NotAccessible } from "@mui/icons-material";
@@ -52,6 +52,12 @@ const ResidenceObjectForm = ({
   const { data: session, status, update } = useSession();
 
   const { theme } = useThemeContext();
+
+  const [currentTheme, setCurrentTheme] = useState<string>("dark");
+  useEffect(() => {
+    console.log("Theme changed to:", theme);
+    setCurrentTheme(theme);
+  }, [theme]);
 
   const [form] = Form.useForm();
 
@@ -137,21 +143,21 @@ const ResidenceObjectForm = ({
                 "object-pictures"
               );
 
+            console.log("Upload URL Results:", uploadUrlResults);
+
             if (
               typeof uploadUrlResults !== "object" ||
               "error" in uploadUrlResults
             ) {
-              throw new Error("Failed to get upload URL");
+              throw new Error("Failed to get upload URL, uploadUrlResults: " + uploadUrlResults);
             }
 
-            const { presignedUrl, objectKey } =
-              uploadUrlResults;
+            const { presignedUrl, objectKey } = uploadUrlResults;
 
             if (
-              typeof presignedUrl !== "string" ||
-              !objectKey
+              typeof presignedUrl !== "string" || !objectKey
             ) {
-              throw new Error("Failed to get upload URL");
+              throw new Error("Failed to get upload URL not string, presignedUrl: " + presignedUrl + " objectKey: " + objectKey);
             }
 
             console.log(
@@ -159,16 +165,25 @@ const ResidenceObjectForm = ({
               presignedUrl
             );
 
+            // temp solution to dockerize the app (minio lead dev marked issue as wontfix :)))))))))))
             // Step 2: Upload Image Using Pre-signed URL
-            const uploadResponse = await fetch(
-              presignedUrl,
-              {
-                method: "PUT",
-                body: compressedFile, // Send the raw file
-              }
+            // const uploadResponse = await fetch(
+            //   presignedUrl,
+            //   {
+            //     method: "PUT",
+            //     body: compressedFile, // Send the raw file
+            //   }
+            // );
+
+            const fileForm = new FormData();
+            fileForm.append("file", compressedFile);
+
+            const uploadResponse = await uploadFile(
+              fileForm,
+              presignedUrl
             );
 
-            if (!uploadResponse.ok) {
+            if (!uploadResponse.success) {
               throw new Error(
                 "Failed to upload image to MinIO"
               );

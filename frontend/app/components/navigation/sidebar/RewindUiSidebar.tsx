@@ -41,6 +41,12 @@ const RewindUiSidebar = () => {
   
   const { theme } = useThemeContext();
 
+  const [currentTheme, setCurrentTheme] = useState<string>("dark");
+  useEffect(() => {
+    console.log("Theme changed to:", theme);
+    setCurrentTheme(theme);
+  }, [theme]);
+
   const [collapsed, setCollapsed] = useState(
     (typeof window !== "undefined" &&
     localStorage.getItem("sidebarCollapsed") === "true") || false);
@@ -230,7 +236,7 @@ const RewindUiSidebar = () => {
           className={`${styles["left-sidebar-company-logo"]} ${collapsed ? styles["left-sidebar-company-logo-collapsed"] : ""}`}
           onClick={() => router.push("/")}
           style={{
-            filter: theme === "dark" ? "invert(1)" : "brightness(0) saturate(100%) invert(15%) sepia(9%) saturate(702%) hue-rotate(155deg) brightness(96%) contrast(90%)",
+            filter: currentTheme === "dark" ? "invert(1)" : "brightness(0) saturate(100%) invert(15%) sepia(9%) saturate(702%) hue-rotate(155deg) brightness(96%) contrast(90%)",
           }}
         >
           <Logo />

@@ -10,6 +10,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../auth";
 import sendRabbitMessage from "./rabbit_queue";
 
+const rabbitHost = process.env.RABBITMQ_HOST || 'rabbitmq';
+
 export const getObject = async (objectId: string) => {
 
   const session = await getServerSession(authOptions);
@@ -17,20 +19,6 @@ export const getObject = async (objectId: string) => {
   if (!session) {
     return { error: "User not authenticated" };
   }
-
-  amqp.connect('amqp://localhost').then(async (connection) => {
-    console.log("Connected to RabbitMQ");
-    const channel = await connection.createChannel();
-    const exchange = 'objectCreationExchange';
-    const queue = 'objectCreationQueue';
-    const routingKey = 'objectCreationRoutingKey';
-
-    await channel.assertExchange(exchange, 'direct', { durable: true });
-    await channel.assertQueue(queue, { durable: true });
-    await channel.bindQueue(queue, exchange, routingKey);
-
-    channel.publish(exchange, routingKey, Buffer.from(JSON.stringify({ objectId })));
-  });
 
   try {
     const object = await db.residence.findUnique({
@@ -89,6 +77,7 @@ export const getObjects = async (groupId: string, filter: Filter) => {
         if (obj && obj.pictures && Array.isArray(obj.pictures)) {
           const updatedPictures = await Promise.all(
             obj.pictures.map(async (picture) => {
+              // const downloadUrl = await generateDownloadUrl(picture, 'object-pictures');
               const downloadUrl = await generateDownloadUrl(picture, 'object-pictures');
               return {
                 fileName: picture,
@@ -214,14 +203,20 @@ export const createObject = async (
 
     const objectId = newObject.id;
 
-    const messageRes = await sendRabbitMessage(objectId);
-
-    if (messageRes.error) {
-      console.error("Error queuing object rerendering:", messageRes.error);
-    }
-
     try {
-  
+      amqp.connect(`amqp://${rabbitHost}`).then(async (connection) => {
+        console.log("Connected to RabbitMQ");
+        const channel = await connection.createChannel();
+        const exchange = 'objectCreationExchange';
+        const queue = 'objectCreationQueue';
+        const routingKey = 'objectCreationRoutingKey';
+    
+        await channel.assertExchange(exchange, 'direct', { durable: true });
+        await channel.assertQueue(queue, { durable: true });
+        await channel.bindQueue(queue, exchange, routingKey);
+    
+        channel.publish(exchange, routingKey, Buffer.from(JSON.stringify({ objectId })));
+      });
     } catch (error) {
       console.error("Error queuing object rerendering:", error);
     }
@@ -298,13 +293,21 @@ export const updateObject = async (
         });
     }
 
-    const messageRes = await sendRabbitMessage(objectId);
+    amqp.connect(`amqp://${rabbitHost}`).then(async (connection) => {
+      console.log("Connected to RabbitMQ");
+      const channel = await connection.createChannel();
+      const exchange = 'objectCreationExchange';
+      const queue = 'objectCreationQueue';
+      const routingKey = 'objectCreationRoutingKey';
+  
+      await channel.assertExchange(exchange, 'direct', { durable: true });
+      await channel.assertQueue(queue, { durable: true });
+      await channel.bindQueue(queue, exchange, routingKey);
+  
+      channel.publish(exchange, routingKey, Buffer.from(JSON.stringify({ objectId })));
+    });
 
-    if (messageRes.error) {
-      console.error("Error queuing object rerendering:", messageRes.error);
-    }
-
-    return { success: messageRes.success, updatedObject };
+    return { success: true, updatedObject };
   } catch (error) {
     console.error("Error updating object:", error);
     return { error: "Failed to update object" };

@@ -1,16 +1,9 @@
 import numpy as np
-import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
-
-from load_images import load_images
-from load_prices import load_prices
-
-from helpers.label_smothing import apply_lds, apply_fds, adaptive_lds
 
 from data_from_web.load_data_from_web import extract_images_and_prices
 
 from helpers.handle_scaling_params import handle_scaling_params
-from helpers.data_loader import process_sample_images
 
 from config.settings import DEMO_MODE, STANDART_DEV_TO_KEEP, USE_SQUARE_METERS, USE_ADDITIONAL_METADATA
 

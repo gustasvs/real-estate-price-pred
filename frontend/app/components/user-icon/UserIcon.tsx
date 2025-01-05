@@ -46,7 +46,7 @@ const UserIcon: React.FC<UserIconProps> = ({ onClick }) => {
       {userImageUrl ? (
         <img
           src={userImageUrl}
-          alt="User Image"
+          alt="Attēls"
           className={styles["user-image"]}
         />
       ) : (

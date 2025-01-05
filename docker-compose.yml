@@ -1,25 +1,39 @@
-version: '3.8'
-
 services:
   app:
     build: ./frontend
     ports:
       - "3000:3000"
     env_file:
-      - .env.docker  # Use the docker-specific environment file
+      - ./frontend/.env.docker
     volumes:
-      - .:/app
+      - ./frontend:/app
     networks:
       - app-network
     depends_on:
       - db
+      - minio
+      - rabbitmq
+
+  python-app:
+    build: ./CNAModel
+    command: python handle_queue.py
+    env_file:
+      - ./CNAModel/.env
+    depends_on:
+      - db
+      - rabbitmq
+      - minio
+    networks:
+      - app-network
 
   db:
     image: postgres
     container_name: local_pgdb
     restart: always
     ports:
-      - "5432:5432"
+      - "5433:5432"
+    env_file:
+    - ./frontend/.env.docker
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: password
@@ -40,9 +54,51 @@ services:
     volumes:
       - pgadmin-data:/var/lib/pgadmin
 
+  # nginx:
+  #   image: nginx:latest
+  #   volumes:
+  #     - ./ngnix.conf:/etc/nginx/nginx.conf:ro
+  #   ports:
+  #     - "9001:9000"  # Map port 9000 on the host to port 9000 on the container
+  #   depends_on:
+  #     - minio
+  #   networks:
+  #     - app-network
+
+  minio:
+    image: minio/minio
+    hostname: minio
+    ports:
+      - "9001:9000"
+    environment:
+      MINIO_ROOT_USER: "minioadmin"
+      MINIO_ROOT_PASSWORD: "minioadmin"
+      MINIO_HOST: "minio"
+      MINIO_PORT: "9000"
+      MINIO_EXTERNAL_HOST: "localhost"
+      MINIO_EXTERNAL_PORT: "9000"
+
+    command: minio server /data
+    volumes:
+      - minio_data:/data
+    networks:
+      - app-network
+
+  rabbitmq:
+    image: rabbitmq:4-management
+    ports:
+      - "5673:5672"
+      - "15673:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - app-network
+
 volumes:
   local_pgdata:
   pgadmin-data:
-
+  minio_data:
+  rabbitmq_data:
+  
 networks:
   app-network:

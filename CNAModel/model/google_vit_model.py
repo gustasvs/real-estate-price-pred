@@ -17,12 +17,12 @@ from transformers import AutoImageProcessor, ResNetForImageClassification, AutoM
 # import matplotlib.pyplot as plt
 
 # so config can be imported
-import sys
-from pathlib import Path
-current_file_path = Path(__file__).absolute()
-project_root = current_file_path.parent.parent
-if str(project_root) not in sys.path:
-    sys.path.append(str(project_root))
+# import sys
+# from pathlib import Path
+# current_file_path = Path(__file__).absolute()
+# project_root = current_file_path.parent.parent
+# if str(project_root) not in sys.path:
+#     sys.path.append(str(project_root))
 
 from config.settings import ENABLE_DEV_LOGS
 

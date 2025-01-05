@@ -6,6 +6,7 @@ from sklearn.model_selection import train_test_split
 
 from config.settings import BATCH_SIZE, ENABLE_DEV_LOGS, MAX_IMAGES_PER_SAMPLE, USE_ADDITIONAL_METADATA
 
+print("Imported data_loader...")
 
 class ImageDataset(Dataset):
     def __init__(self, inputs, prices, feature_extractor):

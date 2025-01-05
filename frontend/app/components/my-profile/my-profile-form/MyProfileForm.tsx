@@ -25,7 +25,7 @@ import { EditOutlined, QuestionCircleOutlined, UploadOutlined } from "@ant-desig
 import { InputLabel, Slider } from "@mui/material";
 
 import AvatarEditor from 'react-avatar-editor'
-import { generateUploadUrl } from "../../../api/generateUploadUrl";
+import { generateUploadUrl, uploadFile } from "../../../api/generateUploadUrl";
 import { generateDownloadUrl } from "../../../api/generateDownloadUrl";
 
 
@@ -81,7 +81,7 @@ const MyProfileForm = () => {
         const uploadUrlResults = await generateUploadUrl(uploadedFile.name, "profile-pictures");
 
         if (typeof uploadUrlResults !== "object" || "error" in uploadUrlResults) {
-          message.error("Failed to get upload URL");
+          message.error(`Gailed to get upload URL: ${uploadUrlResults.error}`);
           return;
         }
 
@@ -98,12 +98,23 @@ const MyProfileForm = () => {
         const formData = new FormData();
         formData.append("file", uploadedFile);
 
-        const uploadResponse = await fetch(presignedUrl, {
-          method: "PUT",
-          body: uploadedFile, // Send the raw file
-        });
+        // const uploadResponse = await fetch(presignedExternalUrl, {
+        //   method: "PUT",
+        //   body: uploadedFile, // Send the raw file
+        // });
+        // const uploadResponse = await uploadFile(
+        //               compressedFile,
+        //               presignedUrl
+        //             );
 
-        if (!uploadResponse.ok) {
+
+        const uploadResponse = await uploadFile(
+          formData,
+          presignedUrl
+        );
+
+
+        if (!uploadResponse.success) {
           message.error("Failed to upload image to MinIO");
           return;
         }
@@ -174,6 +185,7 @@ const MyProfileForm = () => {
         const sessionUserImage = session?.user?.image;
         if (sessionUserImage) {
           const downloadUrl = await generateDownloadUrl(sessionUserImage, "profile-pictures");
+          // const downloadUrl = "/api/getImage?fileName=" + sessionUserImage + "&bucketName=profile-pictures";
 
           console.log("Download URL:", downloadUrl);
           if (typeof downloadUrl === "object" && "error" in downloadUrl) {

@@ -9,7 +9,7 @@ print("DATABASE_URL: ", DATABASE_URL)
 print("DATABASE_SCHEMA: ", DATABASE_SCHEMA)
 
 cursor = None
-
+ 
 def get_object_images_from_db(object_id):
     """
     Retrieves the images associated with a Residence object from the database.

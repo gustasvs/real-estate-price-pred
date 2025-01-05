@@ -1,23 +1,24 @@
 import pika
 import json
-
-from PIL import Image
-import requests
-from io import BytesIO
-
-import matplotlib.pyplot as plt
+import os
+import time
+from pika.exceptions import AMQPConnectionError
 
 from helpers.processed_data import scale_metadata_for_sample, descale_price
 
+print("Imported...")
+
 from price_assigning_queue.compute_predicted_price import compute_predicted_price
+# def compute_predicted_price(images, metadata):
+#     return 0.0
 
 # so config can be imported
-import sys
-from pathlib import Path
-current_file_path = Path(__file__).absolute()
-project_root = current_file_path.parent.parent
-if str(project_root) not in sys.path:
-    sys.path.append(str(project_root))
+# import sys
+# from pathlib import Path
+# current_file_path = Path(__file__).absolute()
+# project_root = current_file_path.parent.parent
+# if str(project_root) not in sys.path:
+#     sys.path.append(str(project_root))
 
 
 from price_assigning_queue.handle_db_operations import get_object_images_from_db, get_all_residences, update_object_predicted_price_in_db, get_object_metadata_from_db
@@ -26,86 +27,117 @@ from price_assigning_queue.handle_minio_storage_operations import create_minio_c
 def object_processing_queue():
 
     # get_all_residences()
-
+    print("Starting object processing queue...")
     minio_client = create_minio_client()
 
     try:
 
-        c = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+        print("Connecting to RabbitMQ...") 
+        # c = None
+        # while not c:
+        #     try:
+        #         print("Trying to connect to RabbitMQ...")
+        time.sleep(10)
+        c = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq', port=5672, heartbeat=600))
+        #     except AMQPConnectionError as e:
+        #         print("Failed to connect to RabbitMQ. Retrying...")
+        #     except Exception as e:
+        #         print(f"Error connecting to RabbitMQ: {e}")
 
         ch = c.channel()
 
-        def on_message(ch, method, properties, body):
+        print("Connected")
 
-            print('Received message (delivery tag: {}): {}'.format(method.delivery_tag, body))
-
-            body = json.loads(body.decode('utf-8'))
-            object_id = body.get('objectId')
-
-            # STEP 2.1: get image urls from postgres using object id
-            residence_image_urls = get_object_images_from_db(object_id)
-
-            if not residence_image_urls or len(residence_image_urls) == 0:
-                print("No images found for object with id: ", object_id)
-                ch.basic_ack(method.delivery_tag)
-                return
-            print(f"Fetched {len(residence_image_urls)} images for object with id: {object_id}")
-
-            residence_image_pre_signed_urls = []
-            for image_url in residence_image_urls:
-                # print("Image URL: ", image_url)
-                presigned_url = generate_presigned_url(minio_client, image_url, 'object-pictures')
-                # print("Pre-signed URL: ", presigned_url)
-                residence_image_pre_signed_urls.append(presigned_url)
-            images = fetch_images_from_presigned_urls(residence_image_pre_signed_urls)
-            # fig = plt.figure(figsize=(10, 10))
-            # rows = len(images) // 2
-            # columns = 2
-            # for i, image in enumerate(images):
-            #     fig.add_subplot(rows, columns, i + 1)
-            #     plt.imshow(image)
-            # plt.show()
-
-            # STEP 2.2: get metadata from postgres using object id
-            metadata = get_object_metadata_from_db(object_id)
-
-            if not metadata:
-                print("No metadata found for object with id: ", object_id)
-                ch.basic_ack(method.delivery_tag)
-                return
-
-            print("Metadata: ", metadata)
-            print("-" * 20)
-
-            scaled_metadata_for_sample = scale_metadata_for_sample(metadata)
-
-            print("Metadata: ", metadata)
-            print("Descaled Metadata: ", scaled_metadata_for_sample)
-
-            # STEP 4: convert images to a price estimate using the VIT model
-            prediction = compute_predicted_price(images, scaled_metadata_for_sample)
-            print("Prediction: ", prediction)
-
-            descaled_price = descale_price(prediction)
-            print("Descaled price: ", descaled_price)
-            # predicted_price = get_price_estimate_from_vit_model(images)
-            predicted_price = descaled_price * metadata['area']
-
-            print("Predicted final price: ", predicted_price)
-            
-            # STEP 5: update postgres databases object with calculated price prediction
-            update_object_predicted_price_in_db(object_id, predicted_price)
-
-            # STEP 6: confirm message and wait for next message
-            ch.basic_ack(method.delivery_tag)
         
-        ch.queue_declare(queue='objectCreationQueue', durable=True, auto_delete=False)
+
+        def on_message(ch, method, properties, body):
+            try:
+
+                print('Received message (delivery tag: {}): {}'.format(method.delivery_tag, body))
+
+                body = json.loads(body.decode('utf-8'))
+                object_id = body.get('objectId')
+
+                # STEP 2.1: get image urls from postgres using object id
+                residence_image_urls = get_object_images_from_db(object_id)
+
+                if not residence_image_urls or len(residence_image_urls) == 0:
+                    print("No images found for object with id: ", object_id)
+                    ch.basic_ack(method.delivery_tag)
+                    return
+                print(f"Fetched {len(residence_image_urls)} images for object with id: {object_id}")
+
+                residence_image_pre_signed_urls = []
+                for image_url in residence_image_urls:
+                    # print("Image URL: ", image_url)
+                    presigned_url = generate_presigned_url(minio_client, image_url, 'object-pictures')
+                    # print("Pre-signed URL: ", presigned_url)
+                    residence_image_pre_signed_urls.append(presigned_url)
+                images = fetch_images_from_presigned_urls(residence_image_pre_signed_urls)
+                # fig = plt.figure(figsize=(10, 10))
+                # rows = len(images) // 2
+                # columns = 2
+                # for i, image in enumerate(images):
+                #     fig.add_subplot(rows, columns, i + 1)
+                #     plt.imshow(image)
+                # plt.show()
+
+                # STEP 2.2: get metadata from postgres using object id
+                metadata = get_object_metadata_from_db(object_id)
+
+                if not metadata:
+                    print("No metadata found for object with id: ", object_id)
+                    ch.basic_ack(method.delivery_tag)
+                    return
+
+                print("Metadata: ", metadata)
+                print("-" * 20)
+
+                scaled_metadata_for_sample = scale_metadata_for_sample(metadata)
+
+                print("Metadata: ", metadata)
+                print("Descaled Metadata: ", scaled_metadata_for_sample)
+
+                # STEP 4: convert images to a price estimate using the VIT model
+                prediction = compute_predicted_price(images, scaled_metadata_for_sample)
+                print("Prediction: ", prediction)
+
+                descaled_price = descale_price(prediction)
+                print("Descaled price: ", descaled_price)
+                # predicted_price = get_price_estimate_from_vit_model(images)
+                predicted_price = descaled_price * metadata['area']
+
+                print("Predicted final price: ", predicted_price)
+                
+                # STEP 5: update postgres databases object with calculated price prediction
+                update_object_predicted_price_in_db(object_id, predicted_price)
+
+                # STEP 6: confirm message and wait for next message
+                ch.basic_ack(method.delivery_tag)
+
+            except Exception as e:
+                print(f"Error processing object: {e}")
+                ch.basic_nack(method.delivery_tag)
+        
+        
+
+        queue_state = ch.queue_declare(queue='objectCreationQueue', passive=True)
+        print(f"Queue {queue_state.method.queue} has {queue_state.method.message_count} messages.")
         ch.basic_consume(queue='objectCreationQueue', on_message_callback=on_message, auto_ack=False)
 
+        
+
         print(' [*] Waiting for messages. To exit press CTRL+C')
-        ch.start_consuming()
+        try:
+            ch.start_consuming()
+        except:
+            print("Error consuming messages")
+            c.close()
 
     except KeyboardInterrupt:
         print("Exiting...")
+        return
+    except Exception as e:
+        print(f"Error processing object: {e}")
         return
 

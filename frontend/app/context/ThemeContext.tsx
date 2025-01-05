@@ -35,11 +35,8 @@ export function ThemeProvider({
 }: ThemeProviderProps) {
   const { data: session } = useSession();
 
-  // Initialize local theme state based on session data or default to 'light'
   const [theme, setTheme] = useState(
-    session?.user?.theme ||
-    (typeof window !== "undefined" && localStorage.getItem("theme")) || // Add check for window
-    "light"
+    session?.user?.theme || (typeof window !== "undefined" && localStorage.getItem("theme")) || "dark"
   );
 
   const [fontSize, setFontSizeState] = useState<number>(

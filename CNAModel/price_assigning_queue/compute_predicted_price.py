@@ -3,18 +3,26 @@ import numpy as np
 
 from matplotlib import pyplot as plt
 from model.google_vit_model import get_vit_model
+
+print("Imported...")
+
 from helpers.data_loader import process_sample_images
 
 from config.settings import AGGREGATION_METHOD
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+print(f"Device: {device}")
 
 model, feature_extractor = get_vit_model(aggregation_method=AGGREGATION_METHOD)
 
-model.load_state_dict(torch.load("models/vit_regression_model.pth"))
+print("Loading the model...")
 
-model.to(device)
+model.load_state_dict(torch.load("models/vit_regression_model.pth", map_location=device))
+
+print("Model loaded...")
+
+# model.to(device)
 
 
 def compute_predicted_price(images, metadata):

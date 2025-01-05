@@ -2,8 +2,6 @@ import numpy as np
 import torch
 from torch import nn
 
-from collections import Counter
-
 import matplotlib.pyplot as plt
 
 from config.settings import DEMO_MODE

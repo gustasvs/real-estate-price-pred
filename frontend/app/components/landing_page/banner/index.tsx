@@ -17,6 +17,11 @@ const Banner = () => {
   const router = useRouter();
 
   const { theme } = useThemeContext();
+  const [currentTheme, setCurrentTheme] = useState<string>("dark");
+  useEffect(() => {
+    console.log("Theme changed to:", theme);
+    setCurrentTheme(theme);
+  }, [theme]);
 
   const { data: session, status, update } = useSession();
 
@@ -112,7 +117,7 @@ const Banner = () => {
           opacity: layer / 5,
           transform: `translate(-50%, -50%)`,
           animationDelay: `${index * 0.5}s`, // Delay based on index, modify as needed
-          filter: theme === "dark" ? "invert(1)" : "invert(0)",
+          filter: currentTheme === "dark" ? "invert(1)" : "invert(0)",
           // transition: "left 0.1s linear, top 0.1s linear",
           ...(layer && { '--scale': (3 + (layer / 2)).toString() } as React.CSSProperties)
         }}
