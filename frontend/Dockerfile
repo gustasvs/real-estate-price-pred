@@ -21,6 +21,6 @@ COPY wait-for-postgres.sh /wait-for-postgres.sh
 RUN chmod +x /wait-for-postgres.sh
 
 
-# build && npm run start
 
-CMD ["/bin/sh", "-c", "/wait-for-postgres.sh db && npm run dev"]
+
+CMD ["/bin/sh", "-c", "/wait-for-postgres.sh db && npm run build && npm run start"]

@@ -467,8 +467,8 @@ const MyProfileForm = () => {
           >
             <div className={styles["settings-title"]}>Fonta izmērs:</div>
             <StyledSlider
-              defaultValue={fontSize}
-              value={fontSize}
+              defaultValue={fontSize || 19}
+              value={fontSize || 19}
               aria-label="font-size-slider"
               onChange={(event, value) => {
                 if (typeof value === 'number') {

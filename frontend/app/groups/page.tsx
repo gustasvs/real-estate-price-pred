@@ -1,3 +1,4 @@
+
 import React from "react";
 import CardTable from "../components/card-table";
 import GenericLayout from "../components/generic-page-layout";
@@ -19,48 +20,9 @@ const GroupsPage = async ({
 
   console.log("params", searchParams);
 
-  
 
-  const fetchGroups = async () => {
-    "use server";
-    const { groups, total, error } = await getGroupsApi(
-      searchParams
-    );
-    console.log("groups", groups);
-    if (Array.isArray(groups)) {
-      return { groups, total };
-    } else {
-      console.error(
-        "Failed to fetch groups:",
-        error
-      );
-      return { groups: [], total: 0 }
-    }
-  };
 
-  const createGroup = async (groupName: string) => {
-    "use server";
-    const res = await createGroupApi(groupName);
-    console.log("res", res);
-    revalidatePath("/groups");
-  };
-
-  const deleteGroup = async (id: string) => {
-    "use server";
-    const res = await deleteGroupApi(id);
-    revalidatePath("/groups");
-  };
-
-  const updateGroup = async (
-    id: string,
-    newGroupName: string
-  ) => {
-    "use server";
-    const res = await updateGroupApi(id, newGroupName);
-    revalidatePath("/groups");
-  };
-
-  const { groups, total } = await fetchGroups();
+  const { groups, total } = await getGroupsApi(searchParams);
 
   return (
     <GenericLayout>
@@ -75,9 +37,6 @@ const GroupsPage = async ({
         columnCount={3}
         groups={groups}
         total={total || 0}
-        deleteGroup={deleteGroup}
-        createGroup={createGroup}
-        updateGroup={updateGroup}
       />
 
     </GenericLayout>

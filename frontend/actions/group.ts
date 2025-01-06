@@ -136,7 +136,7 @@ export const createGroup = async (groupName: string) => {
 
     console.log("newGroup", newGroup);
 
-    revalidatePath("/groups");
+    // revalidatePath("/groups");
 
     return newGroup;
 
