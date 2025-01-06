@@ -15,7 +15,7 @@
     "@material/textfield": "^14.0.0",
     "@mui/icons-material": "^6.1.9",
     "@mui/material": "^6.1.5",
-    "@prisma/client": "^5.15.1",
+    "@prisma/client": "^6.1.0",
     "@tsparticles/react": "^3.0.0",
     "amqplib": "^0.10.5",
     "antd": "^5.0.0",
@@ -31,7 +31,6 @@
     "next-auth": "^4.24.11",
     "next-cloudinary": "^6.16.0",
     "nodemailer": "^6.9.16",
-    "prisma": "^5.20.0",
     "rc-queue-anim": "^2.0.0",
     "rc-scroll-anim": "^2.7.6",
     "rc-tween-one": "^3.0.6",
@@ -61,6 +60,7 @@
     "@types/react": "^18.2.17",
     "@types/react-avatar-editor": "^13.0.3",
     "@types/react-dom": "^18.2.7",
+    "prisma": "^6.1.0",
     "typescript": "^5.1.6"
   },
   "browser": {

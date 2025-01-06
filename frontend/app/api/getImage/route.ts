@@ -1,14 +1,18 @@
 import { NextResponse } from "next/server";
 import minioClient from "../minioClient";
 
+
 export async function GET(req: Request) {
+    
+    console.log("Request URL:", req);
+
+    const url = new URL(req.url);
+    
     try {
         // const fileName = req.nextUrl.searchParams.get('fileName');
         // const bucketName = req.nextUrl.searchParams.get('bucketName');
 
-        console.log("Request URL:", req);
-
-        const url = new URL(req.url);
+        
         const fileName = url.searchParams.get('fileName');
         const bucketName = url.searchParams.get('bucketName');
         
@@ -31,6 +35,7 @@ export async function GET(req: Request) {
 
     } catch (error) {
         console.error('Error fetching image:', error);
+        
         return new NextResponse('Error fetching image', { status: 500 });
     }
 };

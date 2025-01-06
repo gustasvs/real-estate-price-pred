@@ -44,20 +44,22 @@ def object_processing_queue():
     try:
 
         print("Connecting to RabbitMQ...")
-        # c = None
-        # while not c:
-        #     try:
-        #         print("Trying to connect to RabbitMQ...")
-        time.sleep(10)
-        c = pika.BlockingConnection(
-            pika.ConnectionParameters(host="rabbitmq", port=5672, heartbeat=600)
-        )
-        #     except AMQPConnectionError as e:
-        #         print("Failed to connect to RabbitMQ. Retrying...")
-        #     except Exception as e:
-        #         print(f"Error connecting to RabbitMQ: {e}")
+        c = None
+        while not c:
+            try:
+                print("Trying to connect to RabbitMQ...")
+                time.sleep(10)
+                c = pika.BlockingConnection(
+                    pika.ConnectionParameters(host="rabbitmq", port=5672, heartbeat=600)
+                )
+            except AMQPConnectionError as e:
+                print("Failed to connect to RabbitMQ. Retrying...")
+            except Exception as e:
+                print(f"Error connecting to RabbitMQ: {e}")
 
         ch = c.channel()
+
+        ch.queue_declare(queue="objectCreationQueue", durable=True)
 
         print("Connected")
 
