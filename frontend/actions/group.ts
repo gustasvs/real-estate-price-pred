@@ -136,7 +136,7 @@ export const createGroup = async (groupName: string) => {
 
     console.log("newGroup", newGroup);
 
-    // revalidatePath("/groups");
+    revalidatePath("/groups");
 
     return newGroup;
 
@@ -191,6 +191,9 @@ export const updateGroup = async (groupId: string, newGroupName: string) => {
         updatedAt: new Date(),
       },
     });
+
+    revalidatePath("/groups");
+
     return updatedGroup;
   } catch (error) {
     console.error("Error updating group:", error);
@@ -205,6 +208,9 @@ export const deleteGroup = async (groupId: string) => {
       where: { id: groupId },
     });
     return { success: true };
+
+    revalidatePath("/groups");
+
   } catch (error) {
     console.error("Error deleting group:", error);
     return { error: "Failed to delete group" };

@@ -60,6 +60,11 @@ const CardTable = ({
     }
   }, [searchParams]);
 
+
+  useEffect(() => {
+    setGroups(groups);
+  }, [groups]);
+
   if (status === "loading") {
     return <div></div>;
   }
@@ -82,10 +87,6 @@ const CardTable = ({
       console.error("Error creating group:", newGroup.error);
       return;
     }
-
-    setGroups((prevGroups) => {
-      return [...prevGroups, newGroup];
-    });
   };
 
   const deleteGroupLocal = async (groupId: string) => {
