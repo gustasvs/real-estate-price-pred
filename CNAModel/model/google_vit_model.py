@@ -99,7 +99,7 @@ class CustomViTHead(nn.Module):
         super(CustomViTHead, self).__init__()
 
         # image embeddings layers
-        self.fc_image = nn.Linear(embedding_layer_size, 128)
+        self.fc_image = nn.Linear(embedding_layer_size, 196)
         self.dropout_image = nn.Dropout(0.2)
 
         # additional metadata layers
@@ -107,7 +107,7 @@ class CustomViTHead(nn.Module):
         self.dropout_features = nn.Dropout(0.2)
 
         # combined layers
-        self.fc_combined = nn.Linear(128 + 64, 96)
+        self.fc_combined = nn.Linear(196 + 64, 96)
         self.fc_final = nn.Linear(96, 1)
 
     def forward(self, aggregated_image_embeddings, additional_metadata):
