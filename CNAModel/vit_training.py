@@ -253,9 +253,16 @@ for i, aggregation_method in enumerate(aggregation_methods):
         results[j][i] = val_loss
 
 fig, ax = plt.subplots(2, 1, figsize=(15, 5))
-# ax[0].plot(losses_for_plot)
 # smooth out using ma 20
-ax[0].plot(np.convolve(losses_for_plot, np.ones(40) / 40, mode="valid"))
+# ax[0].plot(np.convolve(losses_for_plot, np.ones(40) / 40, mode="valid"))
+
+smoothed_losses = np.convolve(losses_for_plot, np.ones(40) / 40, mode="valid")
+
+clipped_detailed_loss_values = np.clip(smoothed_losses, None, 4)
+colors_detailed = ['red' if val > 4 else 'blue' for val in smoothed_losses]
+
+ax[0].scatter(range(len(clipped_detailed_loss_values)), clipped_detailed_loss_values, c=colors_detailed, s=1)
+ax[0].plot(smoothed_losses)
 
 ax[0].set_title("Training Loss")
 ax[0].set_xlabel("Epochs")

@@ -5,6 +5,8 @@ from data_from_web.load_data_from_web import extract_images_and_prices
 
 from helpers.handle_scaling_params import handle_scaling_params
 
+import matplotlib.pyplot as plt
+
 from config.settings import DEMO_MODE, STANDART_DEV_TO_KEEP, USE_SQUARE_METERS, USE_ADDITIONAL_METADATA
 
 def processed_data(count):
@@ -22,6 +24,11 @@ def processed_data(count):
     prices, images, additional_metadata = extract_images_and_prices(count, root_dir="data_from_web/", use_square_meters=USE_SQUARE_METERS)
 
     print(f"Prices count: {len(prices)}, Images count: {len(images)}, Additional metadata count: {len(additional_metadata)}")
+
+    if DEMO_MODE:
+        plt.hist(prices, bins=20)
+        plt.title("Price distribution before removing outliers")
+        plt.show()
 
     # filter out outliers
     mean_price = np.mean(prices)
@@ -45,10 +52,10 @@ def processed_data(count):
     print(f"Filtered count: {count}")
     print(f"*" * 20)
 
-    # if DEMO_MODE:
-    #     plt.hist(prices, bins=20)
-    #     plt.title("Price distribution after removing outliers")
-    #     plt.show()
+    if DEMO_MODE:
+        plt.hist(prices, bins=20)
+        plt.title("Price distribution after removing outliers")
+        plt.show()
 
     prices = np.array(prices)
 

@@ -136,6 +136,8 @@ def normalise_and_prepare_additional_metadata(additional_metadata):
     has_elevator = [metadata[4] for metadata in additional_metadata]
     street = [metadata[5] for metadata in additional_metadata]  # Not used for now
     district = [metadata[6] for metadata in additional_metadata]
+    
+    print("first metadata: ", additional_metadata[0])
 
     print(
         f"Square Meters: {np.array(square_meters).shape} \n Rooms Count: {np.array(rooms_count).shape} \n Apartment Floor: {np.array(apartment_floor).shape} \n Building Floors: {np.array(building_floors).shape} \n Has Elevator: {np.array(has_elevator).shape} \n Street: {np.array(street).shape} \n District: {np.array(district).shape}"
@@ -191,6 +193,8 @@ def normalise_and_prepare_additional_metadata(additional_metadata):
         )
     )  # district_one_hot
 
+    print("processed first metadata: ", output_metadata[0])
+
     # plt.hist(square_meters, bins=20)
     # plt.title("Square Meters distribution")
     # plt.show()
@@ -199,20 +203,20 @@ def normalise_and_prepare_additional_metadata(additional_metadata):
     # plt.title("Rooms Count distribution")
     # plt.show()
 
-    fig, ax = plt.subplots(2, 2, figsize=(15, 5))
-    ax[0, 0].hist(apartment_floor, bins=20)
-    ax[0, 0].set_title("Apartment Floor distribution")
-    ax[0, 1].hist(building_floors, bins=20)
-    ax[0, 1].set_title("Building Floors distribution")
-    fig.delaxes(ax[1, 0])
-    fig.delaxes(ax[1, 1])
-    ax_big = fig.add_subplot(2, 1, 2)
-    bins_floor_ratio = np.linspace(0, 1, 21)  # Create 20 bins between 0 and 1
-    ax_big.hist(floor_ratio, bins=bins_floor_ratio, range=(0, 1))
-    ax_big.set_title("Floor Ratio distribution")
-    ax_big.set_title("Floor Ratio distribution")
+    # fig, ax = plt.subplots(2, 2, figsize=(15, 5))
+    # ax[0, 0].hist(apartment_floor, bins=20)
+    # ax[0, 0].set_title("Apartment Floor distribution")
+    # ax[0, 1].hist(building_floors, bins=20)
+    # ax[0, 1].set_title("Building Floors distribution")
+    # fig.delaxes(ax[1, 0])
+    # fig.delaxes(ax[1, 1])
+    # ax_big = fig.add_subplot(2, 1, 2)
+    # bins_floor_ratio = np.linspace(0, 1, 21)  # Create 20 bins between 0 and 1
+    # ax_big.hist(floor_ratio, bins=bins_floor_ratio, range=(0, 1))
+    # ax_big.set_title("Floor Ratio distribution")
+    # ax_big.set_title("Floor Ratio distribution")
 
-    plt.show()
+    # plt.show()
 
     # plt.hist(floor_ratio, bins=20)
     # plt.title("Floor Ratio distribution")

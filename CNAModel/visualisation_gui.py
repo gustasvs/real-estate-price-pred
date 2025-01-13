@@ -26,6 +26,8 @@ def setup_gui(root, samples, predicted_prices, actual_prices):
 
     # Convert each sample (list of PIL images) into Tkinter-compatible images
     tk_samples = [[ImageTk.PhotoImage(image) for image in sample] for sample in samples]
+    global photoimage_references  # Declare a global or use a broader scope variable
+    photoimage_references = tk_samples
     
     actual_label = Label(root, text=f"Real: ${actual_prices[current_index]:.2f}", font=("Helvetica", 25), bg='darkgray')
     actual_label.grid(row=0, column=0, columnspan=1, padx=10, pady=10)
@@ -57,7 +59,12 @@ def setup_gui(root, samples, predicted_prices, actual_prices):
 
     def update_images():
         for i, label in enumerate(image_labels):
-            label.config(image=tk_samples[current_index][i])
+            try:
+                label.config(image=photoimage_references[current_index][i])
+                label.image = photoimage_references[current_index][i]  # Keep the reference
+            except Exception as e:
+                print(f"Failed to update image {i} at index {current_index}: {e}")
+
 
 
     def next_sample():

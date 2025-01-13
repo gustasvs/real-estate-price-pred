@@ -1,5 +1,9 @@
 
 import torch
+import numpy as np
+
+from PIL import Image
+from PIL import ImageTk
 
 from matplotlib import pyplot as plt
 from model.google_vit_model import get_vit_model
@@ -31,19 +35,62 @@ from visualisation_gui import visualise_results, tensor_to_pil
 def calculate_predictions(val_loader, model, device):
     model.eval()
     with torch.no_grad():
-        for pixel_values_list, prices in val_loader:
-            outputs = model([instance.to(device) for instance in pixel_values_list])
-            for batch, predicted, actual in zip(pixel_values_list, outputs, prices):
-                # Populate the global lists with the necessary data
-                predicted_prices.append(predicted.item())
-                actual_prices.append(actual.item())
+        for sample, prices in val_loader:
+                sample = [
+                    [
+                        instance[0].to(
+                            device, dtype=torch.float32
+                        ),  # Assuming instance[0] is already a tensor
+                        (
+                            torch.tensor(
+                                instance[1], device=device, dtype=torch.float32
+                            )
+                            if isinstance(instance[1], np.ndarray)
+                            else instance[1].to(device, dtype=torch.float32)
+                        ),
+                    ]
+                    for instance in sample
+                ]
 
-                print("Predicted: ", predicted.item())
-                print("Actual: ", actual.item())
-                print("-" * 20)
-                # Convert tensors to PIL images and add to image_samples
-                # image_samples.append([tensor_to_pil(img_tensor) for img_tensor in batch])
-                image_samples.append([tensor_to_pil(img_tensor, mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5]) for img_tensor in batch])
+                outputs = model(sample)  # Now passing the correct structured sample
+
+                for batch_idx, (instances, predicted, actual) in enumerate(
+                    zip(sample, outputs, prices)
+                ):
+                    n_images = len(
+                        instances[0]
+                    )
+                    # plt.figure(figsize=(n_images * 5, 5))
+                    batch_images = []
+                    
+                    for idx, img_tensor in enumerate(instances[0]):
+                        
+                        img_tensor.clamp_(0, 1)  # Clamp to [0, 1]
+                        img_tensor = img_tensor.cpu().squeeze()
+                        if img_tensor.dim() == 3:
+                            img_tensor = img_tensor.permute(
+                                1, 2, 0
+                            )  # Permute to (H, W, C) for imshow
+
+                        # img_tensor = (
+                        #     img_tensor + 1
+                        # ) / 2  # Rescale from [-1, 1] to [0, 1]
+
+                        img_tensor = Image.fromarray((img_tensor.numpy() * 255).astype(np.uint8))
+                        batch_images.append(img_tensor)
+                        # batch_images.append(tensor_to_pil(img_tensor, mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5]))
+
+
+                    image_samples.append(batch_images)
+
+                    # Populate the global lists with the necessary data
+                    predicted_prices.append(predicted.item())
+                    actual_prices.append(actual.item())
+
+                    print("Predicted: ", predicted.item())
+                    print("Actual: ", actual.item())
+                    print("-" * 20)
+                    
 
 calculate_predictions(val_loader, model, device)
 
